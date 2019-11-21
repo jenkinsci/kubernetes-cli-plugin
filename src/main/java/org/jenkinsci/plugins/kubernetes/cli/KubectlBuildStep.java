@@ -1,11 +1,7 @@
 package org.jenkinsci.plugins.kubernetes.cli;
 
-import com.cloudbees.plugins.credentials.CredentialsMatcher;
-import com.cloudbees.plugins.credentials.CredentialsMatchers;
-import com.cloudbees.plugins.credentials.common.StandardCertificateCredentials;
 import com.cloudbees.plugins.credentials.common.StandardCredentials;
 import com.cloudbees.plugins.credentials.common.StandardListBoxModel;
-import com.cloudbees.plugins.credentials.common.StandardUsernamePasswordCredentials;
 import com.cloudbees.plugins.credentials.domains.URIRequirementBuilder;
 import hudson.EnvVars;
 import hudson.Extension;
@@ -14,12 +10,17 @@ import hudson.model.Item;
 import hudson.model.TaskListener;
 import hudson.security.ACL;
 import hudson.util.ListBoxModel;
+import jenkins.authentication.tokens.api.AuthenticationTokens;
+import org.jenkinsci.plugins.kubernetes.auth.KubernetesAuth;
 import org.jenkinsci.plugins.kubernetes.cli.kubeconfig.KubeConfigWriter;
 import org.jenkinsci.plugins.kubernetes.cli.kubeconfig.KubeConfigWriterFactory;
-import org.jenkinsci.plugins.kubernetes.credentials.TokenProducer;
-import org.jenkinsci.plugins.plaincredentials.FileCredentials;
-import org.jenkinsci.plugins.plaincredentials.StringCredentials;
-import org.jenkinsci.plugins.workflow.steps.*;
+import org.jenkinsci.plugins.workflow.steps.AbstractStepExecutionImpl;
+import org.jenkinsci.plugins.workflow.steps.BodyExecutionCallback;
+import org.jenkinsci.plugins.workflow.steps.EnvironmentExpander;
+import org.jenkinsci.plugins.workflow.steps.Step;
+import org.jenkinsci.plugins.workflow.steps.StepContext;
+import org.jenkinsci.plugins.workflow.steps.StepDescriptor;
+import org.jenkinsci.plugins.workflow.steps.StepExecution;
 import org.kohsuke.stapler.AncestorInPath;
 import org.kohsuke.stapler.DataBoundConstructor;
 import org.kohsuke.stapler.DataBoundSetter;
@@ -133,15 +134,6 @@ public class KubectlBuildStep extends Step {
 
     @Extension
     public static class DescriptorImpl extends StepDescriptor {
-        // List of supported credentials
-        private static CredentialsMatcher matcher = CredentialsMatchers.anyOf(
-                CredentialsMatchers.instanceOf(StandardUsernamePasswordCredentials.class),
-                CredentialsMatchers.instanceOf(TokenProducer.class),
-                CredentialsMatchers.instanceOf(StringCredentials.class),
-                CredentialsMatchers.instanceOf(StandardCertificateCredentials.class),
-                CredentialsMatchers.instanceOf(FileCredentials.class)
-        );
-
         /**
          * {@inheritDoc}
          */
@@ -179,7 +171,7 @@ public class KubectlBuildStep extends Step {
                             item,
                             StandardCredentials.class,
                             URIRequirementBuilder.fromUri(serverUrl).build(),
-                            matcher);
+                            AuthenticationTokens.matcher(KubernetesAuth.class));
         }
     }
 

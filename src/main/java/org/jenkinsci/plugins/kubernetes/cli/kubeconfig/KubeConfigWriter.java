@@ -1,27 +1,26 @@
 package org.jenkinsci.plugins.kubernetes.cli.kubeconfig;
 
 import com.cloudbees.plugins.credentials.CredentialsProvider;
-import com.cloudbees.plugins.credentials.common.StandardCertificateCredentials;
 import com.cloudbees.plugins.credentials.common.StandardCredentials;
-import com.cloudbees.plugins.credentials.common.UsernamePasswordCredentials;
-import com.cloudbees.plugins.credentials.domains.DomainRequirement;
 import hudson.AbortException;
 import hudson.EnvVars;
 import hudson.FilePath;
 import hudson.Launcher;
+import hudson.Util;
 import hudson.model.Run;
-import hudson.util.QuotedStringTokenizer;
-import hudson.util.Secret;
+import jenkins.authentication.tokens.api.AuthenticationTokens;
 import org.apache.commons.io.IOUtils;
-import org.apache.commons.lang.StringUtils;
-import org.jenkinsci.plugins.kubernetes.credentials.TokenProducer;
-import org.jenkinsci.plugins.plaincredentials.FileCredentials;
-import org.jenkinsci.plugins.plaincredentials.StringCredentials;
+import org.jenkinsci.plugins.kubernetes.auth.KubernetesAuth;
+import org.jenkinsci.plugins.kubernetes.auth.KubernetesAuthConfig;
+import org.jenkinsci.plugins.kubernetes.auth.KubernetesAuthException;
+import org.jenkinsci.plugins.kubernetes.auth.KubernetesAuthKubeconfig;
 
 import javax.annotation.Nonnull;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.OutputStream;
+import java.io.StringReader;
+import java.nio.charset.StandardCharsets;
 import java.util.Collections;
 import java.util.Set;
 
@@ -51,7 +50,7 @@ public class KubeConfigWriter {
     public KubeConfigWriter(@Nonnull String serverUrl, @Nonnull String credentialsId,
                             String caCertificate, String clusterName, String contextName, String namespace, FilePath workspace, Launcher launcher, Run<?, ?> build) {
         this.serverUrl = serverUrl;
-        this.credentialsId = credentialsId;
+        this.credentialsId = Util.fixEmpty(credentialsId);
         this.caCertificate = caCertificate;
         this.workspace = workspace;
         this.launcher = launcher;
@@ -76,60 +75,59 @@ public class KubeConfigWriter {
 
         FilePath configFile = workspace.createTempFile(".kube", "config");
 
-        final StandardCredentials credentials = getCredentials(build);
-        if (credentials == null) {
-            throw new AbortException("No credentials defined to setup Kubernetes CLI");
-        } else if (credentials instanceof FileCredentials) {
-            setRawKubeConfig(configFile, (FileCredentials) credentials);
-
-            if (wasContextProvided()) {
-                useContext(configFile.getRemote(), this.contextName);
+        try {
+            if (credentialsId == null) {
+                throw new AbortException("No credentials defined to setup Kubernetes CLI");
             }
-
-            if (wasServerUrlProvided()) {
-                setCluster(configFile.getRemote());
+            StandardCredentials credentials = CredentialsProvider.findCredentialById(credentialsId, StandardCredentials.class, build, Collections.emptyList());
+            if (credentials == null) {
+                throw new AbortException("No credentials found for id \"" + credentialsId + "\"");
             }
-
-            if (wasClusterProvided()) {
-                setContextCluster(configFile.getRemote(), this.clusterName);
-            } else if (wasServerUrlProvided()) {
-                setContextCluster(configFile.getRemote(), getClusterNameOrDefault());
+            KubernetesAuth auth = AuthenticationTokens.convert(KubernetesAuth.class, credentials);
+            if (auth == null) {
+                throw new AbortException("Unsupported Credentials type " + credentials.getClass().getName());
             }
-
-            if (wasNamespaceProvided()) {
-                setContextNamespace(configFile.getRemote(), namespace);
+            String kubeConfig = auth.buildKubeConfig(new KubernetesAuthConfig(serverUrl, caCertificate, false));
+            try (OutputStream output = configFile.write()) {
+                IOUtils.copy(new StringReader(kubeConfig), output, StandardCharsets.UTF_8);
             }
-        } else {
-            setCluster(configFile.getRemote());
-            setCredentials(configFile.getRemote(), credentials);
-            if (wasNamespaceProvided()) {
-                setFullContext(configFile.getRemote(), namespace);
+            if (auth instanceof KubernetesAuthKubeconfig) {
+                if (wasContextProvided()) {
+                    useContext(configFile.getRemote(), this.contextName);
+                }
+
+                if (wasServerUrlProvided()) {
+                    setCluster(configFile.getRemote());
+                }
+
+                if (wasClusterProvided()) {
+                    setContextCluster(configFile.getRemote(), this.clusterName);
+                } else if (wasServerUrlProvided()) {
+                    setContextCluster(configFile.getRemote(), getClusterNameOrDefault());
+                }
+
+                if (wasNamespaceProvided()) {
+                    setContextNamespace(configFile.getRemote(), namespace);
+                }
             } else {
-                setFullContext(configFile.getRemote());
+                setCluster(configFile.getRemote());
+                if (wasNamespaceProvided()) {
+                    setFullContext(configFile.getRemote(), namespace);
+                } else {
+                    setFullContext(configFile.getRemote());
+                }
+                useContext(configFile.getRemote(), getContextNameOrDefault());
             }
-            useContext(configFile.getRemote(), getContextNameOrDefault());
+        } catch (KubernetesAuthException e) {
+            throw new AbortException(e.getMessage());
         }
-
         return configFile.getRemote();
-    }
-
-    /**
-     * Set the whole kube configuration file from a FileCredentials.
-     *
-     * @throws IOException          on file operations
-     * @throws InterruptedException on file operations
-     */
-    private void setRawKubeConfig(FilePath configFile, FileCredentials credentials) throws IOException, InterruptedException {
-        try (OutputStream output = configFile.write()) {
-            IOUtils.copy(credentials.getContent(), output);
-        }
     }
 
     /**
      * Set the cluster section of the kube configuration file.
      *
-     * @param String configFile
-     * @param String clusterName
+     * @param configFile
      * @throws IOException          on file operations
      * @throws InterruptedException on file operations
      */
@@ -145,7 +143,7 @@ public class KubeConfigWriter {
             caCrtFile.write(CertificateHelper.wrapCertificate(caCertificate), null);
             filesToBeRemoved.add(caCrtFile.getRemote());
 
-            tlsConfigArgs = " --embed-certs=true --certificate-authority=" + caCrtFile.getRemote();
+            tlsConfigArgs = " --embed-certs=true --certificate-authority=" + Util.singleQuote(caCrtFile.getRemote());
         }
 
         try {
@@ -164,56 +162,6 @@ public class KubeConfigWriter {
                 workspace.child(tempFile).delete();
             }
         }
-    }
-
-    /**
-     * Set the user section of the kube configuration file.
-     *
-     * @throws IOException          on file operations
-     * @throws InterruptedException on file operations
-     */
-    private void setCredentials(String configFile, StandardCredentials credentials) throws IOException, InterruptedException {
-        Set<String> tempFiles = newHashSet();
-
-        String credentialsArgs;
-        int sensitiveFieldsCount = 1;
-        if (credentials instanceof TokenProducer) {
-            credentialsArgs = "--token=\"" + ((TokenProducer) credentials).getToken(getServerUrl(), null, true) + "\"";
-        } else if (credentials instanceof StringCredentials) {
-            credentialsArgs = "--token=\"" + ((StringCredentials) credentials).getSecret() + "\"";
-        } else if (credentials instanceof UsernamePasswordCredentials) {
-            UsernamePasswordCredentials upc = (UsernamePasswordCredentials) credentials;
-            credentialsArgs = "--username=\"" + upc.getUsername() + "\" --password=\"" + Secret.toString(upc.getPassword()) + "\"";
-        } else if (credentials instanceof StandardCertificateCredentials) {
-            sensitiveFieldsCount = 0;
-            FilePath clientCrtFile = workspace.createTempFile("client", "crt");
-            FilePath clientKeyFile = workspace.createTempFile("client", "key");
-            CertificateHelper.extractFromCertificate((StandardCertificateCredentials) credentials, clientCrtFile, clientKeyFile);
-            tempFiles.add(clientCrtFile.getRemote());
-            tempFiles.add(clientKeyFile.getRemote());
-            credentialsArgs = "--embed-certs=true --client-certificate=\"" + clientCrtFile.getRemote() + "\" --client-key=\""
-                    + clientKeyFile.getRemote() + "\"";
-        } else {
-            throw new AbortException("Unsupported Credentials type " + credentials.getClass().getName());
-        }
-
-        String[] cmds = QuotedStringTokenizer.tokenize(String.format("%s config set-credentials %s %s",
-                KUBECTL_BINARY,
-                USERNAME,
-                credentialsArgs));
-
-        int status = launcher.launch()
-                .envs(String.format("KUBECONFIG=%s", configFile))
-                .cmds(cmds)
-                .masks(getMasks(cmds.length, sensitiveFieldsCount))
-                .stdout(launcher.getListener())
-                .join();
-        if (status != 0) throw new IOException("Failed to add kubectl credentials (exit code  " + status + ")");
-
-        for (String tempFile : tempFiles) {
-            workspace.child(tempFile).delete();
-        }
-
     }
 
     /**
@@ -334,28 +282,6 @@ public class KubeConfigWriter {
             masks[masks.length - 1 - i] = true;
         }
         return masks;
-    }
-
-    /**
-     * Get the {@link StandardCredentials}.
-     *
-     * @return the credentials matching the {@link #credentialsId} or {@code null} is {@code #credentialsId} is blank
-     * @throws AbortException if no {@link StandardCredentials} matching {@link #credentialsId} is found
-     */
-    private StandardCredentials getCredentials(Run<?, ?> build) throws AbortException {
-        if (StringUtils.isBlank(credentialsId)) {
-            return null;
-        }
-        StandardCredentials result = CredentialsProvider.findCredentialById(
-                credentialsId,
-                StandardCredentials.class,
-                build,
-                Collections.<DomainRequirement>emptyList());
-
-        if (result == null) {
-            throw new AbortException("No credentials found for id \"" + credentialsId + "\"");
-        }
-        return result;
     }
 
     /**

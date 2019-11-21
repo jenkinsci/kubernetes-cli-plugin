@@ -36,9 +36,13 @@
     <jenkins.version>2.176.1</jenkins.version>
 
     <!-- jenkins plugins versions -->
+    <jenkins-authentication-tokens.version>1.3</jenkins-authentication-tokens.version>
     <jenkins-env-inject.version>2.1.3</jenkins-env-inject.version>
     <jenkins-declarative.version>1.3.9</jenkins-declarative.version>
-    <jenkins-kubernetes-credentials.version>0.3.1</jenkins-kubernetes-credentials.version>
+    <jenkins-kubernetes-credentials.version>0.4.2-SNAPSHOT</jenkins-kubernetes-credentials.version> <!-- https://github.com/jenkinsci/kubernetes-credentials-plugin/pull/12 & https://github.com/dev-dsp/kubernetes-credentials-plugin/pull/2 -->
+    <jenkins-google-oauth.version>0.8</jenkins-google-oauth.version>
+    <jenkins-jackson2-api.version>2.9.9</jenkins-jackson2-api.version>
+    <jenkins-kubernetes-client-api.version>4.6.0-2</jenkins-kubernetes-client-api.version>
 
     <!-- maven plugins versions -->
     <maven-coveralls.version>4.3.0</maven-coveralls.version>
@@ -57,6 +61,24 @@
     <dependency>
       <groupId>org.jenkins-ci.plugins</groupId>
       <artifactId>credentials</artifactId>
+    </dependency>
+
+    <dependency>
+      <groupId>org.jenkins-ci.plugins</groupId>
+      <artifactId>authentication-tokens</artifactId>
+      <version>${jenkins-authentication-tokens.version}</version>
+    </dependency>
+
+    <dependency>
+      <groupId>org.jenkins-ci.plugins</groupId>
+      <artifactId>jackson2-api</artifactId>
+      <version>${jenkins-jackson2-api.version}</version>
+    </dependency>
+
+    <dependency>
+      <groupId>org.jenkins-ci.plugins</groupId>
+      <artifactId>kubernetes-client-api</artifactId>
+      <version>${jenkins-kubernetes-client-api.version}</version>
     </dependency>
 
     <dependency>
@@ -106,6 +128,19 @@
       <groupId>org.jenkins-ci.plugins</groupId>
       <artifactId>envinject</artifactId>
       <version>${jenkins-env-inject.version}</version>
+      <scope>test</scope>
+    </dependency>
+    <dependency>
+      <groupId>org.jenkins-ci.plugins</groupId>
+      <artifactId>google-oauth-plugin</artifactId>
+      <version>${jenkins-google-oauth.version}</version>
+      <exclusions>
+        <exclusion>
+          <!-- Use the one provided by core -->
+          <groupId>commons-io</groupId>
+          <artifactId>commons-io</artifactId>
+        </exclusion>
+      </exclusions>
       <scope>test</scope>
     </dependency>
   </dependencies>

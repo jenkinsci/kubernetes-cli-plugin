@@ -1,11 +1,7 @@
 package org.jenkinsci.plugins.kubernetes.cli;
 
-import com.cloudbees.plugins.credentials.CredentialsMatcher;
-import com.cloudbees.plugins.credentials.CredentialsMatchers;
-import com.cloudbees.plugins.credentials.common.StandardCertificateCredentials;
 import com.cloudbees.plugins.credentials.common.StandardCredentials;
 import com.cloudbees.plugins.credentials.common.StandardListBoxModel;
-import com.cloudbees.plugins.credentials.common.StandardUsernamePasswordCredentials;
 import com.cloudbees.plugins.credentials.domains.URIRequirementBuilder;
 import hudson.EnvVars;
 import hudson.Extension;
@@ -18,12 +14,11 @@ import hudson.model.TaskListener;
 import hudson.security.ACL;
 import hudson.tasks.BuildWrapperDescriptor;
 import hudson.util.ListBoxModel;
+import jenkins.authentication.tokens.api.AuthenticationTokens;
 import jenkins.tasks.SimpleBuildWrapper;
+import org.jenkinsci.plugins.kubernetes.auth.KubernetesAuth;
 import org.jenkinsci.plugins.kubernetes.cli.kubeconfig.KubeConfigWriter;
 import org.jenkinsci.plugins.kubernetes.cli.kubeconfig.KubeConfigWriterFactory;
-import org.jenkinsci.plugins.kubernetes.credentials.TokenProducer;
-import org.jenkinsci.plugins.plaincredentials.FileCredentials;
-import org.jenkinsci.plugins.plaincredentials.StringCredentials;
 import org.kohsuke.stapler.AncestorInPath;
 import org.kohsuke.stapler.DataBoundConstructor;
 import org.kohsuke.stapler.DataBoundSetter;
@@ -87,15 +82,6 @@ public class KubectlBuildWrapper extends SimpleBuildWrapper {
 
     @Extension
     public static class DescriptorImpl extends BuildWrapperDescriptor {
-        // List of supported credentials
-        private static CredentialsMatcher matcher = CredentialsMatchers.anyOf(
-                CredentialsMatchers.instanceOf(StandardUsernamePasswordCredentials.class),
-                CredentialsMatchers.instanceOf(TokenProducer.class),
-                CredentialsMatchers.instanceOf(StringCredentials.class),
-                CredentialsMatchers.instanceOf(StandardCertificateCredentials.class),
-                CredentialsMatchers.instanceOf(FileCredentials.class)
-        );
-
         @Override
         public boolean isApplicable(AbstractProject<?, ?> item) {
             return true;
@@ -114,7 +100,7 @@ public class KubectlBuildWrapper extends SimpleBuildWrapper {
                             item,
                             StandardCredentials.class,
                             URIRequirementBuilder.fromUri(serverUrl).build(),
-                            matcher);
+                            AuthenticationTokens.matcher(KubernetesAuth.class));
         }
     }
 

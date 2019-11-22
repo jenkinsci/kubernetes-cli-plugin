@@ -13,7 +13,7 @@ import org.apache.commons.io.IOUtils;
 import org.jenkinsci.plugins.kubernetes.auth.KubernetesAuth;
 import org.jenkinsci.plugins.kubernetes.auth.KubernetesAuthConfig;
 import org.jenkinsci.plugins.kubernetes.auth.KubernetesAuthException;
-import org.jenkinsci.plugins.kubernetes.auth.KubernetesAuthKubeconfig;
+import org.jenkinsci.plugins.kubernetes.auth.impl.KubernetesAuthKubeconfig;
 
 import javax.annotation.Nonnull;
 import java.io.ByteArrayOutputStream;

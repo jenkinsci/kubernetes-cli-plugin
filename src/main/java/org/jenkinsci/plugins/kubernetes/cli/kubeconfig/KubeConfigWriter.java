@@ -147,13 +147,15 @@ public class KubeConfigWriter {
         }
 
         try {
+            String[] cmds = QuotedStringTokenizer.tokenize(String.format("%s config set-cluster %s --server=%s %s",
+                    KUBECTL_BINARY,
+                    getClusterNameOrDefault(),
+                    getServerUrl(),
+                    tlsConfigArgs));
+
             int status = launcher.launch()
                     .envs(String.format("KUBECONFIG=%s", configFile))
-                    .cmdAsSingleString(String.format("%s config set-cluster %s --server=%s %s",
-                            KUBECTL_BINARY,
-                            getClusterNameOrDefault(),
-                            getServerUrl(),
-                            tlsConfigArgs))
+                    .cmds(cmds)
                     .stdout(launcher.getListener())
                     .join();
             if (status != 0) throw new IOException("Failed to add kubectl cluster (exit code  " + status + ")");

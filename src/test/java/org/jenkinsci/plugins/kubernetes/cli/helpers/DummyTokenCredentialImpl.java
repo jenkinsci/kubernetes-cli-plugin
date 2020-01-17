@@ -1,4 +1,4 @@
-package org.jenkinsci.plugins.kubernetes.cli.utils;
+package org.jenkinsci.plugins.kubernetes.cli.helpers;
 
 
 import com.cloudbees.plugins.credentials.CredentialsScope;
@@ -7,9 +7,9 @@ import org.jenkinsci.plugins.kubernetes.credentials.TokenProducer;
 
 import java.io.IOException;
 
-public class FakeBearerTokenCredentialImpl extends UsernamePasswordCredentialsImpl implements TokenProducer {
+public class DummyTokenCredentialImpl extends UsernamePasswordCredentialsImpl implements TokenProducer {
 
-    public FakeBearerTokenCredentialImpl(CredentialsScope scope, String id, String description, String username, String password) {
+    public DummyTokenCredentialImpl(CredentialsScope scope, String id, String description, String username, String password) {
         super(scope, id, description, username, password);
     }
 

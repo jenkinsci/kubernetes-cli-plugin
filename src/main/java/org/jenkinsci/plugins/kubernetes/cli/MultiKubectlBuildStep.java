@@ -1,35 +1,15 @@
 package org.jenkinsci.plugins.kubernetes.cli;
 
-import com.cloudbees.plugins.credentials.CredentialsMatcher;
-import com.cloudbees.plugins.credentials.CredentialsMatchers;
-import com.cloudbees.plugins.credentials.common.StandardCertificateCredentials;
-import com.cloudbees.plugins.credentials.common.StandardCredentials;
-import com.cloudbees.plugins.credentials.common.StandardListBoxModel;
-import com.cloudbees.plugins.credentials.common.StandardUsernamePasswordCredentials;
-import com.cloudbees.plugins.credentials.domains.URIRequirementBuilder;
-import hudson.EnvVars;
 import hudson.Extension;
-import hudson.FilePath;
-import hudson.model.Item;
-import hudson.model.TaskListener;
-import hudson.security.ACL;
-import hudson.util.ListBoxModel;
-import org.jenkinsci.plugins.kubernetes.cli.kubeconfig.KubeConfigWriter;
-import org.jenkinsci.plugins.kubernetes.cli.kubeconfig.KubeConfigWriterFactory;
-import org.jenkinsci.plugins.kubernetes.credentials.TokenProducer;
-import org.jenkinsci.plugins.plaincredentials.FileCredentials;
-import org.jenkinsci.plugins.plaincredentials.StringCredentials;
-import org.jenkinsci.plugins.workflow.steps.*;
-import org.kohsuke.stapler.AncestorInPath;
+import org.jenkinsci.plugins.workflow.steps.Step;
+import org.jenkinsci.plugins.workflow.steps.StepContext;
+import org.jenkinsci.plugins.workflow.steps.StepDescriptor;
+import org.jenkinsci.plugins.workflow.steps.StepExecution;
 import org.kohsuke.stapler.DataBoundConstructor;
-import org.kohsuke.stapler.DataBoundSetter;
-import org.kohsuke.stapler.QueryParameter;
 
-import javax.annotation.Nonnull;
-import java.io.File;
-import java.io.IOException;
-import java.util.*;
-import java.util.stream.Collectors;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
 
 
 public class MultiKubectlBuildStep extends Step {

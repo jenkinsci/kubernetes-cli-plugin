@@ -1,8 +1,9 @@
 package org.jenkinsci.plugins.kubernetes.cli;
 
 import hudson.EnvVars;
-import org.jenkinsci.plugins.workflow.steps.EnvironmentExpander;
 import org.jenkinsci.plugins.kubernetes.cli.kubeconfig.KubeConfigWriter;
+import org.jenkinsci.plugins.workflow.steps.EnvironmentExpander;
+
 import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;

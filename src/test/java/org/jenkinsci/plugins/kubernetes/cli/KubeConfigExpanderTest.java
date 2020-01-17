@@ -7,29 +7,32 @@ import static org.junit.Assert.assertEquals;
 
 public class KubeConfigExpanderTest {
     @Test
-    public void testExpander() throws Exception {
+    public void testKubeConfigVariableIsSet() throws Exception {
         KubeConfigExpander expander = new KubeConfigExpander("a-file-path");
         EnvVars initialEnv = new EnvVars();
         expander.expand(initialEnv);
+
         assertEquals("a-file-path", initialEnv.get("KUBECONFIG"));
     }
 
     @Test
-    public void testExpanderOverride() throws Exception {
+    public void testExistingKubeConfigVariableIsOverridden() throws Exception {
         KubeConfigExpander expander = new KubeConfigExpander("a-file-path");
         EnvVars initialEnv = new EnvVars();
         initialEnv.put("KUBECONFIG", "a-wrong-path");
         expander.expand(initialEnv);
+
         assertEquals("a-file-path", initialEnv.get("KUBECONFIG"));
     }
 
     @Test
-    public void testExpanderHeritate() throws Exception {
+    public void testExistingVariableAreLeftUntouched() throws Exception {
         KubeConfigExpander expander = new KubeConfigExpander("a-file-path");
         EnvVars initialEnv = new EnvVars();
         initialEnv.put("KUBECONFIG", "a-wrong-path");
         initialEnv.put("ANOTHER", "value");
         expander.expand(initialEnv);
+
         assertEquals("value", initialEnv.get("ANOTHER"));
     }
 }

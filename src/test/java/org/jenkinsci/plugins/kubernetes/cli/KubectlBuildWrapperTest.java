@@ -10,7 +10,7 @@ import hudson.tasks.Shell;
 import hudson.util.ListBoxModel;
 import org.jenkinsci.plugins.envinject.EnvInjectBuildWrapper;
 import org.jenkinsci.plugins.envinject.EnvInjectJobPropertyInfo;
-import org.junit.Before;
+import org.jenkinsci.plugins.kubernetes.cli.helpers.DummyCredentials;
 import org.junit.Rule;
 import org.junit.Test;
 import org.jvnet.hudson.test.JenkinsRule;
@@ -21,31 +21,25 @@ import static org.junit.Assert.assertNotNull;
 /**
  * @author Max Laverse
  */
-public class KubectlBuildWrapperTest extends KubectlTestBase {
-
+public class KubectlBuildWrapperTest {
     @Rule
     public JenkinsRule r = new JenkinsRule();
 
-    @Before
-    public void addFakeSlave() throws Exception {
-        r.jenkins.addNode(getFakeSlave(r));
-        r.jenkins.setNumExecutors(0);
-    }
-
     @Test
     public void testEnvVariablePresent() throws Exception {
-        CredentialsProvider.lookupStores(r.jenkins).iterator().next().addCredentials(Domain.global(), secretCredential(CREDENTIAL_ID));
+        CredentialsProvider.lookupStores(r.jenkins).iterator().next().addCredentials(Domain.global(), DummyCredentials.secretCredential("test-credentials"));
 
         FreeStyleProject p = r.createFreeStyleProject();
 
         KubectlBuildWrapper bw = new KubectlBuildWrapper();
-        bw.credentialsId = CREDENTIAL_ID;
+        bw.credentialsId = "test-credentials";
         p.getBuildWrappersList().add(bw);
 
         Shell builder = new Shell("#!/bin/bash\nenv");
         p.getBuildersList().add(builder);
 
         FreeStyleBuild b = p.scheduleBuild2(0).waitForStart();
+
         assertNotNull(b);
         r.assertBuildStatus(Result.SUCCESS, r.waitForCompletion(b));
         r.assertLogContains("KUBECONFIG=", b);
@@ -53,7 +47,7 @@ public class KubectlBuildWrapperTest extends KubectlTestBase {
 
     @Test
     public void testEnvInterpolation() throws Exception {
-        CredentialsProvider.lookupStores(r.jenkins).iterator().next().addCredentials(Domain.global(), secretCredential(CREDENTIAL_ID));
+        CredentialsProvider.lookupStores(r.jenkins).iterator().next().addCredentials(Domain.global(), DummyCredentials.secretCredential("test-credentials"));
 
         FreeStyleProject p = r.createFreeStyleProject();
 
@@ -66,7 +60,7 @@ public class KubectlBuildWrapperTest extends KubectlTestBase {
 
 
         KubectlBuildWrapper bw = new KubectlBuildWrapper();
-        bw.credentialsId = CREDENTIAL_ID;
+        bw.credentialsId = "test-credentials";
         bw.serverUrl = "${SERVER_URL}";
         p.getBuildWrappersList().add(bw);
 
@@ -74,6 +68,7 @@ public class KubectlBuildWrapperTest extends KubectlTestBase {
         p.getBuildersList().add(b2);
 
         FreeStyleBuild b = p.scheduleBuild2(0).waitForStart();
+
         assertNotNull(b);
         r.assertBuildStatus(Result.SUCCESS, r.waitForCompletion(b));
         r.assertLogContains("server: \"http://my-server\"", b);
@@ -81,15 +76,16 @@ public class KubectlBuildWrapperTest extends KubectlTestBase {
 
     @Test
     public void testKubeConfigDisposed() throws Exception {
-        CredentialsProvider.lookupStores(r.jenkins).iterator().next().addCredentials(Domain.global(), secretCredential(CREDENTIAL_ID));
+        CredentialsProvider.lookupStores(r.jenkins).iterator().next().addCredentials(Domain.global(), DummyCredentials.secretCredential("test-credentials"));
 
         FreeStyleProject p = r.createFreeStyleProject();
 
         KubectlBuildWrapper bw = new KubectlBuildWrapper();
-        bw.credentialsId = CREDENTIAL_ID;
+        bw.credentialsId = "test-credentials";
         p.getBuildWrappersList().add(bw);
 
         FreeStyleBuild b = p.scheduleBuild2(0).waitForStart();
+
         assertNotNull(b);
         r.assertBuildStatus(Result.SUCCESS, r.waitForCompletion(b));
         r.assertLogContains("kubectl configuration cleaned up", b);
@@ -98,16 +94,16 @@ public class KubectlBuildWrapperTest extends KubectlTestBase {
     @Test
     public void testListedCredentials() throws Exception {
         CredentialsStore store = CredentialsProvider.lookupStores(r.jenkins).iterator().next();
-        store.addCredentials(Domain.global(), usernamePasswordCredential("1"));
-        store.addCredentials(Domain.global(), secretCredential("2"));
-        store.addCredentials(Domain.global(), fileCredential("3"));
-        store.addCredentials(Domain.global(), certificateCredential("4"));
-        store.addCredentials(Domain.global(), tokenCredential("5"));
+        store.addCredentials(Domain.global(), DummyCredentials.usernamePasswordCredential("1"));
+        store.addCredentials(Domain.global(), DummyCredentials.secretCredential("2"));
+        store.addCredentials(Domain.global(), DummyCredentials.fileCredential("3"));
+        store.addCredentials(Domain.global(), DummyCredentials.certificateCredential("4"));
+        store.addCredentials(Domain.global(), DummyCredentials.tokenCredential("5"));
 
         KubectlBuildWrapper.DescriptorImpl d = new KubectlBuildWrapper.DescriptorImpl();
         FreeStyleProject p = r.createFreeStyleProject();
-
         ListBoxModel s = d.doFillCredentialsIdItems(p.asItem(), "");
+
         assertEquals(6, s.size());
     }
 }

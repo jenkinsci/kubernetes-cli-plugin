@@ -123,12 +123,24 @@ public class KubeConfigWriter {
             throw new AbortException("Unsupported credentials type " + credentials.getClass().getName());
         }
 
+        ConfigBuilder configBuilder = getConfigBuilder(credentials.getId(), auth);
+
+        // Write configuration to disk
+        FilePath configFile = getTempKubeconfigFilePath();
+        try (Writer w = new OutputStreamWriter(new FileOutputStream(configFile.getRemote()), StandardCharsets.UTF_8)) {
+            w.write(SerializationUtils.getMapper().writeValueAsString(configBuilder.build()));
+        }
+
+        return configFile.getRemote();
+    }
+
+    public ConfigBuilder getConfigBuilder(String credentialsId, KubernetesAuth auth) throws IOException, InterruptedException {
         // Build configuration
         ConfigBuilder configBuilder;
         try {
             // Build an initial Kubeconfig builder from the credentials
             KubernetesAuthConfig authConfig = new KubernetesAuthConfig(getServerUrl(), caCertificate, !wasProvided(caCertificate));
-            configBuilder = auth.buildConfigBuilder(authConfig, getContextNameOrDefault(), getClusterNameOrDefault(), credentials.getId());
+            configBuilder = auth.buildConfigBuilder(authConfig, getContextNameOrDefault(), getClusterNameOrDefault(), credentialsId);
 
             // Set additional values of the Kubeconfig
             if (auth instanceof KubernetesAuthKubeconfig) {
@@ -139,14 +151,7 @@ public class KubeConfigWriter {
         } catch (KubernetesAuthException e) {
             throw new AbortException(e.getMessage());
         }
-
-        // Write configuration to disk
-        FilePath configFile = getTempKubeconfigFilePath();
-        try (Writer w = new OutputStreamWriter(new FileOutputStream(configFile.getRemote()), StandardCharsets.UTF_8)) {
-            w.write(SerializationUtils.getMapper().writeValueAsString(configBuilder.build()));
-        }
-
-        return configFile.getRemote();
+        return configBuilder;
     }
 
     private ConfigBuilder completeConfigBuilder(ConfigBuilder configBuilder) {

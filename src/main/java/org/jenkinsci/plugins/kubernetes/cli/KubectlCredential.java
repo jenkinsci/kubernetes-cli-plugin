@@ -32,7 +32,7 @@ import java.io.IOException;
  */
 public class KubectlCredential extends AbstractDescribableImpl<KubectlCredential> {
     // List of supported credentials
-    public static CredentialsMatcher supportedCredentials = CredentialsMatchers.anyOf(
+    public static final CredentialsMatcher supportedCredentials = CredentialsMatchers.anyOf(
             CredentialsMatchers.instanceOf(StandardUsernamePasswordCredentials.class),
             CredentialsMatchers.instanceOf(TokenProducer.class),
             CredentialsMatchers.instanceOf(StringCredentials.class),

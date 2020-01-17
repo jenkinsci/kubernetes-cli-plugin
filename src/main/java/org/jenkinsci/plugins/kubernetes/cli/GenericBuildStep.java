@@ -1,5 +1,6 @@
 package org.jenkinsci.plugins.kubernetes.cli;
 
+import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 import hudson.FilePath;
 import hudson.model.TaskListener;
 import org.jenkinsci.plugins.kubernetes.cli.kubeconfig.KubeConfigWriter;
@@ -16,6 +17,8 @@ import java.util.List;
 
 public class GenericBuildStep extends AbstractStepExecutionImpl {
     private static final long serialVersionUID = 1L;
+
+    @SuppressFBWarnings(value = "SE_TRANSIENT_FIELD_NOT_RESTORED", justification = "not needed on deserialization")
     private transient List<KubectlCredential> kubectlCredentials;
 
     public GenericBuildStep(List<KubectlCredential> credentials, StepContext context) {

@@ -22,5 +22,8 @@ install:
 - chmod +x ./kubectl
 - sudo mv ./kubectl /usr/local/bin/kubectl
 
+script:
+- mvn clean test findbugs:check
+
 after_success:
-- mvn clean test findbugs:check jacoco:report coveralls:report
+- mvn jacoco:report coveralls:report

@@ -46,7 +46,7 @@ public class KubectlIntegrationTest {
 
     @Before
     public void checkKubectlPresence() {
-        assumeTrue(kubectlPresent());
+        assumeTrue("The 'kubectl' binary could not be found in the PATH",kubectlPresent());
     }
 
     @Test

@@ -51,7 +51,12 @@ public class KubectlBuildWrapperTest {
 
         FreeStyleProject p = r.createFreeStyleProject();
 
-        EnvInjectJobPropertyInfo info = new EnvInjectJobPropertyInfo(null, "SERVER_URL=http://my-server", null, null, true, null);
+        EnvInjectJobPropertyInfo info = new EnvInjectJobPropertyInfo(null,
+                "SERVER_URL=http://my-server",
+                null,
+                null,
+                true,
+                null);
         p.getBuildWrappersList().add(new EnvInjectBuildWrapper(info));
 
 

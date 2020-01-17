@@ -56,26 +56,6 @@ public class KubeConfigWriterAuthTest {
         return SerializationUtils.getMapper().writeValueAsString(configBuilder.build());
     }
 
-    private static KubernetesAuthKubeconfig dummyKubeConfigAuth() {
-        return new KubernetesAuthKubeconfig(
-                "---\n" +
-                        "clusters:\n" +
-                        "- name: \"existing-cluster\"\n" +
-                        "  cluster:\n" +
-                        "    server: https://existing-cluster\n" +
-                        "contexts:\n" +
-                        "- context:\n" +
-                        "    cluster: \"existing-cluster\"\n" +
-                        "    namespace: \"existing-namespace\"\n" +
-                        "  name: \"existing-context\"\n" +
-                        "current-context: \"existing-context\"\n" +
-                        "users:\n" +
-                        "- name: \"existing-credential\"\n" +
-                        "  user:\n" +
-                        "    password: \"existing-password\"\n" +
-                        "    username: \"existing-user\"\n");
-    }
-
     private static KeyStore loadKeyStore(InputStream inputStream, char[] password) throws CertificateException, NoSuchAlgorithmException, IOException, KeyStoreException {
         KeyStore keyStore = KeyStore.getInstance("PKCS12");
         keyStore.load(inputStream, password);

@@ -42,7 +42,6 @@ public class KubectlBuildStepTest {
         assertEquals(6, s.size());
     }
 
-
     @Test
     public void testScopedCredentials() throws Exception {
         Folder folder = new Folder(r.jenkins.getItemGroup(), "test-folder");

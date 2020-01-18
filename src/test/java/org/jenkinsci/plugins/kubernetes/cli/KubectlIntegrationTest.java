@@ -54,7 +54,7 @@ public class KubectlIntegrationTest {
         CredentialsProvider.lookupStores(r.jenkins).iterator().next().addCredentials(Domain.global(), DummyCredentials.usernamePasswordCredential(CREDENTIAL_ID));
 
         WorkflowJob p = r.jenkins.createProject(WorkflowJob.class, "testBasicWithCa");
-        p.setDefinition(new CpsFlowDefinition(TestResourceLoader.load("withKubeConfigPipelineConfigDump.groovy"), true));
+        p.setDefinition(new CpsFlowDefinition(TestResourceLoader.loadAsString("withKubeConfigPipelineConfigDump.groovy"), true));
         WorkflowRun b = p.scheduleBuild2(0).waitForStart();
         assertNotNull(b);
         r.assertBuildStatusSuccess(r.waitForCompletion(b));
@@ -92,7 +92,7 @@ public class KubectlIntegrationTest {
         store.addCredentials(Domain.global(), DummyCredentials.fileCredential(SECONDARY_CREDENTIAL_ID,"test-cluster2","test-user2"));
 
         WorkflowJob p = r.jenkins.createProject(WorkflowJob.class, "multiKubeConfig");
-        p.setDefinition(new CpsFlowDefinition(TestResourceLoader.load("withKubeCredentialsPipelineConfigDump.groovy"), true));
+        p.setDefinition(new CpsFlowDefinition(TestResourceLoader.loadAsString("withKubeCredentialsPipelineConfigDump.groovy"), true));
         WorkflowRun b = p.scheduleBuild2(0).waitForStart();
         assertNotNull(b);
         r.assertBuildStatusSuccess(r.waitForCompletion(b));
@@ -137,7 +137,7 @@ public class KubectlIntegrationTest {
         store.addCredentials(Domain.global(), DummyCredentials.fileCredential(SECONDARY_CREDENTIAL_ID,"test-cluster2","test-user2"));
 
         WorkflowJob p = r.jenkins.createProject(WorkflowJob.class, "multiKubeConfigUsernames");
-        p.setDefinition(new CpsFlowDefinition(TestResourceLoader.load("withKubeCredentialsPipelineAndUsernames.groovy"), true));
+        p.setDefinition(new CpsFlowDefinition(TestResourceLoader.loadAsString("withKubeCredentialsPipelineAndUsernames.groovy"), true));
         WorkflowRun b = p.scheduleBuild2(0).waitForStart();
         assertNotNull(b);
         r.assertBuildStatusSuccess(r.waitForCompletion(b));
@@ -187,7 +187,7 @@ public class KubectlIntegrationTest {
         store.addCredentials(Domain.global(), DummyCredentials.fileCredential(SECONDARY_CREDENTIAL_ID,"test-cluster2","test-user2"));
 
         WorkflowJob p = r.jenkins.createProject(WorkflowJob.class, "multiKubeConfigWithServer");
-        p.setDefinition(new CpsFlowDefinition(TestResourceLoader.load("withKubeCredentialsPipelineAndServer.groovy"), true));
+        p.setDefinition(new CpsFlowDefinition(TestResourceLoader.loadAsString("withKubeCredentialsPipelineAndServer.groovy"), true));
         WorkflowRun b = p.scheduleBuild2(0).waitForStart();
         assertNotNull(b);
         r.assertBuildStatusSuccess(r.waitForCompletion(b));

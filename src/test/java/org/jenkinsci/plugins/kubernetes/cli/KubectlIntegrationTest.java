@@ -46,7 +46,7 @@ public class KubectlIntegrationTest {
 
     @Before
     public void checkKubectlPresence() {
-        assumeTrue(kubectlPresent());
+        assumeTrue("The 'kubectl' binary could not be found in the PATH",kubectlPresent());
     }
 
     @Test
@@ -54,7 +54,7 @@ public class KubectlIntegrationTest {
         CredentialsProvider.lookupStores(r.jenkins).iterator().next().addCredentials(Domain.global(), DummyCredentials.usernamePasswordCredential(CREDENTIAL_ID));
 
         WorkflowJob p = r.jenkins.createProject(WorkflowJob.class, "testBasicWithCa");
-        p.setDefinition(new CpsFlowDefinition(TestResourceLoader.load("withKubeConfigPipelineConfigDump.groovy"), true));
+        p.setDefinition(new CpsFlowDefinition(TestResourceLoader.loadAsString("withKubeConfigPipelineConfigDump.groovy"), true));
         WorkflowRun b = p.scheduleBuild2(0).waitForStart();
         assertNotNull(b);
         r.assertBuildStatusSuccess(r.waitForCompletion(b));
@@ -89,10 +89,10 @@ public class KubectlIntegrationTest {
     public void testMultiKubeConfig() throws Exception {
         CredentialsStore store = CredentialsProvider.lookupStores(r.jenkins).iterator().next();
         store.addCredentials(Domain.global(), DummyCredentials.fileCredential(CREDENTIAL_ID));
-        store.addCredentials(Domain.global(), DummyCredentials.fileCredential(SECONDARY_CREDENTIAL_ID));
+        store.addCredentials(Domain.global(), DummyCredentials.fileCredential(SECONDARY_CREDENTIAL_ID,"test-cluster2","test-user2"));
 
         WorkflowJob p = r.jenkins.createProject(WorkflowJob.class, "multiKubeConfig");
-        p.setDefinition(new CpsFlowDefinition(TestResourceLoader.load("withKubeCredentialsPipelineConfigDump.groovy"), true));
+        p.setDefinition(new CpsFlowDefinition(TestResourceLoader.loadAsString("withKubeCredentialsPipelineConfigDump.groovy"), true));
         WorkflowRun b = p.scheduleBuild2(0).waitForStart();
         assertNotNull(b);
         r.assertBuildStatusSuccess(r.waitForCompletion(b));
@@ -104,35 +104,40 @@ public class KubectlIntegrationTest {
         assertThat(configDumpContent, containsString("apiVersion: v1\n" +
                 "clusters:\n" +
                 "- cluster:\n" +
-                "    server: \"\"\n" +
-                "  name: cred9999\n" +
+                "    insecure-skip-tls-verify: true\n"+
+                "    server: https://test-cluster\n" +
+                "  name: test-cluster\n" +
                 "- cluster:\n" +
-                "    server: \"\"\n" +
-                "  name: test-sample\n" +
+                "    insecure-skip-tls-verify: true\n"+
+                "    server: https://test-cluster2\n" +
+                "  name: test-cluster2\n" +
                 "contexts:\n" +
                 "- context:\n" +
-                "    cluster: cred9999\n" +
-                "    user: \"\"\n" +
-                "  name: cred9999\n" +
+                "    cluster: test-cluster\n" +
+                "    user: test-user\n" +
+                "  name: test-cluster\n" +
                 "- context:\n" +
-                "    cluster: \"\"\n" +
-                "    user: \"\"\n" +
-                "  name: minikube\n" +
-                "- context:\n" +
-                "    cluster: test-sample\n" +
-                "    user: \"\"\n" +
-                "  name: test-sample\n" +
-                "current-context: test-sample\n"));
+                "    cluster: test-cluster2\n" +
+                "    user: test-user2\n" +
+                "  name: test-cluster2\n" +
+                "current-context: test-cluster\n"+
+                "kind: Config\n" +
+                "preferences: {}\n" +
+                "users:\n" +
+                "- name: test-user\n" +
+                "  user: {}\n" +
+                "- name: test-user2\n" +
+                "  user: {}"));
     }
 
     @Test
     public void testMultiKubeConfigUsernames() throws Exception {
         CredentialsStore store = CredentialsProvider.lookupStores(r.jenkins).iterator().next();
         store.addCredentials(Domain.global(), DummyCredentials.secretCredential(CREDENTIAL_ID));
-        store.addCredentials(Domain.global(), DummyCredentials.secretCredential(SECONDARY_CREDENTIAL_ID));
+        store.addCredentials(Domain.global(), DummyCredentials.fileCredential(SECONDARY_CREDENTIAL_ID,"test-cluster2","test-user2"));
 
         WorkflowJob p = r.jenkins.createProject(WorkflowJob.class, "multiKubeConfigUsernames");
-        p.setDefinition(new CpsFlowDefinition(TestResourceLoader.load("withKubeCredentialsPipelineAndUsernames.groovy"), true));
+        p.setDefinition(new CpsFlowDefinition(TestResourceLoader.loadAsString("withKubeCredentialsPipelineAndUsernames.groovy"), true));
         WorkflowRun b = p.scheduleBuild2(0).waitForStart();
         assertNotNull(b);
         r.assertBuildStatusSuccess(r.waitForCompletion(b));
@@ -151,6 +156,10 @@ public class KubectlIntegrationTest {
                 "    insecure-skip-tls-verify: true\n" +
                 "    server: https://localhost:9999\n" +
                 "  name: clus9999\n" +
+                "- cluster:\n" +
+                "    insecure-skip-tls-verify: true\n" +
+                "    server: https://test-cluster2\n" +
+                "  name: test-cluster2\n"+
                 "contexts:\n" +
                 "- context:\n" +
                 "    cluster: clus1234\n" +
@@ -158,28 +167,27 @@ public class KubectlIntegrationTest {
                 "  name: cont1234\n" +
                 "- context:\n" +
                 "    cluster: clus9999\n" +
-                "    user: cred9999\n" +
-                "  name: cont9999\n" +
-                "current-context: \"\"\n" +
+                "    user: test-user2\n" +
+                "  name: test-cluster2\n" +
+                "current-context: test-cluster2\n" +
                 "kind: Config\n" +
                 "preferences: {}\n" +
                 "users:\n" +
-                "- name: cred9999\n" +
-                "  user:\n" +
-                "    token: s3cr3t\n" +
                 "- name: test-credentials\n" +
                 "  user:\n" +
-                "    token: s3cr3t", configDumpContent);
+                "    token: s3cr3t\n" +
+                "- name: test-user2\n" +
+                "  user: {}", configDumpContent);
     }
 
     @Test
     public void testMultiKubeConfigWithServer() throws Exception {
         CredentialsStore store = CredentialsProvider.lookupStores(r.jenkins).iterator().next();
         store.addCredentials(Domain.global(), DummyCredentials.fileCredential(CREDENTIAL_ID));
-        store.addCredentials(Domain.global(), DummyCredentials.fileCredential(SECONDARY_CREDENTIAL_ID));
+        store.addCredentials(Domain.global(), DummyCredentials.fileCredential(SECONDARY_CREDENTIAL_ID,"test-cluster2","test-user2"));
 
         WorkflowJob p = r.jenkins.createProject(WorkflowJob.class, "multiKubeConfigWithServer");
-        p.setDefinition(new CpsFlowDefinition(TestResourceLoader.load("withKubeCredentialsPipelineAndServer.groovy"), true));
+        p.setDefinition(new CpsFlowDefinition(TestResourceLoader.loadAsString("withKubeCredentialsPipelineAndServer.groovy"), true));
         WorkflowRun b = p.scheduleBuild2(0).waitForStart();
         assertNotNull(b);
         r.assertBuildStatusSuccess(r.waitForCompletion(b));
@@ -196,24 +204,28 @@ public class KubectlIntegrationTest {
                 "  name: cred9999\n" +
                 "- cluster:\n" +
                 "    insecure-skip-tls-verify: true\n" +
-                "    server: https://localhost:1234\n" +
+                "    server: https://test-cluster\n" +
                 "  name: test-cluster\n" +
                 "- cluster:\n" +
-                "    server: \"\"\n" +
-                "  name: test-sample\n" +
+                "    insecure-skip-tls-verify: true\n"+
+                "    server: https://test-cluster2\n" +
+                "  name: test-cluster2\n" +
                 "contexts:\n" +
                 "- context:\n" +
-                "    cluster: cred9999\n" +
-                "    user: \"\"\n" +
-                "  name: cred9999\n" +
-                "- context:\n" +
-                "    cluster: \"\"\n" +
-                "    user: \"\"\n" +
-                "  name: minikube\n" +
-                "- context:\n" +
                 "    cluster: test-cluster\n" +
-                "    user: \"\"\n" +
-                "  name: test-sample\n" +
-                "current-context: test-sample\n"));
+                "    user: test-user\n" +
+                "  name: test-cluster\n" +
+                "- context:\n" +
+                "    cluster: cred9999\n" +
+                "    user: test-user2\n" +
+                "  name: test-cluster2\n" +
+                "current-context: test-cluster\n"+
+                "kind: Config\n" +
+                "preferences: {}\n" +
+                "users:\n" +
+                "- name: test-user\n" +
+                "  user: {}\n" +
+                "- name: test-user2\n" +
+                "  user: {}"));
     }
 }

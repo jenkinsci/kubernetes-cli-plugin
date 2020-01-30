@@ -127,9 +127,7 @@ public class KubeConfigWriter {
 
         // Write configuration to disk
         FilePath configFile = getTempKubeconfigFilePath();
-        try (Writer w = new OutputStreamWriter(new FileOutputStream(configFile.getRemote()), StandardCharsets.UTF_8)) {
-            w.write(SerializationUtils.getMapper().writeValueAsString(configBuilder.build()));
-        }
+        configFile.write(SerializationUtils.getMapper().writeValueAsString(configBuilder.build()), String.valueOf(StandardCharsets.UTF_8));
 
         return configFile.getRemote();
     }

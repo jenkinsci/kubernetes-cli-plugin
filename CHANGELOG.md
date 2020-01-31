@@ -1,6 +1,22 @@
 CHANGELOG
 =========
 
+1.8.0
+-----
+* Fix some warnings when running the tests[#48](https://github.com/jenkinsci/kubernetes-cli-plugin/pull/48)
+* Speed up testsr [#47](https://github.com/jenkinsci/kubernetes-cli-plugin/pull/47)
+* Apply Jenkins infrastructure changes to pom.xml [#46](https://github.com/jenkinsci/kubernetes-cli-plugin/pull/46)
+* Add a quick implementation overview in the README [#45](https://github.com/jenkinsci/kubernetes-cli-plugin/pull/45)
+* Add support for new kubectl versions and drop olders [#44](https://github.com/jenkinsci/kubernetes-cli-plugin/pull/44)
+* Don't use kubectl to set credentials up [#43](https://github.com/jenkinsci/kubernetes-cli-plugin/pull/43)
+* Support configuration of multiple kube credentials at the same time [#40](https://github.com/jenkinsci/kubernetes-cli-plugin/pull/40)
+* Remove duplicated KubeConfigExpander [#39](https://github.com/jenkinsci/kubernetes-cli-plugin/pull/39)
+* Fix escaping of certificate-authority parameter [#38](https://github.com/jenkinsci/kubernetes-cli-plugin/pull/38)
+* Incrementals [#35](https://github.com/jenkinsci/kubernetes-cli-plugin/pull/35)
+* Tests were not passing on my machine because paths were not quoted [#34](https://github.com/jenkinsci/kubernetes-cli-plugin/pull/34)
+* Fix README when setting up ServiceAccount in non-default namespace [#33](https://github.com/jenkinsci/kubernetes-cli-plugin/pull/33)
+* Corrected decode flag syntax in README [#32](https://github.com/jenkinsci/kubernetes-cli-plugin/pull/32)
+
 1.7.0
 -----
 * Update credentials plugin from 2.1.7 to 2.1.19 (2.2.0) CVE-2019-10320 [#30](https://github.com/jenkinsci/kubernetes-cli-plugin/pull/30)

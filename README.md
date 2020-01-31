@@ -6,7 +6,7 @@
 [![Jenkins Plugin installs](https://img.shields.io/jenkins/plugin/i/kubernetes-cli.svg)](https://plugins.jenkins.io/kubernetes-cli)
 
 Allows you to configure [kubectl][kubectl] in your job to interact with Kubernetes clusters.
-Any tool built on top of `kubectl` can then be used from your pipelines to perform deployments, e.g. [kubernetes-deploy][kubernetes-deploy].
+Any tool built on top of `kubectl` can then be used from your pipelines to perform deployments, e.g. [Shopify/krane][krane].
 
 *Initially extracted and rewritten from the [Kubernetes Plugin][kubernetes-plugin].*
 
@@ -176,7 +176,7 @@ mvn release:prepare release:perform
 [kubernetes-credentials-plugin]:https://github.com/jenkinsci/kubernetes-credentials-plugin
 [plain-credentials-plugin]: https://github.com/jenkinsci/plain-credentials-plugin
 [kubectl]:https://kubernetes.io/docs/reference/kubectl/overview/
-[kubernetes-deploy]:https://github.com/Shopify/kubernetes-deploy
+[krane]:https://github.com/Shopify/krane
 [master-build]: https://ci.jenkins.io/job/Plugins/job/kubernetes-cli-plugin/job/master/
 [issue-tracker]: https://issues.jenkins-ci.org/issues/?jql=project%20%3D%20JENKINS%20AND%20status%20in%20(Open%2C%20%22In%20Progress%22%2C%20Reopened%2C%20%22In%20Review%22)%20AND%20component%20%3D%20kubernetes-cli-plugin
 [multi-clusters]: https://kubernetes.io/docs/tasks/access-application-cluster/configure-access-multiple-clusters/

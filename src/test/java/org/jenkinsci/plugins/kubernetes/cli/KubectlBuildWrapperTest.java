@@ -65,7 +65,7 @@ public class KubectlBuildWrapperTest {
         bw.serverUrl = "${SERVER_URL}";
         p.getBuildWrappersList().add(bw);
 
-        Shell b2 = new Shell("#!/bin/bash\ncat $KUBECONFIG");
+        Shell b2 = new Shell("#!/bin/bash\ncat \"$KUBECONFIG\"");
         p.getBuildersList().add(b2);
 
         FreeStyleBuild b = p.scheduleBuild2(0).waitForStart();

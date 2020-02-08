@@ -1,13 +1,18 @@
 CHANGELOG
 =========
 
+1.8.2
+-----
+* Fix raw kubeconfig context switch [#52](https://github.com/jenkinsci/kubernetes-cli-plugin/pull/52)
+* Fix creation of new contextes and add tests [#53](https://github.com/jenkinsci/kubernetes-cli-plugin/pull/53)
+
 1.8.1
 -----
-* Write kubeconfig back in the workspace[#50](https://github.com/jenkinsci/kubernetes-cli-plugin/pull/50)
+* Write kubeconfig back in the workspace [#50](https://github.com/jenkinsci/kubernetes-cli-plugin/pull/50)
 
 1.8.0
 -----
-* Fix some warnings when running the tests[#48](https://github.com/jenkinsci/kubernetes-cli-plugin/pull/48)
+* Fix some warnings when running the tests [#48](https://github.com/jenkinsci/kubernetes-cli-plugin/pull/48)
 * Speed up testsr [#47](https://github.com/jenkinsci/kubernetes-cli-plugin/pull/47)
 * Apply Jenkins infrastructure changes to pom.xml [#46](https://github.com/jenkinsci/kubernetes-cli-plugin/pull/46)
 * Add a quick implementation overview in the README [#45](https://github.com/jenkinsci/kubernetes-cli-plugin/pull/45)

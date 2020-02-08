@@ -80,21 +80,21 @@ public class KubeConfigWriter {
 
     private static ConfigFluent.ContextsNested<ConfigBuilder> existingOrNewContext(ConfigBuilder configBuilder, String context) {
         if (hasContext(configBuilder, context)) {
-            return configBuilder.editMatchingContext(p -> p.getName().equals(context));
+            return configBuilder.editMatchingContext(p -> context.equals(p.getName()));
         } else {
-            return configBuilder.addNewContext();
+            return configBuilder.addNewContext().withName(context);
         }
     }
 
     private static boolean hasContext(ConfigBuilder configBuilder, String context) {
-        return configBuilder.hasMatchingContext(p -> p.getName().equals(context));
+        return configBuilder.hasMatchingContext(p -> context.equals(p.getName()));
     }
 
     private static ConfigFluent.ClustersNested<ConfigBuilder> existingOrNewCluster(ConfigBuilder configBuilder, String cluster) {
-        if (configBuilder.hasMatchingCluster(p -> p.getName().equals(cluster))) {
-            return configBuilder.editMatchingCluster(p -> p.getName().equals(cluster));
+        if (configBuilder.hasMatchingCluster(p -> cluster.equals(p.getName()))) {
+            return configBuilder.editMatchingCluster(p -> cluster.equals(p.getName()));
         } else {
-            return configBuilder.addNewCluster();
+            return configBuilder.addNewCluster().withName(cluster);
         }
     }
 
@@ -165,7 +165,7 @@ public class KubeConfigWriter {
         if (wasProvided(contextName) && !skipUseContext) {
             if (!hasContext(configBuilder, contextName)) {
                 // There is not much sense to create a new context in a raw kubeconfig file as it would have no
-                // configured credentials
+                // configured credentials. Print a warning
                 launcher.getListener().getLogger().printf("[kubernetes-cli] context '%s' doesn't exist in kubeconfig", contextName);
             }
             configBuilder = setCurrentContext(configBuilder, contextName);

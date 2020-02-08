@@ -5,6 +5,7 @@ import hudson.EnvVars;
 import hudson.FilePath;
 import hudson.Launcher;
 import hudson.model.AbstractBuild;
+import hudson.model.TaskListener;
 import hudson.remoting.VirtualChannel;
 import io.fabric8.kubernetes.api.model.ConfigBuilder;
 import io.fabric8.kubernetes.client.internal.SerializationUtils;
@@ -17,16 +18,18 @@ import org.junit.Test;
 import org.junit.rules.TemporaryFolder;
 import org.mockito.Mockito;
 
+import java.io.ByteArrayOutputStream;
 import java.io.IOException;
+import java.io.PrintStream;
 
 import static org.junit.Assert.assertEquals;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.when;
 
 public class KubeConfigWriterBuilderTest {
+    final ByteArrayOutputStream output = new ByteArrayOutputStream();
     @Rule
     public TemporaryFolder tempFolder = new TemporaryFolder();
-
     FilePath workspace;
     Launcher mockLauncher;
     AbstractBuild build;
@@ -66,6 +69,11 @@ public class KubeConfigWriterBuilderTest {
         mockLauncher = Mockito.mock(Launcher.class);
         VirtualChannel mockChannel = Mockito.mock(VirtualChannel.class);
         when(mockLauncher.getChannel()).thenReturn(mockChannel);
+
+        TaskListener mockListener = Mockito.mock(TaskListener.class);
+        when(mockListener.getLogger()).thenReturn(new PrintStream(output, true, "UTF-8"));
+
+        when(mockLauncher.getListener()).thenReturn(mockListener);
 
         build = Mockito.mock(AbstractBuild.class);
         EnvVars env = new EnvVars();
@@ -530,6 +538,61 @@ public class KubeConfigWriterBuilderTest {
                 "    as-user-extra: {}\n" +
                 "    password: \"existing-password\"\n" +
                 "    username: \"existing-user\"\n", configDumpContent);
+    }
+
+
+    @Test
+    public void kubeConfigWithSwitchToNonExistentContext() throws Exception {
+        KubeConfigWriter configWriter = new KubeConfigWriter(
+                "https://localhost:6443",
+                "test-credential",
+                "",
+                "",
+                "non-existent-context",
+                "new-namespace",
+                false,
+                workspace, mockLauncher, build);
+
+        KubernetesAuthKubeconfig auth = dummyKubeConfigAuth();
+        ConfigBuilder configBuilder = configWriter.getConfigBuilder("test-credential", auth);
+        String configDumpContent = dumpBuilder(configBuilder);
+
+        // asserts that:
+        // * kubeconfig is imported
+        // * non-existent context is created
+        // * a new cluster is created with the serverURL
+        // * the cluster is used by the context we created
+        // * the namespace is set in the context we created
+        assertEquals("---\n" +
+                "clusters:\n" +
+                "- cluster:\n" +
+                "    server: \"https://existing-cluster\"\n" +
+                "  name: \"existing-cluster\"\n" +
+                "- cluster:\n" +
+                "    insecure-skip-tls-verify: true\n" +
+                "    server: \"https://localhost:6443\"\n" +
+                "  name: \"k8s\"\n" +
+                "contexts:\n" +
+                "- context:\n" +
+                "    cluster: \"existing-cluster\"\n" +
+                "    namespace: \"existing-namespace\"\n" +
+                "  name: \"existing-context\"\n" +
+                "- context:\n" +
+                "    cluster: \"existing-cluster\"\n" +
+                "    namespace: \"unused-namespace\"\n" +
+                "  name: \"unused-context\"\n" +
+                "- context:\n" +
+                "    cluster: \"k8s\"\n" +
+                "    namespace: \"new-namespace\"\n" +
+                "  name: \"non-existent-context\"\n" +
+                "current-context: \"non-existent-context\"\n" +
+                "users:\n" +
+                "- name: \"existing-credential\"\n" +
+                "  user:\n" +
+                "    as-user-extra: {}\n" +
+                "    password: \"existing-password\"\n" +
+                "    username: \"existing-user\"\n", configDumpContent);
+        assertEquals("[kubernetes-cli] context 'non-existent-context' doesn't exist in kubeconfig", output.toString());
     }
 
     @Test

@@ -24,7 +24,7 @@ public class MultiKubectlBuildWrapper extends SimpleBuildWrapper {
     @DataBoundConstructor
     public MultiKubectlBuildWrapper(List<KubectlCredential> kubectlCredentials) {
         if (kubectlCredentials == null || kubectlCredentials.size() == 0) {
-            throw new RuntimeException("Credentials list cannot be empty");
+            throw new RuntimeException("[kubernetes-cli] credentials list cannot be empty");
         }
         this.kubectlCredentials = kubectlCredentials;
     }

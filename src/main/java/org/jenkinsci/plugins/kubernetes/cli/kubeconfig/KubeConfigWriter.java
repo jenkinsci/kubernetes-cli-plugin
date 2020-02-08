@@ -106,11 +106,6 @@ public class KubeConfigWriter {
      * @throws InterruptedException on file operations
      */
     public String writeKubeConfig() throws IOException, InterruptedException {
-        if (!workspace.exists()) {
-            launcher.getListener().getLogger().println("creating missing workspace to write kubeconfig");
-            workspace.mkdirs();
-        }
-
         // Lookup for the credentials on Jenkins
         final StandardCredentials credentials = CredentialsProvider.findCredentialById(credentialsId, StandardCredentials.class, build, Collections.emptyList());
         if (credentials == null) {
@@ -242,26 +237,11 @@ public class KubeConfigWriter {
     }
 
     private FilePath getTempKubeconfigFilePath() throws IOException, InterruptedException {
-        String tempFolder = workspace.getChannel().call(new ObtainTemporaryFolderCallable());
-        FilePath tempPath = new FilePath(workspace.getChannel(), tempFolder);
-        if (!tempPath.exists()) {
-            launcher.getListener().getLogger().println("creating missing temporary folder to write kube config files");
-            tempPath.mkdirs();
+        if (!workspace.exists()) {
+            launcher.getListener().getLogger().println("creating missing workspace to write kubeconfig");
+            workspace.mkdirs();
         }
 
-        return tempPath.createTempFile("kubernetes-cli-plugin-kube", "config");
+        return workspace.createTempFile(".kube","config");
     }
-
-    /**
-     * Used for obtaining the temporary folder for a node.
-     */
-    private static class ObtainTemporaryFolderCallable extends MasterToSlaveCallable<String, IOException> {
-        private static final String TMPDIR__PROPERTY = "java.io.tmpdir";
-
-        @Override
-        public String call() {
-            return System.getProperty(TMPDIR__PROPERTY);
-        }
-    }
-
 }

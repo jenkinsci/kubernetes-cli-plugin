@@ -13,7 +13,6 @@ import io.fabric8.kubernetes.api.model.ConfigFluent;
 import io.fabric8.kubernetes.api.model.NamedCluster;
 import io.fabric8.kubernetes.client.internal.SerializationUtils;
 import jenkins.authentication.tokens.api.AuthenticationTokens;
-import jenkins.security.MasterToSlaveCallable;
 import org.jenkinsci.plugins.kubernetes.auth.KubernetesAuth;
 import org.jenkinsci.plugins.kubernetes.auth.KubernetesAuthConfig;
 import org.jenkinsci.plugins.kubernetes.auth.KubernetesAuthException;
@@ -21,10 +20,7 @@ import org.jenkinsci.plugins.kubernetes.auth.impl.KubernetesAuthKubeconfig;
 import org.jenkinsci.plugins.kubernetes.credentials.Utils;
 
 import javax.annotation.Nonnull;
-import java.io.FileOutputStream;
 import java.io.IOException;
-import java.io.OutputStreamWriter;
-import java.io.Writer;
 import java.nio.charset.StandardCharsets;
 import java.util.Collections;
 
@@ -83,11 +79,15 @@ public class KubeConfigWriter {
     }
 
     private static ConfigFluent.ContextsNested<ConfigBuilder> existingOrNewContext(ConfigBuilder configBuilder, String context) {
-        if (configBuilder.hasMatchingContext(p -> p.getName().equals(context))) {
+        if (hasContext(configBuilder, context)) {
             return configBuilder.editMatchingContext(p -> p.getName().equals(context));
         } else {
             return configBuilder.addNewContext();
         }
+    }
+
+    private static boolean hasContext(ConfigBuilder configBuilder, String context) {
+        return configBuilder.hasMatchingContext(p -> p.getName().equals(context));
     }
 
     private static ConfigFluent.ClustersNested<ConfigBuilder> existingOrNewCluster(ConfigBuilder configBuilder, String cluster) {
@@ -109,13 +109,13 @@ public class KubeConfigWriter {
         // Lookup for the credentials on Jenkins
         final StandardCredentials credentials = CredentialsProvider.findCredentialById(credentialsId, StandardCredentials.class, build, Collections.emptyList());
         if (credentials == null) {
-            throw new AbortException("Unable to find credentials with id '" + credentialsId + "'");
+            throw new AbortException("[kubernetes-cli] unable to find credentials with id '" + credentialsId + "'");
         }
 
         // Convert into Kubernetes credentials
         KubernetesAuth auth = AuthenticationTokens.convert(KubernetesAuth.class, credentials);
         if (auth == null) {
-            throw new AbortException("Unsupported credentials type " + credentials.getClass().getName());
+            throw new AbortException("[kubernetes-cli] unsupported credentials type " + credentials.getClass().getName());
         }
 
         ConfigBuilder configBuilder = getConfigBuilder(credentials.getId(), auth);
@@ -159,21 +159,31 @@ public class KubeConfigWriter {
     }
 
     private ConfigBuilder completeKubeconfigConfigBuilder(ConfigBuilder configBuilder) throws IOException, InterruptedException {
-        if (wasProvided(getServerUrl())) {
+
+        String currentContext;
+
+        if (wasProvided(contextName) && !skipUseContext) {
+            if (!hasContext(configBuilder, contextName)) {
+                // There is not much sense to create a new context in a raw kubeconfig file as it would have no
+                // configured credentials
+                launcher.getListener().getLogger().printf("[kubernetes-cli] context '%s' doesn't exist in kubeconfig", contextName);
+            }
+            configBuilder = setCurrentContext(configBuilder, contextName);
+            currentContext = contextName;
+        } else {
+            currentContext = configBuilder.getCurrentContext();
+        }
+
+        if (wasProvided(serverUrl)) {
             configBuilder = setNamedCluster(configBuilder, buildNamedCluster());
         }
 
-        String currentContext = configBuilder.getCurrentContext();
         if (wasProvided(serverUrl) || wasProvided(clusterName)) {
             configBuilder = setContextCluster(configBuilder, currentContext, getClusterNameOrDefault());
         }
 
         if (wasProvided(namespace)) {
             configBuilder = setContextNamespace(configBuilder, currentContext, namespace);
-        }
-
-        if (wasProvided(contextName) && !skipUseContext) {
-            configBuilder = setCurrentContext(configBuilder, contextName);
         }
 
         return configBuilder;
@@ -238,10 +248,10 @@ public class KubeConfigWriter {
 
     private FilePath getTempKubeconfigFilePath() throws IOException, InterruptedException {
         if (!workspace.exists()) {
-            launcher.getListener().getLogger().println("creating missing workspace to write kubeconfig");
+            launcher.getListener().getLogger().println("[kubernetes-cli] creating missing workspace to write temporary kubeconfig");
             workspace.mkdirs();
         }
 
-        return workspace.createTempFile(".kube","config");
+        return workspace.createTempFile(".kube", "config");
     }
 }

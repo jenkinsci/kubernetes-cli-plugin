@@ -1,6 +1,10 @@
 CHANGELOG
 =========
 
+1.8.1
+-----
+* Write kubeconfig back in the workspace[#50](https://github.com/jenkinsci/kubernetes-cli-plugin/pull/50)
+
 1.8.0
 -----
 * Fix some warnings when running the tests[#48](https://github.com/jenkinsci/kubernetes-cli-plugin/pull/48)

@@ -8,7 +8,7 @@
 
   <groupId>org.jenkins-ci.plugins</groupId>
   <artifactId>kubernetes-cli</artifactId>
-  <version>${revision}${changelist}</version>
+  <version>1.8.2</version>
   <name>Kubernetes CLI Plugin</name>
   <packaging>hpi</packaging>
 
@@ -17,7 +17,7 @@
     <developerConnection>scm:git:ssh://git@github.com/jenkinsci/${project.artifactId}-plugin.git
     </developerConnection>
     <url>https://github.com/jenkinsci/${project.artifactId}-plugin</url>
-    <tag>${scmTag}</tag>
+    <tag>kubernetes-cli-1.8.2</tag>
   </scm>
 
   <developers>

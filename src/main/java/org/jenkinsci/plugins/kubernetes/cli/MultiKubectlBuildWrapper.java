@@ -92,7 +92,7 @@ public class MultiKubectlBuildWrapper extends SimpleBuildWrapper {
             for(String file : filesToBeRemoved) {
                 workspace.child(file).delete();
             }
-            listener.getLogger().println("kubectl configuration cleaned up");
+            listener.getLogger().println("[kubernetes-cli] kubectl configuration cleaned up");
         }
     }
 }

@@ -47,6 +47,10 @@ public class KubeConfigWriterBuilderTest {
                         "    cluster: \"existing-cluster\"\n" +
                         "    namespace: \"existing-namespace\"\n" +
                         "  name: \"existing-context\"\n" +
+                        "- context:\n" +
+                        "    cluster: \"existing-cluster\"\n" +
+                        "    namespace: \"unused-namespace\"\n" +
+                        "  name: \"unused-context\"\n" +
                         "current-context: \"existing-context\"\n" +
                         "users:\n" +
                         "- name: \"existing-credential\"\n" +
@@ -294,7 +298,7 @@ public class KubeConfigWriterBuilderTest {
     @Test
     public void kubeConfigMinimum() throws Exception {
         KubeConfigWriter configWriter = new KubeConfigWriter(
-                "https://localhost:6443",
+                "",
                 "test-credential",
                 "",
                 "",
@@ -308,20 +312,22 @@ public class KubeConfigWriterBuilderTest {
         ConfigBuilder configBuilder = configWriter.getConfigBuilder("test-credential", auth);
         String configDumpContent = dumpBuilder(configBuilder);
 
+        // asserts that:
+        // * kubeconfig is simply imported
         assertEquals("---\n" +
                 "clusters:\n" +
                 "- cluster:\n" +
                 "    server: \"https://existing-cluster\"\n" +
                 "  name: \"existing-cluster\"\n" +
-                "- cluster:\n" +
-                "    insecure-skip-tls-verify: true\n" +
-                "    server: \"https://localhost:6443\"\n" +
-                "  name: \"k8s\"\n" +
                 "contexts:\n" +
                 "- context:\n" +
-                "    cluster: \"k8s\"\n" +
+                "    cluster: \"existing-cluster\"\n" +
                 "    namespace: \"existing-namespace\"\n" +
                 "  name: \"existing-context\"\n" +
+                "- context:\n" +
+                "    cluster: \"existing-cluster\"\n" +
+                "    namespace: \"unused-namespace\"\n" +
+                "  name: \"unused-context\"\n" +
                 "current-context: \"existing-context\"\n" +
                 "users:\n" +
                 "- name: \"existing-credential\"\n" +
@@ -349,6 +355,10 @@ public class KubeConfigWriterBuilderTest {
         ConfigBuilder configBuilder = configWriter.getConfigBuilder("test-credential", auth);
         String configDumpContent = dumpBuilder(configBuilder);
 
+        // asserts that:
+        // * kubeconfig is imported
+        // * a new cluster is created with the CA and serverURL
+        // * the cluster is used by the existing context
         assertEquals("---\n" +
                 "clusters:\n" +
                 "- cluster:\n" +
@@ -364,6 +374,10 @@ public class KubeConfigWriterBuilderTest {
                 "    cluster: \"k8s\"\n" +
                 "    namespace: \"existing-namespace\"\n" +
                 "  name: \"existing-context\"\n" +
+                "- context:\n" +
+                "    cluster: \"existing-cluster\"\n" +
+                "    namespace: \"unused-namespace\"\n" +
+                "  name: \"unused-context\"\n" +
                 "current-context: \"existing-context\"\n" +
                 "users:\n" +
                 "- name: \"existing-credential\"\n" +
@@ -381,7 +395,7 @@ public class KubeConfigWriterBuilderTest {
                 "",
                 "",
                 "",
-                "test-namespace",
+                "new-namespace",
                 false,
                 workspace, mockLauncher, build);
 
@@ -390,6 +404,11 @@ public class KubeConfigWriterBuilderTest {
         ConfigBuilder configBuilder = configWriter.getConfigBuilder("test-credential", auth);
         String configDumpContent = dumpBuilder(configBuilder);
 
+        // asserts that:
+        // * kubeconfig is imported
+        // * a new cluster is created with the serverURL
+        // * the cluster is used by the existing context
+        // * the namespace is set for the existing context
         assertEquals("---\n" +
                 "clusters:\n" +
                 "- cluster:\n" +
@@ -402,8 +421,12 @@ public class KubeConfigWriterBuilderTest {
                 "contexts:\n" +
                 "- context:\n" +
                 "    cluster: \"k8s\"\n" +
-                "    namespace: \"test-namespace\"\n" +
+                "    namespace: \"new-namespace\"\n" +
                 "  name: \"existing-context\"\n" +
+                "- context:\n" +
+                "    cluster: \"existing-cluster\"\n" +
+                "    namespace: \"unused-namespace\"\n" +
+                "  name: \"unused-context\"\n" +
                 "current-context: \"existing-context\"\n" +
                 "users:\n" +
                 "- name: \"existing-credential\"\n" +
@@ -419,7 +442,7 @@ public class KubeConfigWriterBuilderTest {
                 "https://localhost:6443",
                 "test-credential",
                 "",
-                "test-cluster",
+                "new-cluster",
                 "",
                 "",
                 false,
@@ -430,6 +453,10 @@ public class KubeConfigWriterBuilderTest {
         ConfigBuilder configBuilder = configWriter.getConfigBuilder("test-credential", auth);
         String configDumpContent = dumpBuilder(configBuilder);
 
+        // asserts that:
+        // * kubeconfig is imported
+        // * a new cluster is created with the serverURL and the clusterName
+        // * the cluster is used by the existing context
         assertEquals("---\n" +
                 "clusters:\n" +
                 "- cluster:\n" +
@@ -438,12 +465,16 @@ public class KubeConfigWriterBuilderTest {
                 "- cluster:\n" +
                 "    insecure-skip-tls-verify: true\n" +
                 "    server: \"https://localhost:6443\"\n" +
-                "  name: \"test-cluster\"\n" +
+                "  name: \"new-cluster\"\n" +
                 "contexts:\n" +
                 "- context:\n" +
-                "    cluster: \"test-cluster\"\n" +
+                "    cluster: \"new-cluster\"\n" +
                 "    namespace: \"existing-namespace\"\n" +
                 "  name: \"existing-context\"\n" +
+                "- context:\n" +
+                "    cluster: \"existing-cluster\"\n" +
+                "    namespace: \"unused-namespace\"\n" +
+                "  name: \"unused-context\"\n" +
                 "current-context: \"existing-context\"\n" +
                 "users:\n" +
                 "- name: \"existing-credential\"\n" +
@@ -454,14 +485,14 @@ public class KubeConfigWriterBuilderTest {
     }
 
     @Test
-    public void kubeConfigWithNewContext() throws Exception {
+    public void kubeConfigWithContextSwitch() throws Exception {
         KubeConfigWriter configWriter = new KubeConfigWriter(
                 "https://localhost:6443",
                 "test-credential",
                 "",
                 "",
-                "test-context",
-                "",
+                "unused-context",
+                "new-namespace",
                 false,
                 workspace, mockLauncher, build);
 
@@ -469,6 +500,11 @@ public class KubeConfigWriterBuilderTest {
         ConfigBuilder configBuilder = configWriter.getConfigBuilder("test-credential", auth);
         String configDumpContent = dumpBuilder(configBuilder);
 
+        // asserts that:
+        // * kubeconfig is imported
+        // * context is switched
+        // * a new cluster is created with the serverURL
+        // * the cluster is used by the context we switched to
         assertEquals("---\n" +
                 "clusters:\n" +
                 "- cluster:\n" +
@@ -480,10 +516,14 @@ public class KubeConfigWriterBuilderTest {
                 "  name: \"k8s\"\n" +
                 "contexts:\n" +
                 "- context:\n" +
-                "    cluster: \"k8s\"\n" +
+                "    cluster: \"existing-cluster\"\n" +
                 "    namespace: \"existing-namespace\"\n" +
                 "  name: \"existing-context\"\n" +
-                "current-context: \"test-context\"\n" +
+                "- context:\n" +
+                "    cluster: \"k8s\"\n" +
+                "    namespace: \"new-namespace\"\n" +
+                "  name: \"unused-context\"\n" +
+                "current-context: \"unused-context\"\n" +
                 "users:\n" +
                 "- name: \"existing-credential\"\n" +
                 "  user:\n" +
@@ -522,6 +562,10 @@ public class KubeConfigWriterBuilderTest {
                 "    cluster: \"k8s\"\n" +
                 "    namespace: \"existing-namespace\"\n" +
                 "  name: \"existing-context\"\n" +
+                "- context:\n" +
+                "    cluster: \"existing-cluster\"\n" +
+                "    namespace: \"unused-namespace\"\n" +
+                "  name: \"unused-context\"\n" +
                 "current-context: \"existing-context\"\n" +
                 "users:\n" +
                 "- name: \"existing-credential\"\n" +

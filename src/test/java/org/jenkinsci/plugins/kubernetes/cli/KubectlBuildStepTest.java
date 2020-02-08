@@ -66,7 +66,7 @@ public class KubectlBuildStepTest {
 
         assertNotNull(b);
         assertBuildStatus(b, Result.FAILURE);
-        r.assertLogContains("ERROR: Unable to find credentials with id 'test-credentials'", b);
+        r.assertLogContains("ERROR: [kubernetes-cli] unable to find credentials with id 'test-credentials'", b);
     }
 
     @Test
@@ -79,7 +79,7 @@ public class KubectlBuildStepTest {
 
         assertNotNull(b);
         assertBuildStatus(b, Result.FAILURE);
-        r.assertLogContains("kubectl configuration cleaned up", b);
+        r.assertLogContains("[kubernetes-cli] kubectl configuration cleaned up", b);
     }
 
     @Test
@@ -90,7 +90,7 @@ public class KubectlBuildStepTest {
 
         assertNotNull(b);
         assertBuildStatus(b, Result.FAILURE);
-        r.assertLogContains("ERROR: Unable to find credentials with id ''", b);
+        r.assertLogContains("ERROR: [kubernetes-cli] unable to find credentials with id ''", b);
     }
 
     @Test
@@ -103,7 +103,7 @@ public class KubectlBuildStepTest {
 
         assertNotNull(b);
         assertBuildStatus(b, Result.FAILURE);
-        r.assertLogContains("ERROR: Unsupported credentials type org.jenkinsci.plugins.kubernetes.cli.helpers.UnsupportedCredential", b);
+        r.assertLogContains("ERROR: [kubernetes-cli] unsupported credentials type org.jenkinsci.plugins.kubernetes.cli.helpers.UnsupportedCredential", b);
     }
 
     @Test

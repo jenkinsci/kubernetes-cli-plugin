@@ -84,7 +84,7 @@ public class GenericBuildStep extends AbstractStepExecutionImpl {
             for(String configFile : configFiles) {
                 context.get(FilePath.class).child(configFile).delete();
             }
-            context.get(TaskListener.class).getLogger().println("kubectl configuration cleaned up");
+            context.get(TaskListener.class).getLogger().println("[kubernetes-cli] kubectl configuration cleaned up");
         }
 
     }

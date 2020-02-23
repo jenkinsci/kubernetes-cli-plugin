@@ -107,7 +107,7 @@ node {
         [credentialsId: '<credential-id-1>', serverUrl: '<api-server-address>'],
         [credentialsId: '<credential-id-2>', contextName: '<context-name>']
     ]) {
-      sh 'kubectl view config'
+      sh 'kubectl config view'
     }
   }
 }

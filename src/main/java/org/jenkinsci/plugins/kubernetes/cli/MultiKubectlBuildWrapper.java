@@ -12,6 +12,7 @@ import jenkins.tasks.SimpleBuildWrapper;
 import org.jenkinsci.plugins.kubernetes.cli.kubeconfig.KubeConfigWriter;
 import org.jenkinsci.plugins.kubernetes.cli.kubeconfig.KubeConfigWriterFactory;
 import org.kohsuke.stapler.DataBoundConstructor;
+import org.kohsuke.stapler.DataBoundSetter;
 
 import java.io.File;
 import java.io.IOException;
@@ -19,7 +20,8 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class MultiKubectlBuildWrapper extends SimpleBuildWrapper {
-    final transient public List<KubectlCredential> kubectlCredentials;
+    @DataBoundSetter
+    public List<KubectlCredential> kubectlCredentials;
 
     @DataBoundConstructor
     public MultiKubectlBuildWrapper(List<KubectlCredential> kubectlCredentials) {

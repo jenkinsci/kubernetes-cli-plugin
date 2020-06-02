@@ -6,6 +6,7 @@ import org.jenkinsci.plugins.workflow.steps.StepContext;
 import org.jenkinsci.plugins.workflow.steps.StepDescriptor;
 import org.jenkinsci.plugins.workflow.steps.StepExecution;
 import org.kohsuke.stapler.DataBoundConstructor;
+import org.kohsuke.stapler.DataBoundSetter;
 
 import java.util.HashSet;
 import java.util.List;
@@ -13,7 +14,8 @@ import java.util.Set;
 
 
 public class MultiKubectlBuildStep extends Step {
-    final transient public List<KubectlCredential> kubectlCredentials;
+    @DataBoundSetter
+    public List<KubectlCredential> kubectlCredentials;
 
     @DataBoundConstructor
     public MultiKubectlBuildStep(List<KubectlCredential> kubectlCredentials) {

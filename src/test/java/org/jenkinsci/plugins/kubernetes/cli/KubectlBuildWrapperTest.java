@@ -107,4 +107,35 @@ public class KubectlBuildWrapperTest {
 
         assertEquals(6, s.size());
     }
+
+    @Test
+    public void testConfigurationPersistedOnSave() throws Exception {
+        CredentialsProvider.lookupStores(r.jenkins).iterator().next().addCredentials(Domain.global(), DummyCredentials.secretCredential("test-credentials"));
+
+        FreeStyleProject p = r.createFreeStyleProject();
+
+        KubectlBuildWrapper bw = new KubectlBuildWrapper();
+        bw.credentialsId = "test-credentials";
+        p.getBuildWrappersList().add(bw);
+
+        assertEquals("<?xml version='1.1' encoding='UTF-8'?>\n" +
+                "<project>\n" +
+                "  <keepDependencies>false</keepDependencies>\n" +
+                "  <properties/>\n" +
+                "  <scm class=\"hudson.scm.NullSCM\"/>\n" +
+                "  <canRoam>false</canRoam>\n" +
+                "  <disabled>false</disabled>\n" +
+                "  <blockBuildWhenDownstreamBuilding>false</blockBuildWhenDownstreamBuilding>\n" +
+                "  <blockBuildWhenUpstreamBuilding>false</blockBuildWhenUpstreamBuilding>\n" +
+                "  <triggers/>\n" +
+                "  <concurrentBuild>false</concurrentBuild>\n" +
+                "  <builders/>\n" +
+                "  <publishers/>\n" +
+                "  <buildWrappers>\n" +
+                "    <org.jenkinsci.plugins.kubernetes.cli.KubectlBuildWrapper>\n" +
+                "      <credentialsId>test-credentials</credentialsId>\n" +
+                "    </org.jenkinsci.plugins.kubernetes.cli.KubectlBuildWrapper>\n" +
+                "  </buildWrappers>\n" +
+                "</project>", p.getConfigFile().asString());
+    }
 }

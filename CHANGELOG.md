@@ -1,6 +1,10 @@
 CHANGELOG
 =========
 
+1.8.3
+-----
+* Fix UI job configuration for multiple credentials not being saved [#61](https://github.com/jenkinsci/kubernetes-cli-plugin/pull/61)
+
 1.8.2
 -----
 * Fix raw kubeconfig context switch [#52](https://github.com/jenkinsci/kubernetes-cli-plugin/pull/52)

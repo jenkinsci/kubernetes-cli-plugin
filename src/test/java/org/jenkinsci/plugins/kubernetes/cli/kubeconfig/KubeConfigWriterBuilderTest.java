@@ -89,7 +89,6 @@ public class KubeConfigWriterBuilderTest {
                 "",
                 "",
                 "",
-                false,
                 workspace, mockLauncher, build);
 
         KubernetesAuth auth = new KubernetesAuthUsernamePassword("test-user", "test-password");
@@ -112,7 +111,6 @@ public class KubeConfigWriterBuilderTest {
                 "users:\n" +
                 "- name: \"test-credential\"\n" +
                 "  user:\n" +
-                "    as-user-extra: {}\n" +
                 "    password: \"test-password\"\n" +
                 "    username: \"test-user\"\n", configDumpContent);
     }
@@ -126,7 +124,6 @@ public class KubeConfigWriterBuilderTest {
                 "",
                 "",
                 "",
-                false,
                 workspace, mockLauncher, build);
 
         KubernetesAuth auth = new KubernetesAuthUsernamePassword("test-user", "test-password");
@@ -138,7 +135,6 @@ public class KubeConfigWriterBuilderTest {
                 "clusters:\n" +
                 "- cluster:\n" +
                 "    certificate-authority-data: \"LS0tLS1CRUdJTiBDRVJUSUZJQ0FURS0tLS0tCnRlc3QtY2VydGlmaWNhdGUKLS0tLS1FTkQgQ0VSVElGSUNBVEUtLS0tLQ==\"\n" +
-                "    insecure-skip-tls-verify: false\n" +
                 "    server: \"https://localhost:6443\"\n" +
                 "  name: \"k8s\"\n" +
                 "contexts:\n" +
@@ -150,7 +146,6 @@ public class KubeConfigWriterBuilderTest {
                 "users:\n" +
                 "- name: \"test-credential\"\n" +
                 "  user:\n" +
-                "    as-user-extra: {}\n" +
                 "    password: \"test-password\"\n" +
                 "    username: \"test-user\"\n", configDumpContent);
     }
@@ -164,7 +159,6 @@ public class KubeConfigWriterBuilderTest {
                 "test-cluster",
                 "",
                 "",
-                false,
                 workspace, mockLauncher, build);
 
         KubernetesAuth auth = new KubernetesAuthUsernamePassword("test-user", "test-password");
@@ -187,7 +181,6 @@ public class KubeConfigWriterBuilderTest {
                 "users:\n" +
                 "- name: \"test-credential\"\n" +
                 "  user:\n" +
-                "    as-user-extra: {}\n" +
                 "    password: \"test-password\"\n" +
                 "    username: \"test-user\"\n", configDumpContent);
     }
@@ -201,7 +194,6 @@ public class KubeConfigWriterBuilderTest {
                 "",
                 "",
                 "test-namespace",
-                false,
                 workspace, mockLauncher, build);
 
         KubernetesAuth auth = new KubernetesAuthUsernamePassword("test-user", "test-password");
@@ -225,7 +217,6 @@ public class KubeConfigWriterBuilderTest {
                 "users:\n" +
                 "- name: \"test-credential\"\n" +
                 "  user:\n" +
-                "    as-user-extra: {}\n" +
                 "    password: \"test-password\"\n" +
                 "    username: \"test-user\"\n", configDumpContent);
     }
@@ -239,7 +230,6 @@ public class KubeConfigWriterBuilderTest {
                 "",
                 "test-context",
                 "",
-                false,
                 workspace, mockLauncher, build);
 
         KubernetesAuth auth = new KubernetesAuthUsernamePassword("test-user", "test-password");
@@ -262,43 +252,6 @@ public class KubeConfigWriterBuilderTest {
                 "users:\n" +
                 "- name: \"test-credential\"\n" +
                 "  user:\n" +
-                "    as-user-extra: {}\n" +
-                "    password: \"test-password\"\n" +
-                "    username: \"test-user\"\n", configDumpContent);
-    }
-
-    @Test
-    public void basicConfigWithSkipUseContext() throws Exception {
-        KubeConfigWriter configWriter = new KubeConfigWriter(
-                "https://localhost:6443",
-                "test-credential",
-                "",
-                "",
-                "test-context",
-                "",
-                true,
-                workspace, mockLauncher, build);
-
-        KubernetesAuth auth = new KubernetesAuthUsernamePassword("test-user", "test-password");
-
-        ConfigBuilder configBuilder = configWriter.getConfigBuilder("test-credential", auth);
-        String configDumpContent = dumpBuilder(configBuilder);
-
-        assertEquals("---\n" +
-                "clusters:\n" +
-                "- cluster:\n" +
-                "    insecure-skip-tls-verify: true\n" +
-                "    server: \"https://localhost:6443\"\n" +
-                "  name: \"k8s\"\n" +
-                "contexts:\n" +
-                "- context:\n" +
-                "    cluster: \"k8s\"\n" +
-                "    user: \"test-credential\"\n" +
-                "  name: \"test-context\"\n" +
-                "users:\n" +
-                "- name: \"test-credential\"\n" +
-                "  user:\n" +
-                "    as-user-extra: {}\n" +
                 "    password: \"test-password\"\n" +
                 "    username: \"test-user\"\n", configDumpContent);
     }
@@ -312,7 +265,6 @@ public class KubeConfigWriterBuilderTest {
                 "",
                 "",
                 "",
-                false,
                 workspace, mockLauncher, build);
 
         KubernetesAuthKubeconfig auth = dummyKubeConfigAuth();
@@ -340,7 +292,6 @@ public class KubeConfigWriterBuilderTest {
                 "users:\n" +
                 "- name: \"existing-credential\"\n" +
                 "  user:\n" +
-                "    as-user-extra: {}\n" +
                 "    password: \"existing-password\"\n" +
                 "    username: \"existing-user\"\n", configDumpContent);
     }
@@ -355,7 +306,6 @@ public class KubeConfigWriterBuilderTest {
                 "",
                 "",
                 "",
-                false,
                 workspace, mockLauncher, build);
 
         KubernetesAuthKubeconfig auth = dummyKubeConfigAuth();
@@ -390,7 +340,6 @@ public class KubeConfigWriterBuilderTest {
                 "users:\n" +
                 "- name: \"existing-credential\"\n" +
                 "  user:\n" +
-                "    as-user-extra: {}\n" +
                 "    password: \"existing-password\"\n" +
                 "    username: \"existing-user\"\n", configDumpContent);
     }
@@ -404,7 +353,6 @@ public class KubeConfigWriterBuilderTest {
                 "",
                 "",
                 "new-namespace",
-                false,
                 workspace, mockLauncher, build);
 
         KubernetesAuthKubeconfig auth = dummyKubeConfigAuth();
@@ -439,7 +387,6 @@ public class KubeConfigWriterBuilderTest {
                 "users:\n" +
                 "- name: \"existing-credential\"\n" +
                 "  user:\n" +
-                "    as-user-extra: {}\n" +
                 "    password: \"existing-password\"\n" +
                 "    username: \"existing-user\"\n", configDumpContent);
     }
@@ -453,7 +400,6 @@ public class KubeConfigWriterBuilderTest {
                 "new-cluster",
                 "",
                 "",
-                false,
                 workspace, mockLauncher, build);
 
         KubernetesAuthKubeconfig auth = dummyKubeConfigAuth();
@@ -487,7 +433,6 @@ public class KubeConfigWriterBuilderTest {
                 "users:\n" +
                 "- name: \"existing-credential\"\n" +
                 "  user:\n" +
-                "    as-user-extra: {}\n" +
                 "    password: \"existing-password\"\n" +
                 "    username: \"existing-user\"\n", configDumpContent);
     }
@@ -501,7 +446,6 @@ public class KubeConfigWriterBuilderTest {
                 "",
                 "unused-context",
                 "new-namespace",
-                false,
                 workspace, mockLauncher, build);
 
         KubernetesAuthKubeconfig auth = dummyKubeConfigAuth();
@@ -535,7 +479,6 @@ public class KubeConfigWriterBuilderTest {
                 "users:\n" +
                 "- name: \"existing-credential\"\n" +
                 "  user:\n" +
-                "    as-user-extra: {}\n" +
                 "    password: \"existing-password\"\n" +
                 "    username: \"existing-user\"\n", configDumpContent);
     }
@@ -550,7 +493,6 @@ public class KubeConfigWriterBuilderTest {
                 "",
                 "non-existent-context",
                 "new-namespace",
-                false,
                 workspace, mockLauncher, build);
 
         KubernetesAuthKubeconfig auth = dummyKubeConfigAuth();
@@ -589,7 +531,6 @@ public class KubeConfigWriterBuilderTest {
                 "users:\n" +
                 "- name: \"existing-credential\"\n" +
                 "  user:\n" +
-                "    as-user-extra: {}\n" +
                 "    password: \"existing-password\"\n" +
                 "    username: \"existing-user\"\n", configDumpContent);
         assertEquals("[kubernetes-cli] context 'non-existent-context' doesn't exist in kubeconfig", output.toString());
@@ -604,7 +545,6 @@ public class KubeConfigWriterBuilderTest {
                 "",
                 "existing-context",
                 "",
-                false,
                 workspace, mockLauncher, build);
 
         KubernetesAuthKubeconfig auth = dummyKubeConfigAuth();
@@ -633,7 +573,6 @@ public class KubeConfigWriterBuilderTest {
                 "users:\n" +
                 "- name: \"existing-credential\"\n" +
                 "  user:\n" +
-                "    as-user-extra: {}\n" +
                 "    password: \"existing-password\"\n" +
                 "    username: \"existing-user\"\n", configDumpContent);
     }

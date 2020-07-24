@@ -3,7 +3,7 @@
   <parent>
     <groupId>org.jenkins-ci.plugins</groupId>
     <artifactId>plugin</artifactId>
-    <version>3.53</version>
+    <version>4.2</version>
   </parent>
 
   <groupId>org.jenkins-ci.plugins</groupId>
@@ -35,12 +35,12 @@
     <java.level>8</java.level>
 
     <!-- dependency versions -->
-    <jenkins.version>2.176.1</jenkins.version>
+    <jenkins.version>2.204.6</jenkins.version>
 
     <!-- jenkins plugins versions -->
     <jenkins-env-inject.version>2.3.0</jenkins-env-inject.version>
-    <jenkins-declarative.version>1.3.9</jenkins-declarative.version>
-    <jenkins-kubernetes-credentials.version>0.6.0</jenkins-kubernetes-credentials.version>
+    <jenkins-declarative.version>1.4.0</jenkins-declarative.version>
+    <jenkins-kubernetes-credentials.version>0.7.0</jenkins-kubernetes-credentials.version>
 
     <!-- maven plugins versions -->
     <maven-coveralls.version>4.3.0</maven-coveralls.version>
@@ -122,29 +122,26 @@
       <artifactId>mockito-core</artifactId>
       <version>3.0.0</version>
     </dependency>
+    <dependency>
+      <groupId>org.jenkins-ci.plugins</groupId>
+      <artifactId>docker-commons</artifactId>
+      <version>1.14</version>
+      <scope>test</scope>
+    </dependency>
   </dependencies>
 
   <!-- just to fix enforcer RequireUpperBoundDeps -->
   <dependencyManagement>
     <dependencies>
       <dependency>
-        <groupId>org.apache.commons</groupId>
-        <artifactId>commons-lang3</artifactId>
-        <version>3.7</version>
-      </dependency>
-      <dependency>
         <groupId>org.jenkins-ci.plugins</groupId>
         <artifactId>authentication-tokens</artifactId>
         <version>1.3</version>
       </dependency>
       <dependency>
-        <groupId>org.jenkins-ci.plugins</groupId>
-        <artifactId>script-security</artifactId>
-        <version>1.63</version>
-      </dependency>
-      <dependency>
         <groupId>io.jenkins.tools.bom</groupId>
-        <artifactId>bom-2.176.x</artifactId><version>4</version>
+        <artifactId>bom-2.204.x</artifactId>
+        <version>9</version>
         <scope>import</scope>
         <type>pom</type>
       </dependency>

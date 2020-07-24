@@ -16,7 +16,6 @@ env:
   - KUBECTL_VERSION=v1.15.12
   - KUBECTL_VERSION=v1.14.10
   - KUBECTL_VERSION=v1.13.12
-  - KUBECTL_VERSION=v1.12.10
 
 install:
 - curl -LO https://storage.googleapis.com/kubernetes-release/release/$KUBECTL_VERSION/bin/linux/amd64/kubectl

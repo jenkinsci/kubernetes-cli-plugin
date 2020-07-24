@@ -23,7 +23,7 @@ node {
 
 ## Prerequisites
 * A jenkins installation running version 2.176.1 or higher.
-* An executor with `kubectl` installed (tested against [v1.12 to v1.18][travis-config] included).
+* An executor with `kubectl` installed (tested against [v1.13 to v1.18][travis-config] included).
 * A Kubernetes cluster.
 
 ## How it works

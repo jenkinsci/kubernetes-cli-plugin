@@ -39,13 +39,12 @@ public class KubeConfigWriter {
     private final String clusterName;
     private final String contextName;
     private final String namespace;
-    private final boolean skipUseContext;
     private final FilePath workspace;
     private final Launcher launcher;
     private final Run<?, ?> build;
 
     public KubeConfigWriter(@Nonnull String serverUrl, @Nonnull String credentialsId,
-                            String caCertificate, String clusterName, String contextName, String namespace, boolean skipUseContext, FilePath workspace, Launcher launcher, Run<?, ?> build) {
+                            String caCertificate, String clusterName, String contextName, String namespace, FilePath workspace, Launcher launcher, Run<?, ?> build) {
         this.serverUrl = serverUrl;
         this.credentialsId = credentialsId;
         this.caCertificate = caCertificate;
@@ -55,7 +54,6 @@ public class KubeConfigWriter {
         this.clusterName = clusterName;
         this.contextName = contextName;
         this.namespace = namespace;
-        this.skipUseContext = skipUseContext;
     }
 
     private static ConfigBuilder setNamedCluster(ConfigBuilder configBuilder, NamedCluster cluster) {
@@ -152,9 +150,7 @@ public class KubeConfigWriter {
             configBuilder = setContextNamespace(configBuilder, getContextNameOrDefault(), namespace);
         }
 
-        if (!skipUseContext) {
-            configBuilder = setCurrentContext(configBuilder, getContextNameOrDefault());
-        }
+        configBuilder = setCurrentContext(configBuilder, getContextNameOrDefault());
         return configBuilder;
     }
 
@@ -162,7 +158,7 @@ public class KubeConfigWriter {
 
         String currentContext;
 
-        if (wasProvided(contextName) && !skipUseContext) {
+        if (wasProvided(contextName)) {
             if (!hasContext(configBuilder, contextName)) {
                 // There is not much sense to create a new context in a raw kubeconfig file as it would have no
                 // configured credentials. Print a warning

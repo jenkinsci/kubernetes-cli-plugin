@@ -13,15 +13,15 @@ import java.io.IOException;
  */
 public abstract class KubeConfigWriterFactory {
     public static KubeConfigWriter get(@Nonnull String serverUrl, @Nonnull String credentialsId,
-                                       String caCertificate, String clusterName, String contextName, String namespace, boolean skipUseContext, FilePath workspace, Launcher launcher, Run<?, ?> build) {
-        return new KubeConfigWriter(serverUrl, credentialsId, caCertificate, clusterName, contextName, namespace, skipUseContext, workspace, launcher, build);
+                                       String caCertificate, String clusterName, String contextName, String namespace, FilePath workspace, Launcher launcher, Run<?, ?> build) {
+        return new KubeConfigWriter(serverUrl, credentialsId, caCertificate, clusterName, contextName, namespace, workspace, launcher, build);
     }
 
     public static KubeConfigWriter get(@Nonnull String serverUrl, @Nonnull String credentialsId,
-                                       String caCertificate, String clusterName, String contextName, String namespace, boolean skipUseContext, StepContext context) throws IOException, InterruptedException {
+                                       String caCertificate, String clusterName, String contextName, String namespace, StepContext context) throws IOException, InterruptedException {
         Run<?, ?> run = context.get(Run.class);
         FilePath workspace = context.get(FilePath.class);
         Launcher launcher = context.get(Launcher.class);
-        return new KubeConfigWriter(serverUrl, credentialsId, caCertificate, clusterName, contextName, namespace, skipUseContext, workspace, launcher, run);
+        return new KubeConfigWriter(serverUrl, credentialsId, caCertificate, clusterName, contextName, namespace, workspace, launcher, run);
     }
 }

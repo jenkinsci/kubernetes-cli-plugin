@@ -167,9 +167,13 @@ public class KubectlIntegrationTest {
                 "  name: cont1234\n" +
                 "- context:\n" +
                 "    cluster: clus9999\n" +
+                "    user: \"\"\n" +
+                "  name: cont9999\n" +
+                "- context:\n" +
+                "    cluster: test-cluster2\n" +
                 "    user: test-user2\n" +
                 "  name: test-cluster2\n" +
-                "current-context: test-cluster2\n" +
+                "current-context: cont1234\n" +
                 "kind: Config\n" +
                 "preferences: {}\n" +
                 "users:\n" +

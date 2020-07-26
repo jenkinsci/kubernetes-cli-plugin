@@ -15,8 +15,9 @@ import org.junit.Rule;
 import org.junit.Test;
 import org.jvnet.hudson.test.JenkinsRule;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
+import java.util.regex.Pattern;
+
+import static org.junit.Assert.*;
 
 /**
  * @author Max Laverse
@@ -117,6 +118,22 @@ public class KubectlBuildStepTest {
         assertNotNull(b);
         assertBuildStatus(b, Result.FAILURE);
         r.assertLogContains("ERROR: Uninitialized keystore", b);
+    }
+
+    @Test
+    public void testEnvVariableFormat() throws Exception {
+        Folder folder = new Folder(r.jenkins.getItemGroup(), "test-folder");
+        CredentialsProvider.lookupStores(folder).iterator().next().addCredentials(Domain.global(), DummyCredentials.usernamePasswordCredential("test-credentials"));
+
+        WorkflowJob p = folder.createProject(WorkflowJob.class, "testScopedCredentials");
+        p.setDefinition(new CpsFlowDefinition(TestResourceLoader.loadAsString("withKubeConfigPipelineEchoPath.groovy"), true));
+        WorkflowRun b = p.scheduleBuild2(0).waitForStart();
+
+        assertNotNull(b);
+        assertBuildStatus(b, Result.SUCCESS);
+        String regExp = "Using temporary file '(.+).kube(.+)config'";
+        Pattern kubeConfigPathRegexp = Pattern.compile(regExp);
+        assertTrue("No line in the logs matched the regular expression '" + regExp + "': " + r.getLog(b), kubeConfigPathRegexp.matcher(r.getLog(b)).find());
     }
 
     private void assertBuildStatus(WorkflowRun b, Result result) throws Exception {

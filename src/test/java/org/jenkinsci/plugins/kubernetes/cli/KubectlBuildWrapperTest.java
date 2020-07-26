@@ -6,6 +6,7 @@ import com.cloudbees.plugins.credentials.domains.Domain;
 import hudson.model.FreeStyleBuild;
 import hudson.model.FreeStyleProject;
 import hudson.model.Result;
+import hudson.tasks.BatchFile;
 import hudson.tasks.Shell;
 import hudson.util.ListBoxModel;
 import org.jenkinsci.plugins.envinject.EnvInjectBuildWrapper;
@@ -35,8 +36,11 @@ public class KubectlBuildWrapperTest {
         bw.credentialsId = "test-credentials";
         p.getBuildWrappersList().add(bw);
 
-        Shell builder = new Shell("#!/bin/bash\nenv");
-        p.getBuildersList().add(builder);
+        if (isPlatformWindow()){
+            p.getBuildersList().add(new BatchFile("SET K"));
+        }else{
+            p.getBuildersList().add(new Shell("env"));
+        }
 
         FreeStyleBuild b = p.scheduleBuild2(0).waitForStart();
 
@@ -65,8 +69,11 @@ public class KubectlBuildWrapperTest {
         bw.serverUrl = "${SERVER_URL}";
         p.getBuildWrappersList().add(bw);
 
-        Shell b2 = new Shell("#!/bin/bash\ncat \"$KUBECONFIG\"");
-        p.getBuildersList().add(b2);
+        if (isPlatformWindow()){
+            p.getBuildersList().add(new BatchFile("type \"%KUBECONFIG%\""));
+        }else{
+            p.getBuildersList().add(new Shell("cat \"$KUBECONFIG\""));
+        }
 
         FreeStyleBuild b = p.scheduleBuild2(0).waitForStart();
 
@@ -137,5 +144,13 @@ public class KubectlBuildWrapperTest {
                 "    </org.jenkinsci.plugins.kubernetes.cli.KubectlBuildWrapper>\n" +
                 "  </buildWrappers>\n" +
                 "</project>", p.getConfigFile().asString());
+    }
+
+    private boolean isPlatformWindow(){
+        String OS = System.getProperty("os.name");
+        if (OS!=null && OS.startsWith("Windows")){
+            return true;
+        }
+        return false;
     }
 }

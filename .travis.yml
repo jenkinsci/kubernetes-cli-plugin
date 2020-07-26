@@ -9,6 +9,10 @@ cache:
   directories:
   - $HOME/.m2
 
+ignore:
+  - *.md
+  - Jenkinsfile
+
 env:
   - KUBECTL_VERSION=v1.18.3
   - KUBECTL_VERSION=v1.17.6

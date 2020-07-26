@@ -3,36 +3,23 @@
   <parent>
     <groupId>org.jenkins-ci.plugins</groupId>
     <artifactId>plugin</artifactId>
-    <version>4.2</version>
+    <version>4.2</version> <!-- or whatever the newest version available is -->
+    <!--Check https://mvnrepository.com/artifact/org.jenkins-ci.plugins/plugin?repo=jenkins-releases-->
+    <relativePath />
   </parent>
 
+  <name>Kubernetes CLI Plugin</name>
+  <url>https://github.com/jenkinsci/kubernetes-cli-plugin</url>
   <groupId>org.jenkins-ci.plugins</groupId>
   <artifactId>kubernetes-cli</artifactId>
   <version>${revision}${changelist}</version>
-  <name>Kubernetes CLI Plugin</name>
   <packaging>hpi</packaging>
-
-  <scm>
-    <connection>scm:git:git://github.com/jenkinsci/${project.artifactId}-plugin.git</connection>
-    <developerConnection>scm:git:ssh://git@github.com/jenkinsci/${project.artifactId}-plugin.git
-    </developerConnection>
-    <url>https://github.com/jenkinsci/${project.artifactId}-plugin</url>
-    <tag>${scmTag}</tag>
-  </scm>
-
-  <developers>
-    <developer>
-      <id>max_laverse</id>
-      <name>Max Laverse</name>
-    </developer>
-  </developers>
-
-  <url>https://github.com/jenkinsci/kubernetes-cli-plugin</url>
 
   <properties>
     <revision>1.8.4</revision>
     <changelist>-SNAPSHOT</changelist>
     <java.level>8</java.level>
+    <hpi.compatibleSinceVersion>1.0.0</hpi.compatibleSinceVersion>
 
     <!-- dependency versions -->
     <jenkins.version>2.204.6</jenkins.version>
@@ -48,6 +35,52 @@
     <!-- parent override -->
     <surefire.rerunFailingTestsCount>0</surefire.rerunFailingTestsCount>
   </properties>
+
+  <developers>
+    <developer>
+      <id>max_laverse</id>
+      <name>Max Laverse</name>
+    </developer>
+  </developers>
+
+  <scm>
+    <connection>scm:git:git://github.com/jenkinsci/${project.artifactId}-plugin.git</connection>
+    <developerConnection>scm:git:ssh://git@github.com/jenkinsci/${project.artifactId}-plugin.git</developerConnection>
+    <url>https://github.com/jenkinsci/${project.artifactId}-plugin</url>
+    <tag>${scmTag}</tag>
+  </scm>
+
+  <!-- get every artifact through repo.jenkins-ci.org, which proxies all the artifacts that we need -->
+  <repositories>
+    <repository>
+      <id>repo.jenkins-ci.org</id>
+      <url>https://repo.jenkins-ci.org/public/</url>
+    </repository>
+  </repositories>
+
+  <pluginRepositories>
+    <pluginRepository>
+      <id>repo.jenkins-ci.org</id>
+      <url>https://repo.jenkins-ci.org/public/</url>
+    </pluginRepository>
+  </pluginRepositories>
+
+  <dependencyManagement>
+    <dependencies>
+      <dependency>
+        <groupId>io.jenkins.tools.bom</groupId>
+        <artifactId>bom-2.204.x</artifactId>
+        <version>9</version>
+        <scope>import</scope>
+        <type>pom</type>
+      </dependency>
+       <dependency>
+         <groupId>org.jenkins-ci.plugins</groupId>
+         <artifactId>authentication-tokens</artifactId>
+         <version>1.3</version>
+       </dependency>
+    </dependencies>
+  </dependencyManagement>
 
   <dependencies>
     <dependency>
@@ -130,24 +163,6 @@
     </dependency>
   </dependencies>
 
-  <!-- just to fix enforcer RequireUpperBoundDeps -->
-  <dependencyManagement>
-    <dependencies>
-      <dependency>
-        <groupId>org.jenkins-ci.plugins</groupId>
-        <artifactId>authentication-tokens</artifactId>
-        <version>1.3</version>
-      </dependency>
-      <dependency>
-        <groupId>io.jenkins.tools.bom</groupId>
-        <artifactId>bom-2.204.x</artifactId>
-        <version>9</version>
-        <scope>import</scope>
-        <type>pom</type>
-      </dependency>
-    </dependencies>
-  </dependencyManagement>
-
   <!-- for code coverage -->
   <build>
     <plugins>
@@ -170,20 +185,4 @@
       </plugin>
     </plugins>
   </build>
-
-  <!-- get every artifact through repo.jenkins-ci.org, which proxies all the artifacts that we need -->
-  <repositories>
-    <repository>
-      <id>repo.jenkins-ci.org</id>
-      <url>https://repo.jenkins-ci.org/public/</url>
-    </repository>
-  </repositories>
-
-  <pluginRepositories>
-    <pluginRepository>
-      <id>repo.jenkins-ci.org</id>
-      <url>https://repo.jenkins-ci.org/public/</url>
-    </pluginRepository>
-  </pluginRepositories>
-
 </project>

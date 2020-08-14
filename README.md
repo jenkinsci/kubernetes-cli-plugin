@@ -70,6 +70,9 @@ configure a Context for each of them, and use the `contextName` parameter to swi
 | `namespace`     | no        | Modifies the Namespace of the current Context. |
 | `contextName`   | no        | Switch the current Context to this name. The Context must already exist in the KubeConfig file. |
 
+### Using Environment Variables
+
+The parameters `serverUrl`, `clusterName` , `namespace` and `contextName` can contain environment variables and are interpolated before writing the configuration file to disk.
 
 ### Using the plugin in a Pipeline
 The `kubernetes-cli` plugin provides the function `withKubeConfig()` for Jenkins Pipeline support.

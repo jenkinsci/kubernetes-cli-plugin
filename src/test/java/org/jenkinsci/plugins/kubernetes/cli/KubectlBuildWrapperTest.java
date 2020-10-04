@@ -56,7 +56,7 @@ public class KubectlBuildWrapperTest {
         FreeStyleProject p = r.createFreeStyleProject();
 
         EnvInjectJobPropertyInfo info = new EnvInjectJobPropertyInfo(null,
-                "SERVER_URL=http://my-server",
+                "NAMESPACE=testNamespace\nSERVER_URL=http://my-server\nCLUSTER_NAME=testClusterName\nCONTEXT_NAME=testContext",
                 null,
                 null,
                 true,
@@ -67,6 +67,9 @@ public class KubectlBuildWrapperTest {
         KubectlBuildWrapper bw = new KubectlBuildWrapper();
         bw.credentialsId = "test-credentials";
         bw.serverUrl = "${SERVER_URL}";
+        bw.clusterName = "${CLUSTER_NAME}";
+        bw.contextName = "${CONTEXT_NAME}";
+        bw.namespace = "${NAMESPACE}";
         p.getBuildWrappersList().add(bw);
 
         if (isPlatformWindow()){
@@ -80,6 +83,9 @@ public class KubectlBuildWrapperTest {
         assertNotNull(b);
         r.assertBuildStatus(Result.SUCCESS, r.waitForCompletion(b));
         r.assertLogContains("server: \"http://my-server\"", b);
+        r.assertLogContains("name: \"testClusterName\"", b);
+        r.assertLogContains("current-context: \"testContext\"", b);
+        r.assertLogContains("namespace: \"testNamespace\"", b);
     }
 
     @Test

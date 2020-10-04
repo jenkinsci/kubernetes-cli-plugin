@@ -145,9 +145,9 @@ public class KubeConfigWriter {
         return configBuilder;
     }
 
-    private ConfigBuilder completeConfigBuilder(ConfigBuilder configBuilder) {
+    private ConfigBuilder completeConfigBuilder(ConfigBuilder configBuilder) throws IOException, InterruptedException {
         if (wasProvided(namespace)) {
-            configBuilder = setContextNamespace(configBuilder, getContextNameOrDefault(), namespace);
+            configBuilder = setContextNamespace(configBuilder, getContextNameOrDefault(), getNamespace());
         }
 
         configBuilder = setCurrentContext(configBuilder, getContextNameOrDefault());
@@ -159,13 +159,13 @@ public class KubeConfigWriter {
         String currentContext;
 
         if (wasProvided(contextName)) {
-            if (!hasContext(configBuilder, contextName)) {
+            currentContext = getContextName();
+            if (!hasContext(configBuilder, currentContext)) {
                 // There is not much sense to create a new context in a raw kubeconfig file as it would have no
                 // configured credentials. Print a warning
-                launcher.getListener().getLogger().printf("[kubernetes-cli] context '%s' doesn't exist in kubeconfig", contextName);
+                launcher.getListener().getLogger().printf("[kubernetes-cli] context '%s' doesn't exist in kubeconfig", currentContext);
             }
-            configBuilder = setCurrentContext(configBuilder, contextName);
-            currentContext = contextName;
+            configBuilder = setCurrentContext(configBuilder, currentContext);
         } else {
             currentContext = configBuilder.getCurrentContext();
         }
@@ -179,7 +179,7 @@ public class KubeConfigWriter {
         }
 
         if (wasProvided(namespace)) {
-            configBuilder = setContextNamespace(configBuilder, currentContext, namespace);
+            configBuilder = setContextNamespace(configBuilder, currentContext, getNamespace());
         }
 
         return configBuilder;
@@ -209,15 +209,35 @@ public class KubeConfigWriter {
     }
 
     /**
+     * Returns the namespace after environment variable interpolation.
+     *
+     * @return namespace.
+     */
+    private String getNamespace() throws IOException, InterruptedException {
+        final EnvVars env = build.getEnvironment(launcher.getListener());
+        return env.expand(namespace);
+    }
+
+    /**
      * Returns contextName or its default value
      *
      * @return contextName if provided, else the default value.
      */
-    private String getContextNameOrDefault() {
+    private String getContextNameOrDefault() throws IOException, InterruptedException {
         if (!wasProvided(contextName)) {
             return DEFAULT_CONTEXTNAME;
         }
-        return contextName;
+        return getContextName();
+    }
+
+    /**
+     * Returns the contextName after environment variable interpolation.
+     *
+     * @return contextName.
+     */
+    private String getContextName() throws IOException, InterruptedException {
+        final EnvVars env = build.getEnvironment(launcher.getListener());
+        return env.expand(contextName);
     }
 
     /**
@@ -225,11 +245,21 @@ public class KubeConfigWriter {
      *
      * @return clusterName if provided, else the default value.
      */
-    private String getClusterNameOrDefault() {
+    private String getClusterNameOrDefault() throws IOException, InterruptedException {
         if (!wasProvided(clusterName)) {
             return CLUSTERNAME;
         }
-        return clusterName;
+        return getClusterName();
+    }
+
+    /**
+     * Returns the clusterName after environment variable interpolation.
+     *
+     * @return clusterName.
+     */
+    private String getClusterName() throws IOException, InterruptedException {
+        final EnvVars env = build.getEnvironment(launcher.getListener());
+        return env.expand(clusterName);
     }
 
     /**

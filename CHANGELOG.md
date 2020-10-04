@@ -1,6 +1,12 @@
 CHANGELOG
 =========
 
+1.9.0
+-----
+* use kubernetes-credentials 0.7.0 [#65](https://github.com/jenkinsci/kubernetes-cli-plugin/pull/65)
+* add environment interpolation for more parameters [#74](https://github.com/jenkinsci/kubernetes-cli-plugin/pull/74)
+* test against new kubectl versions [#75](https://github.com/jenkinsci/kubernetes-cli-plugin/pull/75)
+
 1.8.3
 -----
 * Fix UI job configuration for multiple credentials not being saved [#61](https://github.com/jenkinsci/kubernetes-cli-plugin/pull/61)

@@ -10,11 +10,11 @@ cache:
   - $HOME/.m2
 
 env:
+  - KUBECTL_VERSION=v1.20.1
   - KUBECTL_VERSION=v1.19.1
   - KUBECTL_VERSION=v1.18.8
   - KUBECTL_VERSION=v1.17.9
   - KUBECTL_VERSION=v1.16.14
-  - KUBECTL_VERSION=v1.15.12
 
 install:
 - curl -LO https://storage.googleapis.com/kubernetes-release/release/$KUBECTL_VERSION/bin/linux/amd64/kubectl

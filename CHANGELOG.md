@@ -1,6 +1,11 @@
 CHANGELOG
 =========
 
+1.10.0
+-----
+* test against 1.20, drop 1.16 [#78](https://github.com/jenkinsci/kubernetes-cli-plugin/pull/78)
+* use kubernetes-credentials 0.8.0 [#79](https://github.com/jenkinsci/kubernetes-cli-plugin/pull/79)
+
 1.9.0
 -----
 * use kubernetes-credentials 0.7.0 [#65](https://github.com/jenkinsci/kubernetes-cli-plugin/pull/65)

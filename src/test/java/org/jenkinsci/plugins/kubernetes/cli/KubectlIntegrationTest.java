@@ -240,11 +240,11 @@ public class KubectlIntegrationTest {
 
     private Version KubectlVersion() {
         String version = System.getenv("KUBECTL_VERSION");
-        if (version.startsWith("v")){
-            version = version.replaceFirst("^v", "");
-        }
         if (version == null) {
             return new Version("99.99.99");
+        }
+        if (version.startsWith("v")){
+            version = version.replaceFirst("^v", "");
         }
         return new Version(version);
     }

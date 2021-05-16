@@ -38,7 +38,7 @@ public class KubectlBuildStepTest {
         KubectlBuildStep.DescriptorImpl d = new KubectlBuildStep.DescriptorImpl();
         WorkflowJob p = r.jenkins.createProject(WorkflowJob.class, "testUsernamePasswordWithSpace");
 
-        ListBoxModel s = d.doFillCredentialsIdItems(p.asItem(), "");
+        ListBoxModel s = d.doFillCredentialsIdItems(p.asItem(), "","1");
 
         assertEquals(6, s.size());
     }

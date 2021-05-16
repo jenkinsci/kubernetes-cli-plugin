@@ -22,7 +22,7 @@
     <hpi.compatibleSinceVersion>1.0.0</hpi.compatibleSinceVersion>
 
     <!-- dependency versions -->
-    <jenkins.version>2.204.6</jenkins.version>
+    <jenkins.version>2.222.1</jenkins.version>
 
     <!-- jenkins plugins versions -->
     <jenkins-env-inject.version>2.3.0</jenkins-env-inject.version>
@@ -159,6 +159,12 @@
       <groupId>org.jenkins-ci.plugins</groupId>
       <artifactId>docker-commons</artifactId>
       <version>1.14</version>
+      <scope>test</scope>
+    </dependency>
+    <dependency>
+      <groupId>org.jenkins-ci.plugins</groupId>
+      <artifactId>matrix-auth</artifactId>
+      <version>2.6.5</version>
       <scope>test</scope>
     </dependency>
   </dependencies>

@@ -6,9 +6,14 @@ import com.cloudbees.plugins.credentials.domains.Domain;
 import hudson.model.FreeStyleBuild;
 import hudson.model.FreeStyleProject;
 import hudson.model.Result;
+import hudson.model.User;
+import hudson.security.ACL;
+import hudson.security.ACLContext;
+import hudson.security.ProjectMatrixAuthorizationStrategy;
 import hudson.tasks.BatchFile;
 import hudson.tasks.Shell;
 import hudson.util.ListBoxModel;
+import jenkins.model.Jenkins;
 import org.jenkinsci.plugins.envinject.EnvInjectBuildWrapper;
 import org.jenkinsci.plugins.envinject.EnvInjectJobPropertyInfo;
 import org.jenkinsci.plugins.kubernetes.cli.helpers.DummyCredentials;
@@ -116,9 +121,29 @@ public class KubectlBuildWrapperTest {
 
         KubectlBuildWrapper.DescriptorImpl d = new KubectlBuildWrapper.DescriptorImpl();
         FreeStyleProject p = r.createFreeStyleProject();
-        ListBoxModel s = d.doFillCredentialsIdItems(p.asItem(), "");
+        ListBoxModel s = d.doFillCredentialsIdItems(p.asItem(), "","1");
 
         assertEquals(6, s.size());
+    }
+
+    @Test
+    public void testListingCredentialsWithoutAncestorAndMissingPermissions() throws Exception {
+        CredentialsStore store = CredentialsProvider.lookupStores(r.jenkins).iterator().next();
+        store.addCredentials(Domain.global(), DummyCredentials.usernamePasswordCredential("1"));
+        store.addCredentials(Domain.global(), DummyCredentials.secretCredential("2"));
+        store.addCredentials(Domain.global(), DummyCredentials.fileCredential("3"));
+        KubectlBuildWrapper.DescriptorImpl d = new KubectlBuildWrapper.DescriptorImpl();
+
+        r.jenkins.setSecurityRealm(r.createDummySecurityRealm());
+        ProjectMatrixAuthorizationStrategy as = new ProjectMatrixAuthorizationStrategy();
+        as.add(Jenkins.READ, "user-not-enough-permissions");
+        r.jenkins.setAuthorizationStrategy(as);
+
+        try (ACLContext _ = ACL.as(User.get("user-not-enough-permissions", true, null).impersonate())) {
+            ListBoxModel options = d.doFillCredentialsIdItems(null, "","1");
+            assertEquals("- current -", options.get(0).name);
+            assertEquals(1, options.size());
+        }
     }
 
     @Test

@@ -1,11 +1,7 @@
 package org.jenkinsci.plugins.kubernetes.cli;
 
-import com.cloudbees.plugins.credentials.common.StandardCredentials;
-import com.cloudbees.plugins.credentials.common.StandardListBoxModel;
-import com.cloudbees.plugins.credentials.domains.URIRequirementBuilder;
 import hudson.Extension;
 import hudson.model.Item;
-import hudson.security.ACL;
 import hudson.util.ListBoxModel;
 import org.jenkinsci.plugins.workflow.steps.Step;
 import org.jenkinsci.plugins.workflow.steps.StepContext;
@@ -96,15 +92,8 @@ public class KubectlBuildStep extends Step {
             return new HashSet<>();
         }
 
-        public ListBoxModel doFillCredentialsIdItems(@Nonnull @AncestorInPath Item item, @QueryParameter String serverUrl) {
-            return new StandardListBoxModel()
-                    .includeEmptyValue()
-                    .includeMatchingAs(
-                            ACL.SYSTEM,
-                            item,
-                            StandardCredentials.class,
-                            URIRequirementBuilder.fromUri(serverUrl).build(),
-                            KubectlCredential.supportedCredentials);
+        public ListBoxModel doFillCredentialsIdItems(@Nonnull @AncestorInPath Item item, @QueryParameter String serverUrl, @QueryParameter String credentialsId) {
+            return CredentialsLister.doFillCredentialsIdItems(item, serverUrl, credentialsId);
         }
     }
 

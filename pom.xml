@@ -16,7 +16,7 @@
   <packaging>hpi</packaging>
 
   <properties>
-    <revision>1.10.1</revision>
+    <revision>1.10.2</revision>
     <changelist>-SNAPSHOT</changelist>
     <java.level>8</java.level>
     <hpi.compatibleSinceVersion>1.0.0</hpi.compatibleSinceVersion>

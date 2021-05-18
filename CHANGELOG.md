@@ -1,6 +1,11 @@
 CHANGELOG
 =========
 
+1.10.1
+-----
+* test for Kubernetes 1.21 [#81](https://github.com/jenkinsci/kubernetes-cli-plugin/pull/81)
+* fix permission check [#82](https://github.com/jenkinsci/kubernetes-cli-plugin/pull/82)
+
 1.10.0
 -----
 * test against 1.20, drop 1.16 [#78](https://github.com/jenkinsci/kubernetes-cli-plugin/pull/78)

@@ -1,6 +1,13 @@
 CHANGELOG
 =========
 
+1.10.1
+-----
+* test for Kubernetes 1.21 [#81](https://github.com/jenkinsci/kubernetes-cli-plugin/pull/81)
+* [SECURITY-2370](https://issues.jenkins.io/browse/SECURITY-2370)
+
+**Previous versions of the plugin allowed users to enumerate credentials on Jenkins without having the necessary permissions. Please upgrade the plugin as soon as you can!**
+
 1.10.0
 -----
 * test against 1.20, drop 1.16 [#78](https://github.com/jenkinsci/kubernetes-cli-plugin/pull/78)

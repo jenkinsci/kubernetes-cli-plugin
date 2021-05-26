@@ -1,6 +1,11 @@
 CHANGELOG
 =========
 
+1.10.2
+-----
+* test with jdk11 [#83](https://github.com/jenkinsci/kubernetes-cli-plugin/pull/83)
+* upgrade kubernetes-credentials to 0.9.0 [#84](https://github.com/jenkinsci/kubernetes-cli-plugin/pull/84)
+
 1.10.1
 -----
 * test for Kubernetes 1.21 [#81](https://github.com/jenkinsci/kubernetes-cli-plugin/pull/81)

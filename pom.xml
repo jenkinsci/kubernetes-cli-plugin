@@ -23,11 +23,13 @@
 
     <!-- dependency versions -->
     <jenkins.version>2.222.1</jenkins.version>
+    <bom.artifactId>bom-2.222.x</bom.artifactId>
+    <bom.version>9</bom.version>
 
     <!-- jenkins plugins versions -->
     <jenkins-env-inject.version>2.3.0</jenkins-env-inject.version>
     <jenkins-declarative.version>1.4.0</jenkins-declarative.version>
-    <jenkins-kubernetes-credentials.version>0.8.0</jenkins-kubernetes-credentials.version>
+    <jenkins-kubernetes-credentials.version>0.9.0</jenkins-kubernetes-credentials.version>
 
     <!-- maven plugins versions -->
     <maven-coveralls.version>4.3.0</maven-coveralls.version>
@@ -69,8 +71,8 @@
     <dependencies>
       <dependency>
         <groupId>io.jenkins.tools.bom</groupId>
-        <artifactId>bom-2.204.x</artifactId>
-        <version>9</version>
+        <artifactId>${bom.artifactId}</artifactId>
+        <version>${bom.version}</version>
         <scope>import</scope>
         <type>pom</type>
       </dependency>
@@ -158,7 +160,7 @@
     <dependency>
       <groupId>org.jenkins-ci.plugins</groupId>
       <artifactId>docker-commons</artifactId>
-      <version>1.14</version>
+      <version>1.15</version>
       <scope>test</scope>
     </dependency>
     <dependency>

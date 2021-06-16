@@ -12,6 +12,7 @@
 
 ## Specifications
 
-  - Version:
-  - Platform:
-  - Subsystem:
+  - Kubernetes CLI Version:
+  - Jenkins Version:
+  - Java Version:
+  - Other plugins + versions:

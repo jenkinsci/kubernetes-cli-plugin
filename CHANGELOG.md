@@ -1,6 +1,10 @@
 CHANGELOG
 =========
 
+1.10.3
+-----
+* compile against kubernetes-client-api 5.4.1 [#86](https://github.com/jenkinsci/kubernetes-cli-plugin/pull/86)
+
 1.10.2
 -----
 * test with jdk11 [#83](https://github.com/jenkinsci/kubernetes-cli-plugin/pull/83)

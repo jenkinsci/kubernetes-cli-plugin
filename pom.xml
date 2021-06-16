@@ -3,7 +3,7 @@
   <parent>
     <groupId>org.jenkins-ci.plugins</groupId>
     <artifactId>plugin</artifactId>
-    <version>4.2</version> <!-- or whatever the newest version available is -->
+    <version>4.18</version> <!-- or whatever the newest version available is -->
     <!--Check https://mvnrepository.com/artifact/org.jenkins-ci.plugins/plugin?repo=jenkins-releases-->
     <relativePath />
   </parent>
@@ -22,7 +22,7 @@
     <hpi.compatibleSinceVersion>1.0.0</hpi.compatibleSinceVersion>
 
     <!-- dependency versions -->
-    <jenkins.version>2.222.1</jenkins.version>
+    <jenkins.version>2.222.4</jenkins.version>
     <bom.artifactId>bom-2.222.x</bom.artifactId>
     <bom.version>9</bom.version>
 
@@ -81,6 +81,17 @@
          <artifactId>authentication-tokens</artifactId>
          <version>1.3</version>
        </dependency>
+      <!-- required to enforce dependency version -->
+      <dependency>
+        <groupId>org.jenkins-ci.plugins</groupId>
+        <artifactId>kubernetes-client-api</artifactId>
+        <version>5.4.1</version>
+      </dependency>
+      <dependency>
+        <groupId>org.jenkins-ci.plugins</groupId>
+        <artifactId>jackson2-api</artifactId>
+        <version>2.12.3</version>
+      </dependency>
     </dependencies>
   </dependencyManagement>
 

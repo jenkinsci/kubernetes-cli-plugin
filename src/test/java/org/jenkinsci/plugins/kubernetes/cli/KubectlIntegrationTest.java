@@ -17,9 +17,11 @@ import org.jvnet.hudson.test.JenkinsRule;
 
 import java.io.File;
 import java.nio.file.Files;
+import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.Arrays;
 import java.util.regex.Pattern;
+import java.util.stream.Stream;
 
 import static org.hamcrest.CoreMatchers.containsString;
 import static org.hamcrest.MatcherAssert.assertThat;
@@ -36,15 +38,21 @@ public class KubectlIntegrationTest {
     protected static final String CREDENTIAL_ID = "test-credentials";
     protected static final String SECONDARY_CREDENTIAL_ID = "cred9999";
     protected static final String KUBECTL_BINARY = "kubectl";
+    protected static final String KUBECTL_BINARY_EXE = "kubectl.exe";
 
-    protected boolean kubectlPresent() {
-        return System.getenv().entrySet().stream()
-                .filter(map -> map.getKey() == "PATH" || map.getKey().startsWith("PATH+"))
-                .flatMap(map -> Arrays.stream(map.getValue().split(Pattern.quote(File.pathSeparator))))
-                .map(Paths::get)
-                .map(p -> p.resolve(KUBECTL_BINARY))
+    protected boolean hasExecutableBinary(Stream<Path> paths, String binaryName){
+        return paths.map(p -> p.resolve(binaryName))
                 .filter(Files::exists)
                 .anyMatch(Files::isExecutable);
+    }
+
+    protected boolean kubectlPresent() {
+        Stream<Path> paths = System.getenv().entrySet().stream()
+                .filter(map -> map.getKey() == "PATH" || map.getKey().startsWith("PATH+"))
+                .flatMap(map -> Arrays.stream(map.getValue().split(Pattern.quote(File.pathSeparator))))
+                .map(Paths::get);
+
+        return hasExecutableBinary(paths,KUBECTL_BINARY) || hasExecutableBinary(paths,KUBECTL_BINARY_EXE);
     }
 
     @Before

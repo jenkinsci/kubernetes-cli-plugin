@@ -12,11 +12,11 @@
   <url>https://github.com/jenkinsci/kubernetes-cli-plugin</url>
   <groupId>org.jenkins-ci.plugins</groupId>
   <artifactId>kubernetes-cli</artifactId>
-  <version>1.10.3</version>
+  <version>${revision}${changelist}</version>
   <packaging>hpi</packaging>
 
   <properties>
-    <revision>1.10.3</revision>
+    <revision>1.10.4</revision>
     <changelist>-SNAPSHOT</changelist>
     <java.level>8</java.level>
     <hpi.compatibleSinceVersion>1.0.0</hpi.compatibleSinceVersion>
@@ -49,7 +49,7 @@
     <connection>scm:git:git://github.com/jenkinsci/${project.artifactId}-plugin.git</connection>
     <developerConnection>scm:git:ssh://git@github.com/jenkinsci/${project.artifactId}-plugin.git</developerConnection>
     <url>https://github.com/jenkinsci/${project.artifactId}-plugin</url>
-    <tag>kubernetes-cli-1.10.3</tag>
+    <tag>${scmTag}</tag>
   </scm>
 
   <!-- get every artifact through repo.jenkins-ci.org, which proxies all the artifacts that we need -->

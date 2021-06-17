@@ -18,8 +18,8 @@ import org.jvnet.hudson.test.JenkinsRule;
 import java.io.File;
 import java.nio.file.Files;
 import java.nio.file.Paths;
+import java.util.Arrays;
 import java.util.regex.Pattern;
-import java.util.stream.Stream;
 
 import static org.hamcrest.CoreMatchers.containsString;
 import static org.hamcrest.MatcherAssert.assertThat;
@@ -38,7 +38,9 @@ public class KubectlIntegrationTest {
     protected static final String KUBECTL_BINARY = "kubectl";
 
     protected boolean kubectlPresent() {
-        return Stream.of(System.getenv("PATH").split(Pattern.quote(File.pathSeparator)))
+        return System.getenv().entrySet().stream()
+                .filter(map -> map.getKey() == "PATH" || map.getKey().startsWith("PATH+"))
+                .flatMap(map -> Arrays.stream(map.getValue().split(Pattern.quote(File.pathSeparator))))
                 .map(Paths::get)
                 .map(p -> p.resolve(KUBECTL_BINARY))
                 .filter(Files::exists)

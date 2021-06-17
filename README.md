@@ -1,7 +1,6 @@
 # Kubernetes CLI Plugin
 
 [![Jenkins Plugin](https://img.shields.io/jenkins/plugin/v/kubernetes-cli.svg)](https://plugins.jenkins.io/kubernetes-cli)
-[![travis-ci](https://travis-ci.org/jenkinsci/kubernetes-cli-plugin.svg?branch=master)](https://travis-ci.org/jenkinsci/kubernetes-cli-plugin)
 [![coveralls](https://coveralls.io/repos/github/jenkinsci/kubernetes-cli-plugin/badge.svg?branch=master)](https://coveralls.io/github/jenkinsci/kubernetes-cli-plugin?branch=master)
 [![Jenkins Plugin installs](https://img.shields.io/jenkins/plugin/i/kubernetes-cli.svg)](https://plugins.jenkins.io/kubernetes-cli)
 

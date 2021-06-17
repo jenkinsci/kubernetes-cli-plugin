@@ -4,6 +4,7 @@ import com.cloudbees.plugins.credentials.CredentialsProvider;
 import com.cloudbees.plugins.credentials.CredentialsStore;
 import com.cloudbees.plugins.credentials.domains.Domain;
 import hudson.FilePath;
+import io.jenkins.cli.shaded.org.apache.commons.lang.SystemUtils;
 import org.jenkinsci.plugins.kubernetes.cli.helpers.DummyCredentials;
 import org.jenkinsci.plugins.kubernetes.cli.helpers.TestResourceLoader;
 import org.jenkinsci.plugins.kubernetes.cli.helpers.Version;
@@ -37,27 +38,10 @@ public class KubectlIntegrationTest {
 
     protected static final String CREDENTIAL_ID = "test-credentials";
     protected static final String SECONDARY_CREDENTIAL_ID = "cred9999";
-    protected static final String KUBECTL_BINARY = "kubectl";
-    protected static final String KUBECTL_BINARY_EXE = "kubectl.exe";
-
-    protected boolean hasExecutableBinary(Stream<Path> paths, String binaryName){
-        return paths.map(p -> p.resolve(binaryName))
-                .filter(Files::exists)
-                .anyMatch(Files::isExecutable);
-    }
-
-    protected boolean kubectlPresent() {
-        Stream<Path> paths = System.getenv().entrySet().stream()
-                .filter(map -> map.getKey() == "PATH" || map.getKey().startsWith("PATH+"))
-                .flatMap(map -> Arrays.stream(map.getValue().split(Pattern.quote(File.pathSeparator))))
-                .map(Paths::get);
-
-        return hasExecutableBinary(paths,KUBECTL_BINARY) || hasExecutableBinary(paths,KUBECTL_BINARY_EXE);
-    }
 
     @Before
     public void checkKubectlPresence() {
-        assumeTrue("The 'kubectl' binary could not be found in the PATH", kubectlPresent());
+        assumeTrue("The '" + kubectlBinaryName() + "' binary could not be found in the PATH", kubectlPresent());
     }
 
     @Test
@@ -248,12 +232,30 @@ public class KubectlIntegrationTest {
                 "  user: {}"));
     }
 
+    protected boolean kubectlPresent() {
+        return executablePaths()
+                .map(p -> p.resolve(kubectlBinaryName()))
+                .filter(Files::exists)
+                .anyMatch(Files::isExecutable);
+    }
+
+    protected Stream<Path> executablePaths() {
+        return System.getenv().entrySet().stream()
+                .filter(map -> map.getKey().equals("PATH") || map.getKey().startsWith("PATH+"))
+                .flatMap(map -> Arrays.stream(map.getValue().split(Pattern.quote(File.pathSeparator))))
+                .map(Paths::get);
+    }
+
+    protected String kubectlBinaryName() {
+        return SystemUtils.IS_OS_WINDOWS ? "kubectl.exe" : "kubectl";
+    }
+
     private Version KubectlVersion() {
         String version = System.getenv("KUBECTL_VERSION");
         if (version == null) {
             return new Version("99.99.99");
         }
-        if (version.startsWith("v")){
+        if (version.startsWith("v")) {
             version = version.replaceFirst("^v", "");
         }
         return new Version(version);

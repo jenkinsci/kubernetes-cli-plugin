@@ -10,11 +10,11 @@ String[] platforms = [
 // Kubectl versions to test against
 String[] kubectlVersions = [
     '1.16.15',
-    // '1.17.17',
-    // '1.18.18',
-    // '1.19.10',
-    // '1.20.6',
-    // '1.21.0',
+    '1.17.17',
+    '1.18.18',
+    '1.19.10',
+    '1.20.6',
+    '1.21.0',
 ]
 
 // Not sure what this does yet
@@ -28,10 +28,9 @@ properties([
 // for which the kubectl version, platform and java version
 // can be specified
 def buildPlugin(kubectlVersion, platform, jdk) {
-    echo "Testing against ${kubectlVersion} on ${platform}"
     node(platform) {
         timeout(15) {
-            dir('sources') { // switch to subdir
+            withEnv(["PATH+KUBECTL=${env.WORKSPACE}/.bin", "KUBECTL_VERSION=v${kubectlVersion}"]){
                 stage('checkout') {
                     checkout scm
                 }
@@ -39,13 +38,11 @@ def buildPlugin(kubectlVersion, platform, jdk) {
                     downloadKubectl(kubectlVersion)
                 }
                 stage('tests') {
-                    withEnv(["PATH+KUBECTL=${env.WORKSPACE}/.bin"]){
-                        infra.runWithJava('mvn clean test findbugs:check', jdk)
-                    }
+                    infra.runWithJava('mvn clean test findbugs:check', jdk)
                 }
-                stage('report') {
-                    //script 'mvn jacoco:report coveralls:report'
-                }
+                // stage('coverage') {
+                //     infra.runWithJava('mvn jacoco:report coveralls:report')
+                // }
             }
         }
     }
@@ -54,18 +51,20 @@ def buildPlugin(kubectlVersion, platform, jdk) {
 // Generates a script block to download kubectl
 def downloadKubectl(kubectlVersion){
     if (isUnix()) {
-        sh '''
+        sh """
             mkdir -p .bin
             cd .bin
             curl -LO https://storage.googleapis.com/kubernetes-release/release/v${kubectlVersion}/bin/linux/amd64/kubectl
             chmod +x kubectl
-        '''
+            kubectl version --client 
+        """
     }else{
-        bat '''
+        bat """
             mkdir -p .bin
             cd .bin
             curl -LO https://storage.googleapis.com/kubernetes-release/release/v${kubectlVersion}/bin/windows/amd64/kubectl.exe
-        '''
+            kubectl.exe version --client
+        """
     }
 }
 

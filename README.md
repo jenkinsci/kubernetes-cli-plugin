@@ -127,7 +127,7 @@ is provided no context will be set by default.
 
 ![webui](img/webui.png)
 
-## Generating Kubernetes credentials
+## Generating Kubernetes Credentials
 The following example describes how you could use the token of a `ServiceAccount` to access the Kubernetes cluster from Jenkins.
 The result depends of course on the permissions you have.
 

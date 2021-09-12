@@ -33,7 +33,7 @@ from this environment variable.
 Once the build is finished (or the pipeline block is exited), the temporary `kubeconfig` file is
 automatically removed.
 
-## Supported credentials
+## Supported Credentials
 The following types of credentials are supported and can be used to authenticate against Kubernetes clusters:
 * Token, as secrets (see [Plain Credentials plugin][plain-credentials-plugin])
 * Plain KubeConfig files (see [Plain Credentials plugin][plain-credentials-plugin])
@@ -41,10 +41,10 @@ The following types of credentials are supported and can be used to authenticate
 * Certificates (see [Credentials plugin][credentials-plugin])
 * OpenShift OAuth tokens, as secrets (see [Kubernetes Credentials plugin][kubernetes-credentials-plugin])
 
-## Quick usage guide
+## Quick Usage Quide
 The parameters have a slightly different effect depending if a plain KubeConfig file is provided.
 
-### Parameters (without KubeConfig file)
+### Parameters (without KubeConfig File)
 | Name            | Mandatory | Description   |
 | --------------- | --------- | ------------- |
 | `credentialsId` | yes       | The Jenkins ID of the credentials. |
@@ -54,7 +54,7 @@ The parameters have a slightly different effect depending if a plain KubeConfig 
 | `namespace`     | no        | Namespace for the Context. |
 | `contextName`   | no        | Name of the generated Context configuration. (default: `k8s`) |
 
-### Parameters (with KubeConfig file)
+### Parameters (with KubeConfig File)
 
 The plugin writes the plain KubeConfig file and doesn't change any other field if only `credentialsId` is filled.
 The recommended way to use a single KubeConfig file with multiples clusters, users, and default namespaces is to
@@ -73,7 +73,7 @@ configure a Context for each of them, and use the `contextName` parameter to swi
 
 The parameters `serverUrl`, `clusterName` , `namespace` and `contextName` can contain environment variables and are interpolated before writing the configuration file to disk.
 
-### Using the plugin in a Pipeline
+### Using the Plugin in a Pipeline
 The `kubernetes-cli` plugin provides the function `withKubeConfig()` for Jenkins Pipeline support.
 You can go to the *Snippet Generator* page under the *Pipeline Syntax* section in Jenkins, select
 *withKubeConfig: Setup Kubernetes CLI* from the *Sample Step* dropdown, and it will provide you configuration
@@ -97,7 +97,7 @@ node {
 }
 ```
 
-##### Usage with multiple credentails
+##### Usage with multiple Credentials
 
 If you need to use more than one credential at the same time, you can use `withKubeCredentials`. It takes an array of the
 parameters as described for `withKubeConfig`, e.g.:
@@ -118,7 +118,7 @@ node {
 The merging is done by `kubectl` itself, refer to its documentation for details. When providing more than one credential
 is provided no context will be set by default.
 
-### Using the plugin from the web interface
+### Using the Plugin from the Web Interface
 1. Within the Jenkins dashboard, select a Job and then select "Configure"
 2. Scroll down to the "Build Environment" section
 3. Select "Configure Kubernetes CLI (kubectl) with multiple credentials"
@@ -167,7 +167,7 @@ To run the tests:
 mvn clean test
 ```
 
-### Perform a release
+### Performing a Release
 ```bash
 mvn release:prepare release:perform
 ```

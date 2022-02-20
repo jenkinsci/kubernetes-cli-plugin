@@ -9,12 +9,12 @@ String[] platforms = [
 
 // Kubectl versions to test against
 String[] kubectlVersions = [
-    '1.16.15',
-    '1.17.17',
-    '1.18.18',
-    '1.19.10',
-    '1.20.6',
-    '1.21.0',
+    '1.18.20',
+    '1.19.16',
+    '1.20.15',
+    '1.21.10',
+    '1.22.7',
+    '1.23.4'
 ]
 
 // Not sure what this does yet

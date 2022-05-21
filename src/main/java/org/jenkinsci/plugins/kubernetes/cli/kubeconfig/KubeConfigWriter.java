@@ -43,7 +43,7 @@ public class KubeConfigWriter {
     private final Launcher launcher;
     private final Run<?, ?> build;
 
-    public KubeConfigWriter(@Nonnull String serverUrl, @Nonnull String credentialsId,
+    public KubeConfigWriter(@Nonnull String serverUrl, String credentialsId,
                             String caCertificate, String clusterName, String contextName, String namespace, FilePath workspace, Launcher launcher, Run<?, ?> build) {
         this.serverUrl = serverUrl;
         this.credentialsId = credentialsId;
@@ -104,19 +104,25 @@ public class KubeConfigWriter {
      * @throws InterruptedException on file operations
      */
     public String writeKubeConfig() throws IOException, InterruptedException {
-        // Lookup for the credentials on Jenkins
-        final StandardCredentials credentials = CredentialsProvider.findCredentialById(credentialsId, StandardCredentials.class, build, Collections.emptyList());
-        if (credentials == null) {
-            throw new AbortException("[kubernetes-cli] unable to find credentials with id '" + credentialsId + "'");
-        }
+        ConfigBuilder configBuilder;
 
-        // Convert into Kubernetes credentials
-        KubernetesAuth auth = AuthenticationTokens.convert(KubernetesAuth.class, credentials);
-        if (auth == null) {
-            throw new AbortException("[kubernetes-cli] unsupported credentials type " + credentials.getClass().getName());
-        }
+        if (credentialsId == null || credentialsId.isEmpty()){
+            configBuilder = getConfigBuilderInCluster();
+        }else{
+            // Lookup for the credentials on Jenkins
+            final StandardCredentials credentials = CredentialsProvider.findCredentialById(credentialsId, StandardCredentials.class, build, Collections.emptyList());
+            if (credentials == null) {
+                throw new AbortException("[kubernetes-cli] unable to find credentials with id '" + credentialsId + "'");
+            }
 
-        ConfigBuilder configBuilder = getConfigBuilder(credentials.getId(), auth);
+            // Convert into Kubernetes credentials
+            KubernetesAuth auth = AuthenticationTokens.convert(KubernetesAuth.class, credentials);
+            if (auth == null) {
+                throw new AbortException("[kubernetes-cli] unsupported credentials type " + credentials.getClass().getName());
+            }
+
+            configBuilder = getConfigBuilderWithAuth(credentials.getId(), auth);
+        }
 
         // Write configuration to disk
         FilePath configFile = getTempKubeconfigFilePath();
@@ -125,7 +131,13 @@ public class KubeConfigWriter {
         return configFile.getRemote();
     }
 
-    public ConfigBuilder getConfigBuilder(String credentialsId, KubernetesAuth auth) throws IOException, InterruptedException {
+    // getConfigBuilderInCluster() starts an empty configBuilder
+    public ConfigBuilder getConfigBuilderInCluster() throws IOException, InterruptedException {
+        ConfigBuilder configBuilder = new io.fabric8.kubernetes.api.model.ConfigBuilder();
+        return completeConfigBuilder(configBuilder);
+    }
+
+    public ConfigBuilder getConfigBuilderWithAuth(String credentialsId, KubernetesAuth auth) throws IOException, InterruptedException {
         // Build configuration
         ConfigBuilder configBuilder;
         try {

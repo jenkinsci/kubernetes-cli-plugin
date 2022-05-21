@@ -90,8 +90,7 @@ public class KubectlBuildStepTest {
         WorkflowRun b = p.scheduleBuild2(0).waitForStart();
 
         assertNotNull(b);
-        assertBuildStatus(b, Result.FAILURE);
-        r.assertLogContains("ERROR: [kubernetes-cli] unable to find credentials with id ''", b);
+        assertBuildStatus(b, Result.SUCCESS);
     }
 
     @Test

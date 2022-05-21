@@ -13,7 +13,6 @@ import io.fabric8.kubernetes.client.internal.SerializationUtils;
 import jenkins.security.ConfidentialStoreRule;
 import org.jenkinsci.plugins.kubernetes.auth.KubernetesAuth;
 import org.jenkinsci.plugins.kubernetes.auth.impl.*;
-import org.jenkinsci.plugins.kubernetes.cli.helpers.DummyCredentials;
 import org.jenkinsci.plugins.kubernetes.cli.helpers.DummyTokenCredentialImpl;
 import org.junit.Before;
 import org.junit.Rule;
@@ -75,7 +74,7 @@ public class KubeConfigWriterAuthTest {
 
         KubernetesAuth auth = new KubernetesAuthUsernamePassword("test-user", "test-password");
 
-        ConfigBuilder configBuilder = configWriter.getConfigBuilder("test-credential", auth);
+        ConfigBuilder configBuilder = configWriter.getConfigBuilderWithAuth("test-credential", auth);
         String configDumpContent = dumpBuilder(configBuilder);
 
         assertEquals("---\n" +
@@ -126,7 +125,7 @@ public class KubeConfigWriterAuthTest {
 
         KubernetesAuth auth = new KubernetesAuthCertificate(cert, key);
 
-        ConfigBuilder configBuilder = configWriter.getConfigBuilder("test-credential", auth);
+        ConfigBuilder configBuilder = configWriter.getConfigBuilderWithAuth("test-credential", auth);
         String configDumpContent = dumpBuilder(configBuilder);
 
         assertEquals("---\n" +
@@ -161,7 +160,7 @@ public class KubeConfigWriterAuthTest {
 
         KubernetesAuth auth = new KubernetesAuthToken(new DummyTokenCredentialImpl(CredentialsScope.GLOBAL, "test", "test", "test", "test"));
 
-        ConfigBuilder configBuilder = configWriter.getConfigBuilder("test-credential", auth);
+        ConfigBuilder configBuilder = configWriter.getConfigBuilderWithAuth("test-credential", auth);
         String configDumpContent = dumpBuilder(configBuilder);
 
         assertEquals("---\n" +
@@ -198,7 +197,7 @@ public class KubeConfigWriterAuthTest {
 
             KubernetesAuth auth = new KubernetesAuthKeystore(keyStore, "test");
 
-            ConfigBuilder configBuilder = configWriter.getConfigBuilder("test-credential", auth);
+            ConfigBuilder configBuilder = configWriter.getConfigBuilderWithAuth("test-credential", auth);
             String configDumpContent = dumpBuilder(configBuilder);
 
             assertEquals("---\n" +

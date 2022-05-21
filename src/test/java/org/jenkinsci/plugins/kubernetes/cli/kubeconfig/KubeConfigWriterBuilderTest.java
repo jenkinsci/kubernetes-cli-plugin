@@ -1,14 +1,15 @@
 package org.jenkinsci.plugins.kubernetes.cli.kubeconfig;
 
+import static org.junit.Assert.assertEquals;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.Mockito.when;
+
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
+import java.io.PrintStream;
+
 import com.fasterxml.jackson.core.JsonProcessingException;
-import hudson.EnvVars;
-import hudson.FilePath;
-import hudson.Launcher;
-import hudson.model.AbstractBuild;
-import hudson.model.TaskListener;
-import hudson.remoting.VirtualChannel;
-import io.fabric8.kubernetes.api.model.ConfigBuilder;
-import io.fabric8.kubernetes.client.internal.SerializationUtils;
+
 import org.jenkinsci.plugins.kubernetes.auth.KubernetesAuth;
 import org.jenkinsci.plugins.kubernetes.auth.impl.KubernetesAuthKubeconfig;
 import org.jenkinsci.plugins.kubernetes.auth.impl.KubernetesAuthUsernamePassword;
@@ -18,13 +19,14 @@ import org.junit.Test;
 import org.junit.rules.TemporaryFolder;
 import org.mockito.Mockito;
 
-import java.io.ByteArrayOutputStream;
-import java.io.IOException;
-import java.io.PrintStream;
-
-import static org.junit.Assert.assertEquals;
-import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.Mockito.when;
+import hudson.EnvVars;
+import hudson.FilePath;
+import hudson.Launcher;
+import hudson.model.AbstractBuild;
+import hudson.model.TaskListener;
+import hudson.remoting.VirtualChannel;
+import io.fabric8.kubernetes.api.model.ConfigBuilder;
+import io.fabric8.kubernetes.client.internal.SerializationUtils;
 
 public class KubeConfigWriterBuilderTest {
     final ByteArrayOutputStream output = new ByteArrayOutputStream();

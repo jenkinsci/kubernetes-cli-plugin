@@ -1,11 +1,16 @@
 package org.jenkinsci.plugins.kubernetes.cli;
 
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertTrue;
+
+import java.util.regex.Pattern;
+
 import com.cloudbees.hudson.plugins.folder.Folder;
 import com.cloudbees.plugins.credentials.CredentialsProvider;
 import com.cloudbees.plugins.credentials.CredentialsStore;
 import com.cloudbees.plugins.credentials.domains.Domain;
-import hudson.model.Result;
-import hudson.util.ListBoxModel;
+
 import org.jenkinsci.plugins.kubernetes.cli.helpers.DummyCredentials;
 import org.jenkinsci.plugins.kubernetes.cli.helpers.TestResourceLoader;
 import org.jenkinsci.plugins.workflow.cps.CpsFlowDefinition;
@@ -15,9 +20,8 @@ import org.junit.Rule;
 import org.junit.Test;
 import org.jvnet.hudson.test.JenkinsRule;
 
-import java.util.regex.Pattern;
-
-import static org.junit.Assert.*;
+import hudson.model.Result;
+import hudson.util.ListBoxModel;
 
 /**
  * @author Max Laverse
@@ -38,7 +42,7 @@ public class KubectlBuildStepTest {
         KubectlBuildStep.DescriptorImpl d = new KubectlBuildStep.DescriptorImpl();
         WorkflowJob p = r.jenkins.createProject(WorkflowJob.class, "testUsernamePasswordWithSpace");
 
-        ListBoxModel s = d.doFillCredentialsIdItems(p.asItem(), "","1");
+        ListBoxModel s = d.doFillCredentialsIdItems(p.asItem(), "", "1");
 
         assertEquals(6, s.size());
     }
@@ -46,10 +50,12 @@ public class KubectlBuildStepTest {
     @Test
     public void testScopedCredentials() throws Exception {
         Folder folder = new Folder(r.jenkins.getItemGroup(), "test-folder");
-        CredentialsProvider.lookupStores(folder).iterator().next().addCredentials(Domain.global(), DummyCredentials.usernamePasswordCredential("test-credentials"));
+        CredentialsProvider.lookupStores(folder).iterator().next().addCredentials(Domain.global(),
+                DummyCredentials.usernamePasswordCredential("test-credentials"));
 
         WorkflowJob p = folder.createProject(WorkflowJob.class, "testScopedCredentials");
-        p.setDefinition(new CpsFlowDefinition(TestResourceLoader.loadAsString("withKubeConfigPipelineEchoPath.groovy"), true));
+        p.setDefinition(
+                new CpsFlowDefinition(TestResourceLoader.loadAsString("withKubeConfigPipelineEchoPath.groovy"), true));
         WorkflowRun b = p.scheduleBuild2(0).waitForStart();
 
         assertNotNull(b);
@@ -59,10 +65,12 @@ public class KubectlBuildStepTest {
     @Test
     public void testMissingScopedCredentials() throws Exception {
         Folder folder = new Folder(r.jenkins.getItemGroup(), "test-folder");
-        CredentialsProvider.lookupStores(folder).iterator().next().addCredentials(Domain.global(), DummyCredentials.usernamePasswordCredential("test-credentials"));
+        CredentialsProvider.lookupStores(folder).iterator().next().addCredentials(Domain.global(),
+                DummyCredentials.usernamePasswordCredential("test-credentials"));
 
         WorkflowJob p = r.jenkins.createProject(WorkflowJob.class, "testMissingScopedCredentials");
-        p.setDefinition(new CpsFlowDefinition(TestResourceLoader.loadAsString("withKubeConfigPipelineEchoPath.groovy"), true));
+        p.setDefinition(
+                new CpsFlowDefinition(TestResourceLoader.loadAsString("withKubeConfigPipelineEchoPath.groovy"), true));
         WorkflowRun b = p.scheduleBuild2(0).waitForStart();
 
         assertNotNull(b);
@@ -72,10 +80,12 @@ public class KubectlBuildStepTest {
 
     @Test
     public void testKubeConfigDisposedAlsoOnFailure() throws Exception {
-        CredentialsProvider.lookupStores(r.jenkins).iterator().next().addCredentials(Domain.global(), DummyCredentials.usernamePasswordCredentialWithSpace("test-credentials"));
+        CredentialsProvider.lookupStores(r.jenkins).iterator().next().addCredentials(Domain.global(),
+                DummyCredentials.usernamePasswordCredentialWithSpace("test-credentials"));
 
         WorkflowJob p = r.jenkins.createProject(WorkflowJob.class, "testCleanupOnFailure");
-        p.setDefinition(new CpsFlowDefinition(TestResourceLoader.loadAsString("withKubeConfigPipelineFailing.groovy"), true));
+        p.setDefinition(
+                new CpsFlowDefinition(TestResourceLoader.loadAsString("withKubeConfigPipelineFailing.groovy"), true));
         WorkflowRun b = p.scheduleBuild2(0).waitForStart();
 
         assertNotNull(b);
@@ -86,7 +96,8 @@ public class KubectlBuildStepTest {
     @Test
     public void testCredentialNotProvided() throws Exception {
         WorkflowJob p = r.jenkins.createProject(WorkflowJob.class, "testWithEmptyCredentials");
-        p.setDefinition(new CpsFlowDefinition(TestResourceLoader.loadAsString("withKubeConfigPipelineMissingCredentials.groovy"), true));
+        p.setDefinition(new CpsFlowDefinition(
+                TestResourceLoader.loadAsString("withKubeConfigPipelineMissingCredentials.groovy"), true));
         WorkflowRun b = p.scheduleBuild2(0).waitForStart();
 
         assertNotNull(b);
@@ -95,23 +106,29 @@ public class KubectlBuildStepTest {
 
     @Test
     public void testUnsupportedCredential() throws Exception {
-        CredentialsProvider.lookupStores(r.jenkins).iterator().next().addCredentials(Domain.global(), DummyCredentials.unsupportedCredential("test-credentials"));
+        CredentialsProvider.lookupStores(r.jenkins).iterator().next().addCredentials(Domain.global(),
+                DummyCredentials.unsupportedCredential("test-credentials"));
 
         WorkflowJob p = r.jenkins.createProject(WorkflowJob.class, "testWithUnsupportedCredentials");
-        p.setDefinition(new CpsFlowDefinition(TestResourceLoader.loadAsString("withKubeConfigPipelineEchoPath.groovy"), true));
+        p.setDefinition(
+                new CpsFlowDefinition(TestResourceLoader.loadAsString("withKubeConfigPipelineEchoPath.groovy"), true));
         WorkflowRun b = p.scheduleBuild2(0).waitForStart();
 
         assertNotNull(b);
         assertBuildStatus(b, Result.FAILURE);
-        r.assertLogContains("ERROR: [kubernetes-cli] unsupported credentials type org.jenkinsci.plugins.kubernetes.cli.helpers.UnsupportedCredential", b);
+        r.assertLogContains(
+                "ERROR: [kubernetes-cli] unsupported credentials type org.jenkinsci.plugins.kubernetes.cli.helpers.UnsupportedCredential",
+                b);
     }
 
     @Test
     public void testInvalidCertificate() throws Exception {
-        CredentialsProvider.lookupStores(r.jenkins).iterator().next().addCredentials(Domain.global(), DummyCredentials.brokenCertificateCredential("test-credentials"));
+        CredentialsProvider.lookupStores(r.jenkins).iterator().next().addCredentials(Domain.global(),
+                DummyCredentials.brokenCertificateCredential("test-credentials"));
 
         WorkflowJob p = r.jenkins.createProject(WorkflowJob.class, "testWithBrokenCertificate");
-        p.setDefinition(new CpsFlowDefinition(TestResourceLoader.loadAsString("withKubeConfigPipelineEchoPath.groovy"), true));
+        p.setDefinition(
+                new CpsFlowDefinition(TestResourceLoader.loadAsString("withKubeConfigPipelineEchoPath.groovy"), true));
         WorkflowRun b = p.scheduleBuild2(0).waitForStart();
 
         assertNotNull(b);
@@ -122,17 +139,20 @@ public class KubectlBuildStepTest {
     @Test
     public void testEnvVariableFormat() throws Exception {
         Folder folder = new Folder(r.jenkins.getItemGroup(), "test-folder");
-        CredentialsProvider.lookupStores(folder).iterator().next().addCredentials(Domain.global(), DummyCredentials.usernamePasswordCredential("test-credentials"));
+        CredentialsProvider.lookupStores(folder).iterator().next().addCredentials(Domain.global(),
+                DummyCredentials.usernamePasswordCredential("test-credentials"));
 
         WorkflowJob p = folder.createProject(WorkflowJob.class, "testScopedCredentials");
-        p.setDefinition(new CpsFlowDefinition(TestResourceLoader.loadAsString("withKubeConfigPipelineEchoPath.groovy"), true));
+        p.setDefinition(
+                new CpsFlowDefinition(TestResourceLoader.loadAsString("withKubeConfigPipelineEchoPath.groovy"), true));
         WorkflowRun b = p.scheduleBuild2(0).waitForStart();
 
         assertNotNull(b);
         assertBuildStatus(b, Result.SUCCESS);
         String regExp = "Using temporary file '(.+).kube(.+)config'";
         Pattern kubeConfigPathRegexp = Pattern.compile(regExp);
-        assertTrue("No line in the logs matched the regular expression '" + regExp + "': " + r.getLog(b), kubeConfigPathRegexp.matcher(r.getLog(b)).find());
+        assertTrue("No line in the logs matched the regular expression '" + regExp + "': " + r.getLog(b),
+                kubeConfigPathRegexp.matcher(r.getLog(b)).find());
     }
 
     private void assertBuildStatus(WorkflowRun b, Result result) throws Exception {

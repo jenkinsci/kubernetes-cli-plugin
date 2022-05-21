@@ -1,8 +1,8 @@
 package org.jenkinsci.plugins.kubernetes.cli.kubeconfig;
 
-import org.junit.Test;
-
 import static org.junit.Assert.assertEquals;
+
+import org.junit.Test;
 
 public class CertificateHelperTest {
     @Test
@@ -13,7 +13,8 @@ public class CertificateHelperTest {
 
     @Test
     public void testWrapAlreadyWrappedCertificate() {
-        String wrapperCertificate = CertificateHelper.wrapCertificate("-----BEGIN CERTIFICATE-----\na-certificate\n-----END CERTIFICATE-----");
+        String wrapperCertificate = CertificateHelper
+                .wrapCertificate("-----BEGIN CERTIFICATE-----\na-certificate\n-----END CERTIFICATE-----");
         assertEquals("-----BEGIN CERTIFICATE-----\na-certificate\n-----END CERTIFICATE-----", wrapperCertificate);
     }
 
@@ -25,7 +26,8 @@ public class CertificateHelperTest {
 
     @Test
     public void testWrapAlreadyWrappedPrivateKey() {
-        String wrapperCertificate = CertificateHelper.wrapPrivateKey("-----BEGIN PRIVATE KEY-----\na-key\n-----END PRIVATE KEY-----");
+        String wrapperCertificate = CertificateHelper
+                .wrapPrivateKey("-----BEGIN PRIVATE KEY-----\na-key\n-----END PRIVATE KEY-----");
         assertEquals("-----BEGIN PRIVATE KEY-----\na-key\n-----END PRIVATE KEY-----", wrapperCertificate);
     }
 }

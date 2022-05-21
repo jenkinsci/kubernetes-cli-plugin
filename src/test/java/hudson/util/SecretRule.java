@@ -16,4 +16,3 @@ public class SecretRule extends ExternalResource {
         Secret.SECRET = oldSecret;
     }
 }
-

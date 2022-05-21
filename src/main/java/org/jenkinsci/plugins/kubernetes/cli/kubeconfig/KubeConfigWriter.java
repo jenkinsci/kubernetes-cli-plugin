@@ -1,7 +1,20 @@
 package org.jenkinsci.plugins.kubernetes.cli.kubeconfig;
 
+import java.io.IOException;
+import java.nio.charset.StandardCharsets;
+import java.util.Collections;
+
+import javax.annotation.Nonnull;
+
 import com.cloudbees.plugins.credentials.CredentialsProvider;
 import com.cloudbees.plugins.credentials.common.StandardCredentials;
+
+import org.jenkinsci.plugins.kubernetes.auth.KubernetesAuth;
+import org.jenkinsci.plugins.kubernetes.auth.KubernetesAuthConfig;
+import org.jenkinsci.plugins.kubernetes.auth.KubernetesAuthException;
+import org.jenkinsci.plugins.kubernetes.auth.impl.KubernetesAuthKubeconfig;
+import org.jenkinsci.plugins.kubernetes.credentials.Utils;
+
 import hudson.AbortException;
 import hudson.EnvVars;
 import hudson.FilePath;
@@ -13,16 +26,6 @@ import io.fabric8.kubernetes.api.model.ConfigFluent;
 import io.fabric8.kubernetes.api.model.NamedCluster;
 import io.fabric8.kubernetes.client.internal.SerializationUtils;
 import jenkins.authentication.tokens.api.AuthenticationTokens;
-import org.jenkinsci.plugins.kubernetes.auth.KubernetesAuth;
-import org.jenkinsci.plugins.kubernetes.auth.KubernetesAuthConfig;
-import org.jenkinsci.plugins.kubernetes.auth.KubernetesAuthException;
-import org.jenkinsci.plugins.kubernetes.auth.impl.KubernetesAuthKubeconfig;
-import org.jenkinsci.plugins.kubernetes.credentials.Utils;
-
-import javax.annotation.Nonnull;
-import java.io.IOException;
-import java.nio.charset.StandardCharsets;
-import java.util.Collections;
 
 /**
  * @author Max Laverse
@@ -44,7 +47,8 @@ public class KubeConfigWriter {
     private final Run<?, ?> build;
 
     public KubeConfigWriter(@Nonnull String serverUrl, String credentialsId,
-                            String caCertificate, String clusterName, String contextName, String namespace, FilePath workspace, Launcher launcher, Run<?, ?> build) {
+            String caCertificate, String clusterName, String contextName, String namespace, FilePath workspace,
+            Launcher launcher, Run<?, ?> build) {
         this.serverUrl = serverUrl;
         this.credentialsId = credentialsId;
         this.caCertificate = caCertificate;
@@ -65,18 +69,21 @@ public class KubeConfigWriter {
     }
 
     private static ConfigBuilder setContextCluster(ConfigBuilder configBuilder, String context, String cluster) {
-        return existingOrNewContext(configBuilder, context).editOrNewContext().withCluster(cluster).endContext().endContext();
+        return existingOrNewContext(configBuilder, context).editOrNewContext().withCluster(cluster).endContext()
+                .endContext();
     }
 
     private static ConfigBuilder setContextNamespace(ConfigBuilder configBuilder, String context, String namespace) {
-        return existingOrNewContext(configBuilder, context).editOrNewContext().withNamespace(namespace).endContext().endContext();
+        return existingOrNewContext(configBuilder, context).editOrNewContext().withNamespace(namespace).endContext()
+                .endContext();
     }
 
     private static ConfigBuilder setCurrentContext(ConfigBuilder configBuilder, String context) {
         return configBuilder.withNewCurrentContext(context);
     }
 
-    private static ConfigFluent.ContextsNested<ConfigBuilder> existingOrNewContext(ConfigBuilder configBuilder, String context) {
+    private static ConfigFluent.ContextsNested<ConfigBuilder> existingOrNewContext(ConfigBuilder configBuilder,
+            String context) {
         if (hasContext(configBuilder, context)) {
             return configBuilder.editMatchingContext(p -> context.equals(p.getName()));
         } else {
@@ -88,7 +95,8 @@ public class KubeConfigWriter {
         return configBuilder.hasMatchingContext(p -> context.equals(p.getName()));
     }
 
-    private static ConfigFluent.ClustersNested<ConfigBuilder> existingOrNewCluster(ConfigBuilder configBuilder, String cluster) {
+    private static ConfigFluent.ClustersNested<ConfigBuilder> existingOrNewCluster(ConfigBuilder configBuilder,
+            String cluster) {
         if (configBuilder.hasMatchingCluster(p -> cluster.equals(p.getName()))) {
             return configBuilder.editMatchingCluster(p -> cluster.equals(p.getName()));
         } else {
@@ -106,11 +114,12 @@ public class KubeConfigWriter {
     public String writeKubeConfig() throws IOException, InterruptedException {
         ConfigBuilder configBuilder;
 
-        if (credentialsId == null || credentialsId.isEmpty()){
+        if (credentialsId == null || credentialsId.isEmpty()) {
             configBuilder = getConfigBuilderInCluster();
-        }else{
+        } else {
             // Lookup for the credentials on Jenkins
-            final StandardCredentials credentials = CredentialsProvider.findCredentialById(credentialsId, StandardCredentials.class, build, Collections.emptyList());
+            final StandardCredentials credentials = CredentialsProvider.findCredentialById(credentialsId,
+                    StandardCredentials.class, build, Collections.emptyList());
             if (credentials == null) {
                 throw new AbortException("[kubernetes-cli] unable to find credentials with id '" + credentialsId + "'");
             }
@@ -118,7 +127,8 @@ public class KubeConfigWriter {
             // Convert into Kubernetes credentials
             KubernetesAuth auth = AuthenticationTokens.convert(KubernetesAuth.class, credentials);
             if (auth == null) {
-                throw new AbortException("[kubernetes-cli] unsupported credentials type " + credentials.getClass().getName());
+                throw new AbortException(
+                        "[kubernetes-cli] unsupported credentials type " + credentials.getClass().getName());
             }
 
             configBuilder = getConfigBuilderWithAuth(credentials.getId(), auth);
@@ -126,7 +136,8 @@ public class KubeConfigWriter {
 
         // Write configuration to disk
         FilePath configFile = getTempKubeconfigFilePath();
-        configFile.write(SerializationUtils.getMapper().writeValueAsString(configBuilder.build()), String.valueOf(StandardCharsets.UTF_8));
+        configFile.write(SerializationUtils.getMapper().writeValueAsString(configBuilder.build()),
+                String.valueOf(StandardCharsets.UTF_8));
 
         return configFile.getRemote();
     }
@@ -137,13 +148,16 @@ public class KubeConfigWriter {
         return completeConfigBuilder(configBuilder);
     }
 
-    public ConfigBuilder getConfigBuilderWithAuth(String credentialsId, KubernetesAuth auth) throws IOException, InterruptedException {
+    public ConfigBuilder getConfigBuilderWithAuth(String credentialsId, KubernetesAuth auth)
+            throws IOException, InterruptedException {
         // Build configuration
         ConfigBuilder configBuilder;
         try {
             // Build an initial Kubeconfig builder from the credentials
-            KubernetesAuthConfig authConfig = new KubernetesAuthConfig(getServerUrl(), caCertificate, !wasProvided(caCertificate));
-            configBuilder = auth.buildConfigBuilder(authConfig, getContextNameOrDefault(), getClusterNameOrDefault(), credentialsId);
+            KubernetesAuthConfig authConfig = new KubernetesAuthConfig(getServerUrl(), caCertificate,
+                    !wasProvided(caCertificate));
+            configBuilder = auth.buildConfigBuilder(authConfig, getContextNameOrDefault(), getClusterNameOrDefault(),
+                    credentialsId);
 
             // Set additional values of the Kubeconfig
             if (auth instanceof KubernetesAuthKubeconfig) {
@@ -166,16 +180,19 @@ public class KubeConfigWriter {
         return configBuilder;
     }
 
-    private ConfigBuilder completeKubeconfigConfigBuilder(ConfigBuilder configBuilder) throws IOException, InterruptedException {
+    private ConfigBuilder completeKubeconfigConfigBuilder(ConfigBuilder configBuilder)
+            throws IOException, InterruptedException {
 
         String currentContext;
 
         if (wasProvided(contextName)) {
             currentContext = getContextName();
             if (!hasContext(configBuilder, currentContext)) {
-                // There is not much sense to create a new context in a raw kubeconfig file as it would have no
+                // There is not much sense to create a new context in a raw kubeconfig file as
+                // it would have no
                 // configured credentials. Print a warning
-                launcher.getListener().getLogger().printf("[kubernetes-cli] context '%s' doesn't exist in kubeconfig", currentContext);
+                launcher.getListener().getLogger().printf("[kubernetes-cli] context '%s' doesn't exist in kubeconfig",
+                        currentContext);
             }
             configBuilder = setCurrentContext(configBuilder, currentContext);
         } else {
@@ -286,7 +303,8 @@ public class KubeConfigWriter {
 
     private FilePath getTempKubeconfigFilePath() throws IOException, InterruptedException {
         if (!workspace.exists()) {
-            launcher.getListener().getLogger().println("[kubernetes-cli] creating missing workspace to write temporary kubeconfig");
+            launcher.getListener().getLogger()
+                    .println("[kubernetes-cli] creating missing workspace to write temporary kubeconfig");
             workspace.mkdirs();
         }
 

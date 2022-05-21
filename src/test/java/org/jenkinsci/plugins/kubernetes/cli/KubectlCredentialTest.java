@@ -1,22 +1,18 @@
 package org.jenkinsci.plugins.kubernetes.cli;
 
-import com.cloudbees.hudson.plugins.folder.Folder;
+import static org.junit.Assert.assertEquals;
+
 import com.cloudbees.plugins.credentials.CredentialsProvider;
 import com.cloudbees.plugins.credentials.CredentialsStore;
 import com.cloudbees.plugins.credentials.domains.Domain;
-import hudson.model.Result;
-import hudson.util.ListBoxModel;
+
 import org.jenkinsci.plugins.kubernetes.cli.helpers.DummyCredentials;
-import org.jenkinsci.plugins.kubernetes.cli.helpers.TestResourceLoader;
-import org.jenkinsci.plugins.workflow.cps.CpsFlowDefinition;
 import org.jenkinsci.plugins.workflow.job.WorkflowJob;
-import org.jenkinsci.plugins.workflow.job.WorkflowRun;
 import org.junit.Rule;
 import org.junit.Test;
 import org.jvnet.hudson.test.JenkinsRule;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
+import hudson.util.ListBoxModel;
 
 /**
  * @author Max Laverse
@@ -37,7 +33,7 @@ public class KubectlCredentialTest {
         KubectlCredential.DescriptorImpl d = new KubectlCredential.DescriptorImpl();
         WorkflowJob p = r.jenkins.createProject(WorkflowJob.class, "testUsernamePasswordWithSpace");
 
-        ListBoxModel s = d.doFillCredentialsIdItems(p.asItem(), "","1");
+        ListBoxModel s = d.doFillCredentialsIdItems(p.asItem(), "", "1");
 
         assertEquals(6, s.size());
     }

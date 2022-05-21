@@ -1,8 +1,19 @@
 package org.jenkinsci.plugins.kubernetes.cli;
 
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
+
 import com.cloudbees.plugins.credentials.CredentialsProvider;
 import com.cloudbees.plugins.credentials.CredentialsStore;
 import com.cloudbees.plugins.credentials.domains.Domain;
+
+import org.jenkinsci.plugins.envinject.EnvInjectBuildWrapper;
+import org.jenkinsci.plugins.envinject.EnvInjectJobPropertyInfo;
+import org.jenkinsci.plugins.kubernetes.cli.helpers.DummyCredentials;
+import org.junit.Rule;
+import org.junit.Test;
+import org.jvnet.hudson.test.JenkinsRule;
+
 import hudson.model.FreeStyleBuild;
 import hudson.model.FreeStyleProject;
 import hudson.model.Result;
@@ -14,15 +25,6 @@ import hudson.tasks.BatchFile;
 import hudson.tasks.Shell;
 import hudson.util.ListBoxModel;
 import jenkins.model.Jenkins;
-import org.jenkinsci.plugins.envinject.EnvInjectBuildWrapper;
-import org.jenkinsci.plugins.envinject.EnvInjectJobPropertyInfo;
-import org.jenkinsci.plugins.kubernetes.cli.helpers.DummyCredentials;
-import org.junit.Rule;
-import org.junit.Test;
-import org.jvnet.hudson.test.JenkinsRule;
-
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
 
 /**
  * @author Max Laverse
@@ -33,7 +35,8 @@ public class KubectlBuildWrapperTest {
 
     @Test
     public void testEnvVariablePresent() throws Exception {
-        CredentialsProvider.lookupStores(r.jenkins).iterator().next().addCredentials(Domain.global(), DummyCredentials.secretCredential("test-credentials"));
+        CredentialsProvider.lookupStores(r.jenkins).iterator().next().addCredentials(Domain.global(),
+                DummyCredentials.secretCredential("test-credentials"));
 
         FreeStyleProject p = r.createFreeStyleProject();
 
@@ -41,9 +44,9 @@ public class KubectlBuildWrapperTest {
         bw.credentialsId = "test-credentials";
         p.getBuildWrappersList().add(bw);
 
-        if (isPlatformWindow()){
+        if (isPlatformWindow()) {
             p.getBuildersList().add(new BatchFile("SET K"));
-        }else{
+        } else {
             p.getBuildersList().add(new Shell("env"));
         }
 
@@ -56,7 +59,8 @@ public class KubectlBuildWrapperTest {
 
     @Test
     public void testEnvInterpolation() throws Exception {
-        CredentialsProvider.lookupStores(r.jenkins).iterator().next().addCredentials(Domain.global(), DummyCredentials.secretCredential("test-credentials"));
+        CredentialsProvider.lookupStores(r.jenkins).iterator().next().addCredentials(Domain.global(),
+                DummyCredentials.secretCredential("test-credentials"));
 
         FreeStyleProject p = r.createFreeStyleProject();
 
@@ -68,7 +72,6 @@ public class KubectlBuildWrapperTest {
                 null);
         p.getBuildWrappersList().add(new EnvInjectBuildWrapper(info));
 
-
         KubectlBuildWrapper bw = new KubectlBuildWrapper();
         bw.credentialsId = "test-credentials";
         bw.serverUrl = "${SERVER_URL}";
@@ -77,9 +80,9 @@ public class KubectlBuildWrapperTest {
         bw.namespace = "${NAMESPACE}";
         p.getBuildWrappersList().add(bw);
 
-        if (isPlatformWindow()){
+        if (isPlatformWindow()) {
             p.getBuildersList().add(new BatchFile("type \"%KUBECONFIG%\""));
-        }else{
+        } else {
             p.getBuildersList().add(new Shell("cat \"$KUBECONFIG\""));
         }
 
@@ -95,7 +98,8 @@ public class KubectlBuildWrapperTest {
 
     @Test
     public void testKubeConfigDisposed() throws Exception {
-        CredentialsProvider.lookupStores(r.jenkins).iterator().next().addCredentials(Domain.global(), DummyCredentials.secretCredential("test-credentials"));
+        CredentialsProvider.lookupStores(r.jenkins).iterator().next().addCredentials(Domain.global(),
+                DummyCredentials.secretCredential("test-credentials"));
 
         FreeStyleProject p = r.createFreeStyleProject();
 
@@ -121,7 +125,7 @@ public class KubectlBuildWrapperTest {
 
         KubectlBuildWrapper.DescriptorImpl d = new KubectlBuildWrapper.DescriptorImpl();
         FreeStyleProject p = r.createFreeStyleProject();
-        ListBoxModel s = d.doFillCredentialsIdItems(p.asItem(), "","1");
+        ListBoxModel s = d.doFillCredentialsIdItems(p.asItem(), "", "1");
 
         assertEquals(6, s.size());
     }
@@ -140,7 +144,7 @@ public class KubectlBuildWrapperTest {
         r.jenkins.setAuthorizationStrategy(as);
 
         try (ACLContext _ = ACL.as(User.get("user-not-enough-permissions", true, null).impersonate())) {
-            ListBoxModel options = d.doFillCredentialsIdItems(null, "","1");
+            ListBoxModel options = d.doFillCredentialsIdItems(null, "", "1");
             assertEquals("- current -", options.get(0).name);
             assertEquals(1, options.size());
         }
@@ -148,7 +152,8 @@ public class KubectlBuildWrapperTest {
 
     @Test
     public void testConfigurationPersistedOnSave() throws Exception {
-        CredentialsProvider.lookupStores(r.jenkins).iterator().next().addCredentials(Domain.global(), DummyCredentials.secretCredential("test-credentials"));
+        CredentialsProvider.lookupStores(r.jenkins).iterator().next().addCredentials(Domain.global(),
+                DummyCredentials.secretCredential("test-credentials"));
 
         FreeStyleProject p = r.createFreeStyleProject();
 
@@ -177,9 +182,9 @@ public class KubectlBuildWrapperTest {
                 "</project>", p.getConfigFile().asString());
     }
 
-    private boolean isPlatformWindow(){
+    private boolean isPlatformWindow() {
         String OS = System.getProperty("os.name");
-        if (OS!=null && OS.startsWith("Windows")){
+        if (OS != null && OS.startsWith("Windows")) {
             return true;
         }
         return false;

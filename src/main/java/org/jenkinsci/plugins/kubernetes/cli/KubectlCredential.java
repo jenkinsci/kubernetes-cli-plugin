@@ -53,12 +53,5 @@ public class KubectlCredential extends AbstractDescribableImpl<KubectlCredential
         public ListBoxModel doFillCredentialsIdItems(@Nonnull @AncestorInPath Item item, @QueryParameter String serverUrl, @QueryParameter String credentialsId) {
             return CredentialsLister.doFillCredentialsIdItems(item, serverUrl, credentialsId);
         }
-
-        public FormValidation doCheckCredentialsId(@QueryParameter String credentialsId) throws IOException, ServletException {
-            if (Strings.isNullOrEmpty(credentialsId)) {
-                return FormValidation.error("The credentialId cannot be empty");
-            }
-            return FormValidation.ok();
-        }
     }
 }

@@ -4,8 +4,8 @@
 [![coveralls](https://coveralls.io/repos/github/jenkinsci/kubernetes-cli-plugin/badge.svg?branch=master)](https://coveralls.io/github/jenkinsci/kubernetes-cli-plugin?branch=master)
 [![Jenkins Plugin installs](https://img.shields.io/jenkins/plugin/i/kubernetes-cli.svg)](https://plugins.jenkins.io/kubernetes-cli)
 
-Allows you to configure [kubectl][kubectl] in your job to interact with Kubernetes clusters.
-Any tool built on top of `kubectl` can then be used from your pipelines to perform deployments, e.g. [Shopify/krane][krane].
+Allows you to configure [kubectl][kubectl] to interact with Kubernetes clusters from within your jobs.
+Any tool built on top of `kubectl` can then be used from your pipelines to perform deployments, e.g. [Shopify/krane][krane] or [Helm].
 
 *Initially extracted and rewritten from the [Kubernetes Plugin][kubernetes-plugin].*
 
@@ -41,6 +41,9 @@ The following types of credentials are supported and can be used to authenticate
 * Certificates (see [Credentials plugin][credentials-plugin])
 * OpenShift OAuth tokens, as secrets (see [Kubernetes Credentials plugin][kubernetes-credentials-plugin])
 
+If the Jenkins Agent is running within a Pod (e.g. by using the [Kubernetes Plugin][kubernetes-plugin]),
+you can fallback to the Pod's ServiceAccount by not setting any credentials.
+
 ## Quick Usage Quide
 The parameters have a slightly different effect depending if a plain KubeConfig file is provided.
 
@@ -68,6 +71,13 @@ configure a Context for each of them, and use the `contextName` parameter to swi
 | `clusterName`   | no        | Modifies the Cluster of the current Context. Also used for the generated `cluster` block if a `serverUrl` was provided. |
 | `namespace`     | no        | Modifies the Namespace of the current Context. |
 | `contextName`   | no        | Switch the current Context to this name. The Context must already exist in the KubeConfig file. |
+
+### Parameters (when running inside a Pod)
+| Name            | Mandatory | Description   |
+| --------------- | --------- | ------------- |
+| `namespace`     | no        | Namespace for the Context. |
+| `contextName`   | no        | Name of the generated Context configuration. (default: `k8s`) |
+
 
 ### Using Environment Variables
 
@@ -117,6 +127,26 @@ node {
 
 The merging is done by `kubectl` itself, refer to its documentation for details. When providing more than one credential
 is provided no context will be set by default.
+
+##### Usage whe running inside a Pod
+
+If you're running your pipelines within Kubernetes Pods, you could use those Pod's ServiceAccount instead of providing dedicated credentials.
+To do so, don't specify any `credentialsId` when calling `withKubeConfig()`.
+
+```groovy
+podTemplate(inheritFrom: 'default')
+{
+    node(POD_LABEL){
+      stage('List Configmaps') {
+        withKubeConfig([namespace: "this-other-namespace"]) {
+          sh 'kubectl get configmap'
+        }
+  }
+    }
+}
+```
+
+Note: You may also want to call `podTemplate()` with a dedicated `ServiceAccount` that has the permissions required by your pipeline.
 
 ### Using the Plugin from the Web Interface
 1. Within the Jenkins dashboard, select a Job and then select "Configure"
@@ -182,3 +212,5 @@ mvn release:prepare release:perform
 [master-build]: https://ci.jenkins.io/job/Plugins/job/kubernetes-cli-plugin/job/master/
 [issue-tracker]: https://issues.jenkins-ci.org/issues/?jql=project%20%3D%20JENKINS%20AND%20status%20in%20(Open%2C%20%22In%20Progress%22%2C%20Reopened%2C%20%22In%20Review%22)%20AND%20component%20%3D%20kubernetes-cli-plugin
 [multi-clusters]: https://kubernetes.io/docs/tasks/access-application-cluster/configure-access-multiple-clusters/
+[Bound Service Account Token Volume]: https://kubernetes.io/docs/reference/access-authn-authz/service-accounts-admin/#bound-service-account-token-volume
+[Helm]: https://helm.sh/

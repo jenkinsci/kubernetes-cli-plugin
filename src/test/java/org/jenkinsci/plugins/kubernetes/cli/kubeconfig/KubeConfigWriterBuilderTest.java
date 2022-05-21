@@ -81,6 +81,75 @@ public class KubeConfigWriterBuilderTest {
     }
 
     @Test
+    public void inClusterServiceAccountToken() throws Exception {
+        KubeConfigWriter configWriter = new KubeConfigWriter(
+                "",
+                "",
+                "",
+                "",
+                "",
+                "",
+                workspace, mockLauncher, build);
+
+        ConfigBuilder configBuilder = configWriter.getConfigBuilderInCluster();
+        String configDumpContent = dumpBuilder(configBuilder);
+
+        assertEquals("---\n" +
+                "clusters: []\n" +
+                "contexts: []\n" +
+                "current-context: \"k8s\"\n" +
+                "users: []\n", configDumpContent);
+    }
+
+    @Test
+    public void inClusterServiceAccountTokenWithNamespace() throws Exception {
+        KubeConfigWriter configWriter = new KubeConfigWriter(
+                "",
+                "",
+                "",
+                "",
+                "",
+                "test-namespace",
+                workspace, mockLauncher, build);
+
+        ConfigBuilder configBuilder = configWriter.getConfigBuilderInCluster();
+        String configDumpContent = dumpBuilder(configBuilder);
+
+        assertEquals("---\n" +
+                "clusters: []\n" +
+                "contexts:\n" +
+                "- context:\n" +
+                "    namespace: \"test-namespace\"\n" +
+                "  name: \"k8s\"\n" +
+                "current-context: \"k8s\"\n" +
+                "users: []\n", configDumpContent);
+    }
+
+    @Test
+    public void inClusterServiceAccountTokeninClusterServiceAccountTokenWithContextAndNamespace() throws Exception {
+        KubeConfigWriter configWriter = new KubeConfigWriter(
+                "",
+                "",
+                "",
+                "",
+                "test-context",
+                "test-namespace",
+                workspace, mockLauncher, build);
+
+        ConfigBuilder configBuilder = configWriter.getConfigBuilderInCluster();
+        String configDumpContent = dumpBuilder(configBuilder);
+
+        assertEquals("---\n" +
+                "clusters: []\n" +
+                "contexts:\n" +
+                "- context:\n" +
+                "    namespace: \"test-namespace\"\n" +
+                "  name: \"test-context\"\n" +
+                "current-context: \"test-context\"\n" +
+                "users: []\n", configDumpContent);
+    }
+
+    @Test
     public void basicConfigMinimum() throws Exception {
         KubeConfigWriter configWriter = new KubeConfigWriter(
                 "https://localhost:6443",
@@ -93,7 +162,7 @@ public class KubeConfigWriterBuilderTest {
 
         KubernetesAuth auth = new KubernetesAuthUsernamePassword("test-user", "test-password");
 
-        ConfigBuilder configBuilder = configWriter.getConfigBuilder("test-credential", auth);
+        ConfigBuilder configBuilder = configWriter.getConfigBuilderWithAuth("test-credential", auth);
         String configDumpContent = dumpBuilder(configBuilder);
 
         assertEquals("---\n" +
@@ -128,7 +197,7 @@ public class KubeConfigWriterBuilderTest {
 
         KubernetesAuth auth = new KubernetesAuthUsernamePassword("test-user", "test-password");
 
-        ConfigBuilder configBuilder = configWriter.getConfigBuilder("test-credential", auth);
+        ConfigBuilder configBuilder = configWriter.getConfigBuilderWithAuth("test-credential", auth);
         String configDumpContent = dumpBuilder(configBuilder);
 
         assertEquals("---\n" +
@@ -163,7 +232,7 @@ public class KubeConfigWriterBuilderTest {
 
         KubernetesAuth auth = new KubernetesAuthUsernamePassword("test-user", "test-password");
 
-        ConfigBuilder configBuilder = configWriter.getConfigBuilder("test-credential", auth);
+        ConfigBuilder configBuilder = configWriter.getConfigBuilderWithAuth("test-credential", auth);
         String configDumpContent = dumpBuilder(configBuilder);
 
         assertEquals("---\n" +
@@ -198,7 +267,7 @@ public class KubeConfigWriterBuilderTest {
 
         KubernetesAuth auth = new KubernetesAuthUsernamePassword("test-user", "test-password");
 
-        ConfigBuilder configBuilder = configWriter.getConfigBuilder("test-credential", auth);
+        ConfigBuilder configBuilder = configWriter.getConfigBuilderWithAuth("test-credential", auth);
         String configDumpContent = dumpBuilder(configBuilder);
 
         assertEquals("---\n" +
@@ -234,7 +303,7 @@ public class KubeConfigWriterBuilderTest {
 
         KubernetesAuth auth = new KubernetesAuthUsernamePassword("test-user", "test-password");
 
-        ConfigBuilder configBuilder = configWriter.getConfigBuilder("test-credential", auth);
+        ConfigBuilder configBuilder = configWriter.getConfigBuilderWithAuth("test-credential", auth);
         String configDumpContent = dumpBuilder(configBuilder);
 
         assertEquals("---\n" +
@@ -269,7 +338,7 @@ public class KubeConfigWriterBuilderTest {
 
         KubernetesAuthKubeconfig auth = dummyKubeConfigAuth();
 
-        ConfigBuilder configBuilder = configWriter.getConfigBuilder("test-credential", auth);
+        ConfigBuilder configBuilder = configWriter.getConfigBuilderWithAuth("test-credential", auth);
         String configDumpContent = dumpBuilder(configBuilder);
 
         // asserts that:
@@ -310,7 +379,7 @@ public class KubeConfigWriterBuilderTest {
 
         KubernetesAuthKubeconfig auth = dummyKubeConfigAuth();
 
-        ConfigBuilder configBuilder = configWriter.getConfigBuilder("test-credential", auth);
+        ConfigBuilder configBuilder = configWriter.getConfigBuilderWithAuth("test-credential", auth);
         String configDumpContent = dumpBuilder(configBuilder);
 
         // asserts that:
@@ -357,7 +426,7 @@ public class KubeConfigWriterBuilderTest {
 
         KubernetesAuthKubeconfig auth = dummyKubeConfigAuth();
 
-        ConfigBuilder configBuilder = configWriter.getConfigBuilder("test-credential", auth);
+        ConfigBuilder configBuilder = configWriter.getConfigBuilderWithAuth("test-credential", auth);
         String configDumpContent = dumpBuilder(configBuilder);
 
         // asserts that:
@@ -404,7 +473,7 @@ public class KubeConfigWriterBuilderTest {
 
         KubernetesAuthKubeconfig auth = dummyKubeConfigAuth();
 
-        ConfigBuilder configBuilder = configWriter.getConfigBuilder("test-credential", auth);
+        ConfigBuilder configBuilder = configWriter.getConfigBuilderWithAuth("test-credential", auth);
         String configDumpContent = dumpBuilder(configBuilder);
 
         // asserts that:
@@ -449,7 +518,7 @@ public class KubeConfigWriterBuilderTest {
                 workspace, mockLauncher, build);
 
         KubernetesAuthKubeconfig auth = dummyKubeConfigAuth();
-        ConfigBuilder configBuilder = configWriter.getConfigBuilder("test-credential", auth);
+        ConfigBuilder configBuilder = configWriter.getConfigBuilderWithAuth("test-credential", auth);
         String configDumpContent = dumpBuilder(configBuilder);
 
         // asserts that:
@@ -496,7 +565,7 @@ public class KubeConfigWriterBuilderTest {
                 workspace, mockLauncher, build);
 
         KubernetesAuthKubeconfig auth = dummyKubeConfigAuth();
-        ConfigBuilder configBuilder = configWriter.getConfigBuilder("test-credential", auth);
+        ConfigBuilder configBuilder = configWriter.getConfigBuilderWithAuth("test-credential", auth);
         String configDumpContent = dumpBuilder(configBuilder);
 
         // asserts that:
@@ -548,7 +617,7 @@ public class KubeConfigWriterBuilderTest {
                 workspace, mockLauncher, build);
 
         KubernetesAuthKubeconfig auth = dummyKubeConfigAuth();
-        ConfigBuilder configBuilder = configWriter.getConfigBuilder("test-credential", auth);
+        ConfigBuilder configBuilder = configWriter.getConfigBuilderWithAuth("test-credential", auth);
         String configDumpContent = dumpBuilder(configBuilder);
 
         assertEquals("---\n" +

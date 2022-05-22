@@ -1,25 +1,19 @@
 package org.jenkinsci.plugins.kubernetes.cli;
 
+import static org.junit.Assert.assertEquals;
+
+import java.util.ArrayList;
+import java.util.List;
+
 import com.cloudbees.plugins.credentials.CredentialsProvider;
-import com.cloudbees.plugins.credentials.CredentialsStore;
 import com.cloudbees.plugins.credentials.domains.Domain;
-import hudson.model.FreeStyleBuild;
-import hudson.model.FreeStyleProject;
-import hudson.model.Result;
-import hudson.tasks.Shell;
-import hudson.util.ListBoxModel;
-import org.jenkinsci.plugins.envinject.EnvInjectBuildWrapper;
-import org.jenkinsci.plugins.envinject.EnvInjectJobPropertyInfo;
+
 import org.jenkinsci.plugins.kubernetes.cli.helpers.DummyCredentials;
 import org.junit.Rule;
 import org.junit.Test;
 import org.jvnet.hudson.test.JenkinsRule;
 
-import java.util.ArrayList;
-import java.util.List;
-
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
+import hudson.model.FreeStyleProject;
 
 /**
  * @author Max Laverse
@@ -30,12 +24,13 @@ public class MultiKubectlBuildWrapperTest {
 
     @Test
     public void testConfigurationPersistedOnSave() throws Exception {
-        CredentialsProvider.lookupStores(r.jenkins).iterator().next().addCredentials(Domain.global(), DummyCredentials.secretCredential("test-credentials"));
+        CredentialsProvider.lookupStores(r.jenkins).iterator().next().addCredentials(Domain.global(),
+                DummyCredentials.secretCredential("test-credentials"));
 
         FreeStyleProject p = r.createFreeStyleProject();
 
         KubectlCredential kc = new KubectlCredential();
-        kc.credentialsId= "test-credentials";
+        kc.credentialsId = "test-credentials";
         List<KubectlCredential> l = new ArrayList();
         l.add(kc);
         MultiKubectlBuildWrapper bw = new MultiKubectlBuildWrapper(l);

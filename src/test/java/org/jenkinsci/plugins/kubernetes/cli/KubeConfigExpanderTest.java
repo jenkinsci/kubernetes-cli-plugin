@@ -1,9 +1,10 @@
 package org.jenkinsci.plugins.kubernetes.cli;
 
-import hudson.EnvVars;
+import static org.junit.Assert.assertEquals;
+
 import org.junit.Test;
 
-import static org.junit.Assert.assertEquals;
+import hudson.EnvVars;
 
 public class KubeConfigExpanderTest {
     @Test

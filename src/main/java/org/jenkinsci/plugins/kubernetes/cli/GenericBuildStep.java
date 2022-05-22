@@ -1,8 +1,11 @@
 package org.jenkinsci.plugins.kubernetes.cli;
 
-import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
-import hudson.FilePath;
-import hudson.model.TaskListener;
+import java.io.File;
+import java.util.ArrayList;
+import java.util.List;
+
+import javax.annotation.Nonnull;
+
 import org.jenkinsci.plugins.kubernetes.cli.kubeconfig.KubeConfigWriter;
 import org.jenkinsci.plugins.kubernetes.cli.kubeconfig.KubeConfigWriterFactory;
 import org.jenkinsci.plugins.workflow.steps.AbstractStepExecutionImpl;
@@ -10,10 +13,9 @@ import org.jenkinsci.plugins.workflow.steps.BodyExecutionCallback;
 import org.jenkinsci.plugins.workflow.steps.EnvironmentExpander;
 import org.jenkinsci.plugins.workflow.steps.StepContext;
 
-import javax.annotation.Nonnull;
-import java.io.File;
-import java.util.ArrayList;
-import java.util.List;
+import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
+import hudson.FilePath;
+import hudson.model.TaskListener;
 
 public class GenericBuildStep extends AbstractStepExecutionImpl {
     private static final long serialVersionUID = 1L;
@@ -33,7 +35,7 @@ public class GenericBuildStep extends AbstractStepExecutionImpl {
     public boolean start() throws Exception {
         List<String> configFiles = new ArrayList<String>();
 
-        for(KubectlCredential cred: this.kubectlCredentials) {
+        for (KubectlCredential cred : this.kubectlCredentials) {
             KubeConfigWriter kubeConfigWriter = KubeConfigWriterFactory.get(
                     cred.serverUrl,
                     cred.credentialsId,
@@ -78,7 +80,7 @@ public class GenericBuildStep extends AbstractStepExecutionImpl {
         }
 
         protected void finished(StepContext context) throws Exception {
-            for(String configFile : configFiles) {
+            for (String configFile : configFiles) {
                 context.get(FilePath.class).child(configFile).delete();
             }
             context.get(TaskListener.class).getLogger().println("[kubernetes-cli] kubectl configuration cleaned up");

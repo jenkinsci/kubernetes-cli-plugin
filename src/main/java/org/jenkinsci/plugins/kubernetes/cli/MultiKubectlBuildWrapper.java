@@ -1,5 +1,15 @@
 package org.jenkinsci.plugins.kubernetes.cli;
 
+import java.io.File;
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
+
+import org.jenkinsci.plugins.kubernetes.cli.kubeconfig.KubeConfigWriter;
+import org.jenkinsci.plugins.kubernetes.cli.kubeconfig.KubeConfigWriterFactory;
+import org.kohsuke.stapler.DataBoundConstructor;
+import org.kohsuke.stapler.DataBoundSetter;
+
 import hudson.EnvVars;
 import hudson.Extension;
 import hudson.FilePath;
@@ -9,15 +19,6 @@ import hudson.model.Run;
 import hudson.model.TaskListener;
 import hudson.tasks.BuildWrapperDescriptor;
 import jenkins.tasks.SimpleBuildWrapper;
-import org.jenkinsci.plugins.kubernetes.cli.kubeconfig.KubeConfigWriter;
-import org.jenkinsci.plugins.kubernetes.cli.kubeconfig.KubeConfigWriterFactory;
-import org.kohsuke.stapler.DataBoundConstructor;
-import org.kohsuke.stapler.DataBoundSetter;
-
-import java.io.File;
-import java.io.IOException;
-import java.util.ArrayList;
-import java.util.List;
 
 public class MultiKubectlBuildWrapper extends SimpleBuildWrapper {
     @DataBoundSetter
@@ -33,13 +34,13 @@ public class MultiKubectlBuildWrapper extends SimpleBuildWrapper {
 
     @Override
     public void setUp(Context context, Run<?, ?> build,
-                      FilePath workspace,
-                      Launcher launcher,
-                      TaskListener listener,
-                      EnvVars initialEnvironment) throws IOException, InterruptedException {
+            FilePath workspace,
+            Launcher launcher,
+            TaskListener listener,
+            EnvVars initialEnvironment) throws IOException, InterruptedException {
 
         List<String> configFiles = new ArrayList<String>();
-        for(KubectlCredential cred: this.kubectlCredentials) {
+        for (KubectlCredential cred : this.kubectlCredentials) {
             KubeConfigWriter kubeConfigWriter = KubeConfigWriterFactory.get(
                     cred.serverUrl,
                     cred.credentialsId,
@@ -80,16 +81,16 @@ public class MultiKubectlBuildWrapper extends SimpleBuildWrapper {
         private static final long serialVersionUID = 1L;
         private List<String> filesToBeRemoved;
 
-        public CleanupDisposer(List<String > files) {
+        public CleanupDisposer(List<String> files) {
             this.filesToBeRemoved = files;
         }
 
         @Override
         public void tearDown(Run<?, ?> build,
-                             FilePath workspace,
-                             Launcher launcher,
-                             TaskListener listener) throws IOException, InterruptedException {
-            for(String file : filesToBeRemoved) {
+                FilePath workspace,
+                Launcher launcher,
+                TaskListener listener) throws IOException, InterruptedException {
+            for (String file : filesToBeRemoved) {
                 workspace.child(file).delete();
             }
             listener.getLogger().println("[kubernetes-cli] kubectl configuration cleaned up");

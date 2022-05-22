@@ -1,5 +1,16 @@
 package org.jenkinsci.plugins.kubernetes.cli;
 
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
+
+import javax.annotation.Nonnull;
+
+import org.kohsuke.stapler.AncestorInPath;
+import org.kohsuke.stapler.DataBoundConstructor;
+import org.kohsuke.stapler.DataBoundSetter;
+import org.kohsuke.stapler.QueryParameter;
+
 import hudson.EnvVars;
 import hudson.Extension;
 import hudson.FilePath;
@@ -11,15 +22,6 @@ import hudson.model.TaskListener;
 import hudson.tasks.BuildWrapperDescriptor;
 import hudson.util.ListBoxModel;
 import jenkins.tasks.SimpleBuildWrapper;
-import org.kohsuke.stapler.AncestorInPath;
-import org.kohsuke.stapler.DataBoundConstructor;
-import org.kohsuke.stapler.DataBoundSetter;
-import org.kohsuke.stapler.QueryParameter;
-
-import javax.annotation.Nonnull;
-import java.io.IOException;
-import java.util.ArrayList;
-import java.util.List;
 
 /**
  * @author <a href="mailto:nicolas.deloof@gmail.com">Nicolas De Loof</a>
@@ -50,10 +52,10 @@ public class KubectlBuildWrapper extends SimpleBuildWrapper {
 
     @Override
     public void setUp(Context context, Run<?, ?> build,
-                      FilePath workspace,
-                      Launcher launcher,
-                      TaskListener listener,
-                      EnvVars initialEnvironment) throws IOException, InterruptedException {
+            FilePath workspace,
+            Launcher launcher,
+            TaskListener listener,
+            EnvVars initialEnvironment) throws IOException, InterruptedException {
 
         KubectlCredential cred = new KubectlCredential();
         cred.serverUrl = this.serverUrl;
@@ -82,7 +84,8 @@ public class KubectlBuildWrapper extends SimpleBuildWrapper {
             return "Configure Kubernetes CLI (kubectl) (deprecated, use the multi credentials one instead)";
         }
 
-        public ListBoxModel doFillCredentialsIdItems(@Nonnull @AncestorInPath Item item, @QueryParameter String serverUrl, @QueryParameter String credentialsId) {
+        public ListBoxModel doFillCredentialsIdItems(@Nonnull @AncestorInPath Item item,
+                @QueryParameter String serverUrl, @QueryParameter String credentialsId) {
             return CredentialsLister.doFillCredentialsIdItems(item, serverUrl, credentialsId);
         }
     }

@@ -9,7 +9,7 @@ public class TestResourceLoader {
 
     public static byte[] loadAsByteArray(String name) {
         try {
-            return IOUtils.toByteArray(TestResourceLoader.class.getResourceAsStream("../"+name));
+            return IOUtils.toByteArray(TestResourceLoader.class.getResourceAsStream("../" + name));
         } catch (Throwable t) {
             throw new RuntimeException("Could not read resource:[" + name + "].");
         }

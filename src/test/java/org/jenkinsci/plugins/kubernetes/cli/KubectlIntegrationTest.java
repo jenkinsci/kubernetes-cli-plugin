@@ -1,10 +1,24 @@
 package org.jenkinsci.plugins.kubernetes.cli;
 
+import static org.hamcrest.CoreMatchers.containsString;
+import static org.hamcrest.MatcherAssert.assertThat;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertTrue;
+import static org.junit.Assume.assumeTrue;
+
+import java.io.File;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+import java.util.Arrays;
+import java.util.regex.Pattern;
+import java.util.stream.Stream;
+
 import com.cloudbees.plugins.credentials.CredentialsProvider;
 import com.cloudbees.plugins.credentials.CredentialsStore;
 import com.cloudbees.plugins.credentials.domains.Domain;
-import hudson.FilePath;
-import io.jenkins.cli.shaded.org.apache.commons.lang.SystemUtils;
+
 import org.jenkinsci.plugins.kubernetes.cli.helpers.DummyCredentials;
 import org.jenkinsci.plugins.kubernetes.cli.helpers.TestResourceLoader;
 import org.jenkinsci.plugins.kubernetes.cli.helpers.Version;
@@ -17,18 +31,8 @@ import org.junit.Test;
 import org.junit.experimental.categories.Category;
 import org.jvnet.hudson.test.JenkinsRule;
 
-import java.io.File;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.nio.file.Paths;
-import java.util.Arrays;
-import java.util.regex.Pattern;
-import java.util.stream.Stream;
-
-import static org.hamcrest.CoreMatchers.containsString;
-import static org.hamcrest.MatcherAssert.assertThat;
-import static org.junit.Assert.*;
-import static org.junit.Assume.assumeTrue;
+import hudson.FilePath;
+import io.jenkins.cli.shaded.org.apache.commons.lang.SystemUtils;
 
 /**
  * @author Max Laverse
@@ -48,10 +52,12 @@ public class KubectlIntegrationTest {
 
     @Test
     public void testSingleKubeConfig() throws Exception {
-        CredentialsProvider.lookupStores(r.jenkins).iterator().next().addCredentials(Domain.global(), DummyCredentials.usernamePasswordCredential(CREDENTIAL_ID));
+        CredentialsProvider.lookupStores(r.jenkins).iterator().next().addCredentials(Domain.global(),
+                DummyCredentials.usernamePasswordCredential(CREDENTIAL_ID));
 
         WorkflowJob p = r.jenkins.createProject(WorkflowJob.class, "testBasicWithCa");
-        p.setDefinition(new CpsFlowDefinition(TestResourceLoader.loadAsString("withKubeConfigPipelineConfigDump.groovy"), true));
+        p.setDefinition(new CpsFlowDefinition(
+                TestResourceLoader.loadAsString("withKubeConfigPipelineConfigDump.groovy"), true));
         WorkflowRun b = p.scheduleBuild2(0).waitForStart();
         assertNotNull(b);
         r.assertBuildStatusSuccess(r.waitForCompletion(b));
@@ -86,10 +92,12 @@ public class KubectlIntegrationTest {
     public void testMultiKubeConfig() throws Exception {
         CredentialsStore store = CredentialsProvider.lookupStores(r.jenkins).iterator().next();
         store.addCredentials(Domain.global(), DummyCredentials.fileCredential(CREDENTIAL_ID));
-        store.addCredentials(Domain.global(), DummyCredentials.fileCredential(SECONDARY_CREDENTIAL_ID, "test-cluster2", "test-user2"));
+        store.addCredentials(Domain.global(),
+                DummyCredentials.fileCredential(SECONDARY_CREDENTIAL_ID, "test-cluster2", "test-user2"));
 
         WorkflowJob p = r.jenkins.createProject(WorkflowJob.class, "multiKubeConfig");
-        p.setDefinition(new CpsFlowDefinition(TestResourceLoader.loadAsString("withKubeCredentialsPipelineConfigDump.groovy"), true));
+        p.setDefinition(new CpsFlowDefinition(
+                TestResourceLoader.loadAsString("withKubeCredentialsPipelineConfigDump.groovy"), true));
         WorkflowRun b = p.scheduleBuild2(0).waitForStart();
         assertNotNull(b);
         r.assertBuildStatusSuccess(r.waitForCompletion(b));
@@ -131,10 +139,12 @@ public class KubectlIntegrationTest {
     public void testMultiKubeConfigUsernames() throws Exception {
         CredentialsStore store = CredentialsProvider.lookupStores(r.jenkins).iterator().next();
         store.addCredentials(Domain.global(), DummyCredentials.secretCredential(CREDENTIAL_ID));
-        store.addCredentials(Domain.global(), DummyCredentials.fileCredential(SECONDARY_CREDENTIAL_ID, "test-cluster2", "test-user2"));
+        store.addCredentials(Domain.global(),
+                DummyCredentials.fileCredential(SECONDARY_CREDENTIAL_ID, "test-cluster2", "test-user2"));
 
         WorkflowJob p = r.jenkins.createProject(WorkflowJob.class, "multiKubeConfigUsernames");
-        p.setDefinition(new CpsFlowDefinition(TestResourceLoader.loadAsString("withKubeCredentialsPipelineAndUsernames.groovy"), true));
+        p.setDefinition(new CpsFlowDefinition(
+                TestResourceLoader.loadAsString("withKubeCredentialsPipelineAndUsernames.groovy"), true));
         WorkflowRun b = p.scheduleBuild2(0).waitForStart();
         assertNotNull(b);
         r.assertBuildStatusSuccess(r.waitForCompletion(b));
@@ -189,10 +199,12 @@ public class KubectlIntegrationTest {
     public void testMultiKubeConfigWithServer() throws Exception {
         CredentialsStore store = CredentialsProvider.lookupStores(r.jenkins).iterator().next();
         store.addCredentials(Domain.global(), DummyCredentials.fileCredential(CREDENTIAL_ID));
-        store.addCredentials(Domain.global(), DummyCredentials.fileCredential(SECONDARY_CREDENTIAL_ID, "test-cluster2", "test-user2"));
+        store.addCredentials(Domain.global(),
+                DummyCredentials.fileCredential(SECONDARY_CREDENTIAL_ID, "test-cluster2", "test-user2"));
 
         WorkflowJob p = r.jenkins.createProject(WorkflowJob.class, "multiKubeConfigWithServer");
-        p.setDefinition(new CpsFlowDefinition(TestResourceLoader.loadAsString("withKubeCredentialsPipelineAndServer.groovy"), true));
+        p.setDefinition(new CpsFlowDefinition(
+                TestResourceLoader.loadAsString("withKubeCredentialsPipelineAndServer.groovy"), true));
         WorkflowRun b = p.scheduleBuild2(0).waitForStart();
         assertNotNull(b);
         r.assertBuildStatusSuccess(r.waitForCompletion(b));

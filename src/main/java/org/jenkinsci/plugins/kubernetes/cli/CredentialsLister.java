@@ -1,5 +1,7 @@
 package org.jenkinsci.plugins.kubernetes.cli;
 
+import javax.annotation.Nonnull;
+
 import com.cloudbees.plugins.credentials.CredentialsMatcher;
 import com.cloudbees.plugins.credentials.CredentialsMatchers;
 import com.cloudbees.plugins.credentials.common.StandardCertificateCredentials;
@@ -7,17 +9,17 @@ import com.cloudbees.plugins.credentials.common.StandardCredentials;
 import com.cloudbees.plugins.credentials.common.StandardListBoxModel;
 import com.cloudbees.plugins.credentials.common.StandardUsernamePasswordCredentials;
 import com.cloudbees.plugins.credentials.domains.URIRequirementBuilder;
-import hudson.model.Item;
-import hudson.security.ACL;
-import hudson.util.ListBoxModel;
-import jenkins.model.Jenkins;
+
 import org.jenkinsci.plugins.kubernetes.credentials.TokenProducer;
 import org.jenkinsci.plugins.plaincredentials.FileCredentials;
 import org.jenkinsci.plugins.plaincredentials.StringCredentials;
 import org.kohsuke.stapler.AncestorInPath;
 import org.kohsuke.stapler.QueryParameter;
 
-import javax.annotation.Nonnull;
+import hudson.model.Item;
+import hudson.security.ACL;
+import hudson.util.ListBoxModel;
+import jenkins.model.Jenkins;
 
 public abstract class CredentialsLister {
 
@@ -27,10 +29,10 @@ public abstract class CredentialsLister {
             CredentialsMatchers.instanceOf(TokenProducer.class),
             CredentialsMatchers.instanceOf(StringCredentials.class),
             CredentialsMatchers.instanceOf(StandardCertificateCredentials.class),
-            CredentialsMatchers.instanceOf(FileCredentials.class)
-    );
+            CredentialsMatchers.instanceOf(FileCredentials.class));
 
-    public static ListBoxModel doFillCredentialsIdItems(@Nonnull @AncestorInPath Item item, @QueryParameter String serverUrl, @QueryParameter String credentialsId) {
+    public static ListBoxModel doFillCredentialsIdItems(@Nonnull @AncestorInPath Item item,
+            @QueryParameter String serverUrl, @QueryParameter String credentialsId) {
         if (item == null
                 ? !Jenkins.get().hasPermission(Jenkins.ADMINISTER)
                 : !item.hasPermission(Item.EXTENDED_READ)) {

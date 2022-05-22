@@ -1,20 +1,17 @@
 package org.jenkinsci.plugins.kubernetes.cli;
 
-import com.google.common.base.Strings;
-import hudson.Extension;
-import hudson.model.AbstractDescribableImpl;
-import hudson.model.Descriptor;
-import hudson.model.Item;
-import hudson.util.FormValidation;
-import hudson.util.ListBoxModel;
+import javax.annotation.Nonnull;
+
 import org.kohsuke.stapler.AncestorInPath;
 import org.kohsuke.stapler.DataBoundConstructor;
 import org.kohsuke.stapler.DataBoundSetter;
 import org.kohsuke.stapler.QueryParameter;
 
-import javax.annotation.Nonnull;
-import javax.servlet.ServletException;
-import java.io.IOException;
+import hudson.Extension;
+import hudson.model.AbstractDescribableImpl;
+import hudson.model.Descriptor;
+import hudson.model.Item;
+import hudson.util.ListBoxModel;
 
 /**
  * Necessary information for configuring a single registry
@@ -50,7 +47,8 @@ public class KubectlCredential extends AbstractDescribableImpl<KubectlCredential
             return "";
         }
 
-        public ListBoxModel doFillCredentialsIdItems(@Nonnull @AncestorInPath Item item, @QueryParameter String serverUrl, @QueryParameter String credentialsId) {
+        public ListBoxModel doFillCredentialsIdItems(@Nonnull @AncestorInPath Item item,
+                @QueryParameter String serverUrl, @QueryParameter String credentialsId) {
             return CredentialsLister.doFillCredentialsIdItems(item, serverUrl, credentialsId);
         }
     }

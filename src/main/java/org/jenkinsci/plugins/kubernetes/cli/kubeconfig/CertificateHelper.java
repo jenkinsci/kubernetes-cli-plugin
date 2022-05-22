@@ -1,16 +1,5 @@
 package org.jenkinsci.plugins.kubernetes.cli.kubeconfig;
 
-import com.cloudbees.plugins.credentials.common.StandardCertificateCredentials;
-import hudson.AbortException;
-import hudson.FilePath;
-import hudson.util.Secret;
-import org.apache.commons.codec.binary.Base64;
-
-import java.io.IOException;
-import java.security.*;
-import java.security.cert.CertificateEncodingException;
-import java.security.cert.X509Certificate;
-
 /**
  * @author Max Laverse
  */

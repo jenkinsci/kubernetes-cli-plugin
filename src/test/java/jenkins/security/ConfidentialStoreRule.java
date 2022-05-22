@@ -1,7 +1,6 @@
 package jenkins.security;
 
 import org.junit.rules.ExternalResource;
-
 import org.junit.rules.TemporaryFolder;
 
 /**

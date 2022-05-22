@@ -172,10 +172,11 @@ public class KubeConfigWriter {
     }
 
     private ConfigBuilder completeConfigBuilder(ConfigBuilder configBuilder) throws IOException, InterruptedException {
+        configBuilder = existingOrNewContext(configBuilder, getContextNameOrDefault()).editOrNewContext().endContext()
+                .endContext();
         if (wasProvided(namespace)) {
             configBuilder = setContextNamespace(configBuilder, getContextNameOrDefault(), getNamespace());
         }
-
         configBuilder = setCurrentContext(configBuilder, getContextNameOrDefault());
         return configBuilder;
     }

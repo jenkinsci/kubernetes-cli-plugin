@@ -98,7 +98,9 @@ public class KubeConfigWriterBuilderTest {
 
         assertEquals("---\n" +
                 "clusters: []\n" +
-                "contexts: []\n" +
+                "contexts:\n" +
+                "- context: {}\n" +
+                "  name: \"k8s\"\n" +
                 "current-context: \"k8s\"\n" +
                 "users: []\n", configDumpContent);
     }
@@ -205,7 +207,8 @@ public class KubeConfigWriterBuilderTest {
         assertEquals("---\n" +
                 "clusters:\n" +
                 "- cluster:\n" +
-                "    certificate-authority-data: \"LS0tLS1CRUdJTiBDRVJUSUZJQ0FURS0tLS0tCnRlc3QtY2VydGlmaWNhdGUKLS0tLS1FTkQgQ0VSVElGSUNBVEUtLS0tLQ==\"\n" +
+                "    certificate-authority-data: \"LS0tLS1CRUdJTiBDRVJUSUZJQ0FURS0tLS0tCnRlc3QtY2VydGlmaWNhdGUKLS0tLS1FTkQgQ0VSVElGSUNBVEUtLS0tLQ==\"\n"
+                +
                 "    server: \"https://localhost:6443\"\n" +
                 "  name: \"k8s\"\n" +
                 "contexts:\n" +
@@ -367,7 +370,6 @@ public class KubeConfigWriterBuilderTest {
                 "    username: \"existing-user\"\n", configDumpContent);
     }
 
-
     @Test
     public void kubeConfigWithCaCertificate() throws Exception {
         KubeConfigWriter configWriter = new KubeConfigWriter(
@@ -394,7 +396,8 @@ public class KubeConfigWriterBuilderTest {
                 "    server: \"https://existing-cluster\"\n" +
                 "  name: \"existing-cluster\"\n" +
                 "- cluster:\n" +
-                "    certificate-authority-data: \"LS0tLS1CRUdJTiBDRVJUSUZJQ0FURS0tLS0tCnRlc3QtY2VydGlmaWNhdGUKLS0tLS1FTkQgQ0VSVElGSUNBVEUtLS0tLQ==\"\n" +
+                "    certificate-authority-data: \"LS0tLS1CRUdJTiBDRVJUSUZJQ0FURS0tLS0tCnRlc3QtY2VydGlmaWNhdGUKLS0tLS1FTkQgQ0VSVElGSUNBVEUtLS0tLQ==\"\n"
+                +
                 "    insecure-skip-tls-verify: false\n" +
                 "    server: \"https://localhost:6443\"\n" +
                 "  name: \"k8s\"\n" +
@@ -554,7 +557,6 @@ public class KubeConfigWriterBuilderTest {
                 "    username: \"existing-user\"\n", configDumpContent);
     }
 
-
     @Test
     public void kubeConfigWithSwitchToNonExistentContext() throws Exception {
         KubeConfigWriter configWriter = new KubeConfigWriter(
@@ -604,7 +606,8 @@ public class KubeConfigWriterBuilderTest {
                 "  user:\n" +
                 "    password: \"existing-password\"\n" +
                 "    username: \"existing-user\"\n", configDumpContent);
-        assertEquals("[kubernetes-cli] context 'non-existent-context' doesn't exist in kubeconfig", output.toString());
+        assertEquals("[kubernetes-cli] context 'non-existent-context' doesn't exist in kubeconfig",
+                output.toString());
     }
 
     @Test

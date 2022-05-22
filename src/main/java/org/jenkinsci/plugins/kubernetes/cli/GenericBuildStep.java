@@ -23,9 +23,19 @@ public class GenericBuildStep extends AbstractStepExecutionImpl {
     @SuppressFBWarnings(value = "SE_TRANSIENT_FIELD_NOT_RESTORED", justification = "not needed on deserialization")
     private transient List<KubectlCredential> kubectlCredentials;
 
+    @SuppressFBWarnings(value = "SE_TRANSIENT_FIELD_NOT_RESTORED", justification = "not needed on deserialization")
+    private transient Boolean restrictKubeConfigAccess;
+
     public GenericBuildStep(List<KubectlCredential> credentials, StepContext context) {
         super(context);
         this.kubectlCredentials = credentials;
+    }
+
+    public GenericBuildStep(List<KubectlCredential> credentials, Boolean restrictKubeConfigAccess,
+            StepContext context) {
+        super(context);
+        this.kubectlCredentials = credentials;
+        this.restrictKubeConfigAccess = restrictKubeConfigAccess;
     }
 
     /**
@@ -43,6 +53,7 @@ public class GenericBuildStep extends AbstractStepExecutionImpl {
                     cred.clusterName,
                     cred.contextName,
                     cred.namespace,
+                    restrictKubeConfigAccess,
                     getContext());
 
             configFiles.add(kubeConfigWriter.writeKubeConfig());

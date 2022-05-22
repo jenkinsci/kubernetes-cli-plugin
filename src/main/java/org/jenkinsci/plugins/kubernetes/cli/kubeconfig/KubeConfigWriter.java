@@ -42,13 +42,14 @@ public class KubeConfigWriter {
     private final String clusterName;
     private final String contextName;
     private final String namespace;
+    private final Boolean restrictKubeConfigAccess;
     private final FilePath workspace;
     private final Launcher launcher;
     private final Run<?, ?> build;
 
     public KubeConfigWriter(@Nonnull String serverUrl, String credentialsId,
-            String caCertificate, String clusterName, String contextName, String namespace, FilePath workspace,
-            Launcher launcher, Run<?, ?> build) {
+            String caCertificate, String clusterName, String contextName, String namespace,
+            Boolean restrictKubeConfigAccess, FilePath workspace, Launcher launcher, Run<?, ?> build) {
         this.serverUrl = serverUrl;
         this.credentialsId = credentialsId;
         this.caCertificate = caCertificate;
@@ -58,6 +59,7 @@ public class KubeConfigWriter {
         this.clusterName = clusterName;
         this.contextName = contextName;
         this.namespace = namespace;
+        this.restrictKubeConfigAccess = restrictKubeConfigAccess;
     }
 
     private static ConfigBuilder setNamedCluster(ConfigBuilder configBuilder, NamedCluster cluster) {
@@ -138,7 +140,9 @@ public class KubeConfigWriter {
         FilePath configFile = getTempKubeconfigFilePath();
         configFile.write(SerializationUtils.getMapper().writeValueAsString(configBuilder.build()),
                 String.valueOf(StandardCharsets.UTF_8));
-
+        if (restrictKubeConfigAccess != null && restrictKubeConfigAccess) {
+            configFile.chmod(0600);
+        }
         return configFile.getRemote();
     }
 

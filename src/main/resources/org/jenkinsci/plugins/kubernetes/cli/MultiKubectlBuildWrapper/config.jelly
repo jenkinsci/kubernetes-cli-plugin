@@ -3,4 +3,7 @@
     <f:entry title="${%Credentials to use}" field="kubectlCredentials">
         <f:repeatableProperty field="kubectlCredentials" minimum="1" />
     </f:entry>
+    <f:entry field="restrictKubeConfigAccess" title="${%Restrict access to kubeconfig file}">
+        <f:checkbox />
+    </f:entry>
 </j:jelly>

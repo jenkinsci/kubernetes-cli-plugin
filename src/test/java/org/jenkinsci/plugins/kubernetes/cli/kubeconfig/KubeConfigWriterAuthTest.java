@@ -70,6 +70,7 @@ public class KubeConfigWriterAuthTest {
                 "",
                 "",
                 "",
+                false,
                 workspace, mockLauncher, build);
 
         KubernetesAuth auth = new KubernetesAuthUsernamePassword("test-user", "test-password");
@@ -118,6 +119,7 @@ public class KubeConfigWriterAuthTest {
                 "",
                 "",
                 "",
+                false,
                 workspace, mockLauncher, build);
 
         String cert = "-----BEGIN CERTIFICATE-----\nMIICazCCAdQCCQDVtVxaHvqqtzANBgkqhkiG9w0BAQUFADB6MQswCQYDVQQGEwJBVTETMBEGA1UECBMKU29tZS1TdGF0ZTEQMA4GA1UEChMHSmVua2luczEaMBgGA1UEAxMRS3ViZXJuZXRlcy1Vc2VyLTExKDAmBgkqhkiG9w0BCQEWGWt1YmVybmV0ZXMtdXNlci0xQGplbmtpbnMwHhcNMTcxMDAzMTI1NzU5WhcNMTgxMDAzMTI1NzU5WjB6MQswCQYDVQQGEwJBVTETMBEGA1UECBMKU29tZS1TdGF0ZTEQMA4GA1UEChMHSmVua2luczEaMBgGA1UEAxMRS3ViZXJuZXRlcy1Vc2VyLTExKDAmBgkqhkiG9w0BCQEWGWt1YmVybmV0ZXMtdXNlci0xQGplbmtpbnMwgZ8wDQYJKoZIhvcNAQEBBQADgY0AMIGJAoGBALKEbz2+ljp7wMLFXrGaTFx3nGQA4sWlXkKpgjb6+wU7e7XT1n8qh8jDySHL4GUJuN5TMCN56NCx7cMwHwXfdrRXGdPtRLYqGAI+D6qYZTlC8sHSrLVWSVYCMHhIHdFzBlI7kwEXvEmIqR/1RWKgG0mlBxiB5fnlWnja0OTt4ichAgMBAAEwDQYJKoZIhvcNAQEFBQADgYEAFHvKqMNou+idNZCaJJ6x2u0xrkxBG01UbsmxyVwT5uiCrOzsw/xi9IW4vjFFkJezM2RqsCGhFoDP4i64SK++CXmrzURxQJIb/qxGjEC8H4yAU6tk7a+hzYXUkxnvl+Ay9g9ZpVGvykY+lyF4BdvyXgb9heAljwk4mtth6gUywZE=\n-----END CERTIFICATE-----";
@@ -156,6 +158,7 @@ public class KubeConfigWriterAuthTest {
                 "",
                 "",
                 "",
+                false,
                 workspace, mockLauncher, build);
 
         KubernetesAuth auth = new KubernetesAuthToken(new DummyTokenCredentialImpl(CredentialsScope.GLOBAL, "test", "test", "test", "test"));
@@ -190,6 +193,7 @@ public class KubeConfigWriterAuthTest {
                 "",
                 "",
                 "",
+                false,
                 workspace, mockLauncher, build);
 
         try (InputStream resourceAsStream = getClass().getResourceAsStream("../kubernetes.pkcs12")) {

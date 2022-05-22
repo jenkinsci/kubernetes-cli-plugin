@@ -3,10 +3,9 @@ package org.jenkinsci.plugins.kubernetes.cli;
 import static org.hamcrest.CoreMatchers.containsString;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
-import static org.junit.Assume.assumeTrue;
-
 import java.io.File;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -25,6 +24,7 @@ import org.jenkinsci.plugins.kubernetes.cli.helpers.Version;
 import org.jenkinsci.plugins.workflow.cps.CpsFlowDefinition;
 import org.jenkinsci.plugins.workflow.job.WorkflowJob;
 import org.jenkinsci.plugins.workflow.job.WorkflowRun;
+import org.junit.Assume;
 import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
@@ -48,6 +48,52 @@ public class KubectlIntegrationTest {
     @Before
     public void checkKubectlPresence() {
         assertThat("The '" + kubectlBinaryName() + "' binary could not be found in the PATH", kubectlPresent());
+    }
+
+    @Test
+    public void testKubeConfigPermissionsRestrictedRead() throws Exception {
+        Assume.assumeFalse(System.getProperty("os.name").contains("Windows"));
+
+        CredentialsProvider.lookupStores(r.jenkins).iterator().next().addCredentials(Domain.global(),
+                DummyCredentials.usernamePasswordCredential(CREDENTIAL_ID));
+
+        WorkflowJob p = r.jenkins.createProject(WorkflowJob.class, "testBasicWithCa");
+        p.setDefinition(new CpsFlowDefinition(
+                TestResourceLoader.loadAsString(
+                        "withKubeConfigPipelineConfigPermissionsRestrictedRead.groovy"),
+                true));
+        WorkflowRun b = p.scheduleBuild2(0).waitForStart();
+        assertNotNull(b);
+        r.assertBuildStatusSuccess(r.waitForCompletion(b));
+
+        FilePath configCopy = r.jenkins.getWorkspaceFor(p).child("configCopy");
+        assertTrue(configCopy.exists());
+        assertEquals(384, configCopy.mode());
+    }
+
+    @Test
+    public void testKubeConfigPermissionsDefault() throws Exception {
+        Assume.assumeFalse(System.getProperty("os.name").contains("Windows"));
+
+        CredentialsProvider.lookupStores(r.jenkins).iterator().next().addCredentials(Domain.global(),
+                DummyCredentials.usernamePasswordCredential(CREDENTIAL_ID));
+
+        WorkflowJob p = r.jenkins.createProject(WorkflowJob.class, "testBasicWithCa");
+        p.setDefinition(new CpsFlowDefinition(
+                TestResourceLoader.loadAsString(
+                        "withKubeConfigPipelineConfigPermissionsDefault.groovy"),
+                true));
+        WorkflowRun b = p.scheduleBuild2(0).waitForStart();
+        assertNotNull(b);
+        r.assertBuildStatusSuccess(r.waitForCompletion(b));
+
+        FilePath configCopy = r.jenkins.getWorkspaceFor(p).child("configCopy");
+        assertTrue(configCopy.exists());
+
+        // We can expected any specific value here since it's installation-dependent,
+        // but we can
+        // assume it's different from owner only accessible.
+        assertNotEquals(384, configCopy.mode());
     }
 
     @Test
@@ -93,7 +139,8 @@ public class KubectlIntegrationTest {
         CredentialsStore store = CredentialsProvider.lookupStores(r.jenkins).iterator().next();
         store.addCredentials(Domain.global(), DummyCredentials.fileCredential(CREDENTIAL_ID));
         store.addCredentials(Domain.global(),
-                DummyCredentials.fileCredential(SECONDARY_CREDENTIAL_ID, "test-cluster2", "test-user2"));
+                DummyCredentials.fileCredential(SECONDARY_CREDENTIAL_ID, "test-cluster2",
+                        "test-user2"));
 
         WorkflowJob p = r.jenkins.createProject(WorkflowJob.class, "multiKubeConfig");
         p.setDefinition(new CpsFlowDefinition(
@@ -140,11 +187,13 @@ public class KubectlIntegrationTest {
         CredentialsStore store = CredentialsProvider.lookupStores(r.jenkins).iterator().next();
         store.addCredentials(Domain.global(), DummyCredentials.secretCredential(CREDENTIAL_ID));
         store.addCredentials(Domain.global(),
-                DummyCredentials.fileCredential(SECONDARY_CREDENTIAL_ID, "test-cluster2", "test-user2"));
+                DummyCredentials.fileCredential(SECONDARY_CREDENTIAL_ID, "test-cluster2",
+                        "test-user2"));
 
         WorkflowJob p = r.jenkins.createProject(WorkflowJob.class, "multiKubeConfigUsernames");
         p.setDefinition(new CpsFlowDefinition(
-                TestResourceLoader.loadAsString("withKubeCredentialsPipelineAndUsernames.groovy"), true));
+                TestResourceLoader.loadAsString("withKubeCredentialsPipelineAndUsernames.groovy"),
+                true));
         WorkflowRun b = p.scheduleBuild2(0).waitForStart();
         assertNotNull(b);
         r.assertBuildStatusSuccess(r.waitForCompletion(b));
@@ -200,7 +249,8 @@ public class KubectlIntegrationTest {
         CredentialsStore store = CredentialsProvider.lookupStores(r.jenkins).iterator().next();
         store.addCredentials(Domain.global(), DummyCredentials.fileCredential(CREDENTIAL_ID));
         store.addCredentials(Domain.global(),
-                DummyCredentials.fileCredential(SECONDARY_CREDENTIAL_ID, "test-cluster2", "test-user2"));
+                DummyCredentials.fileCredential(SECONDARY_CREDENTIAL_ID, "test-cluster2",
+                        "test-user2"));
 
         WorkflowJob p = r.jenkins.createProject(WorkflowJob.class, "multiKubeConfigWithServer");
         p.setDefinition(new CpsFlowDefinition(

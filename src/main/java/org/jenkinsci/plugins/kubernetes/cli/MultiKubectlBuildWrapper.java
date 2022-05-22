@@ -24,12 +24,16 @@ public class MultiKubectlBuildWrapper extends SimpleBuildWrapper {
     @DataBoundSetter
     public List<KubectlCredential> kubectlCredentials;
 
+    @DataBoundSetter
+    public Boolean restrictKubeConfigAccess;
+
     @DataBoundConstructor
-    public MultiKubectlBuildWrapper(List<KubectlCredential> kubectlCredentials) {
+    public MultiKubectlBuildWrapper(List<KubectlCredential> kubectlCredentials, Boolean restrictKubeConfigAccess) {
         if (kubectlCredentials == null || kubectlCredentials.size() == 0) {
             throw new RuntimeException("[kubernetes-cli] credentials list cannot be empty");
         }
         this.kubectlCredentials = kubectlCredentials;
+        this.restrictKubeConfigAccess = restrictKubeConfigAccess;
     }
 
     @Override
@@ -48,6 +52,7 @@ public class MultiKubectlBuildWrapper extends SimpleBuildWrapper {
                     cred.clusterName,
                     cred.contextName,
                     cred.namespace,
+                    restrictKubeConfigAccess,
                     workspace,
                     launcher,
                     build);

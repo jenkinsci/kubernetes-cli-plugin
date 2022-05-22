@@ -43,6 +43,9 @@ public class KubectlBuildStep extends Step {
     @DataBoundSetter
     public String namespace;
 
+    @DataBoundSetter
+    public Boolean restrictKubeConfigAccess;
+
     @DataBoundConstructor
     public KubectlBuildStep() {
     }
@@ -60,7 +63,7 @@ public class KubectlBuildStep extends Step {
         List<KubectlCredential> list = new ArrayList<KubectlCredential>();
         list.add(cred);
 
-        return new GenericBuildStep(list, context);
+        return new GenericBuildStep(list, restrictKubeConfigAccess, context);
     }
 
     @Extension

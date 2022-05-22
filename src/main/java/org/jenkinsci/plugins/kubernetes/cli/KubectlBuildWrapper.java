@@ -46,6 +46,9 @@ public class KubectlBuildWrapper extends SimpleBuildWrapper {
     @DataBoundSetter
     public String namespace;
 
+    @DataBoundSetter
+    public Boolean restrictKubeConfigAccess;
+
     @DataBoundConstructor
     public KubectlBuildWrapper() {
     }
@@ -68,7 +71,7 @@ public class KubectlBuildWrapper extends SimpleBuildWrapper {
         List<KubectlCredential> list = new ArrayList<KubectlCredential>();
         list.add(cred);
 
-        MultiKubectlBuildWrapper bw = new MultiKubectlBuildWrapper(list);
+        MultiKubectlBuildWrapper bw = new MultiKubectlBuildWrapper(list, restrictKubeConfigAccess);
         bw.setUp(context, build, workspace, launcher, listener, initialEnvironment);
     }
 

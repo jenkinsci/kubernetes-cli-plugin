@@ -91,6 +91,7 @@ public class KubeConfigWriterBuilderTest {
                 "",
                 "",
                 "",
+                false,
                 workspace, mockLauncher, build);
 
         ConfigBuilder configBuilder = configWriter.getConfigBuilderInCluster();
@@ -114,6 +115,7 @@ public class KubeConfigWriterBuilderTest {
                 "",
                 "",
                 "test-namespace",
+                false,
                 workspace, mockLauncher, build);
 
         ConfigBuilder configBuilder = configWriter.getConfigBuilderInCluster();
@@ -138,6 +140,7 @@ public class KubeConfigWriterBuilderTest {
                 "",
                 "test-context",
                 "test-namespace",
+                false,
                 workspace, mockLauncher, build);
 
         ConfigBuilder configBuilder = configWriter.getConfigBuilderInCluster();
@@ -162,6 +165,7 @@ public class KubeConfigWriterBuilderTest {
                 "",
                 "",
                 "",
+                false,
                 workspace, mockLauncher, build);
 
         KubernetesAuth auth = new KubernetesAuthUsernamePassword("test-user", "test-password");
@@ -197,6 +201,7 @@ public class KubeConfigWriterBuilderTest {
                 "",
                 "",
                 "",
+                false,
                 workspace, mockLauncher, build);
 
         KubernetesAuth auth = new KubernetesAuthUsernamePassword("test-user", "test-password");
@@ -233,6 +238,7 @@ public class KubeConfigWriterBuilderTest {
                 "test-cluster",
                 "",
                 "",
+                false,
                 workspace, mockLauncher, build);
 
         KubernetesAuth auth = new KubernetesAuthUsernamePassword("test-user", "test-password");
@@ -268,6 +274,7 @@ public class KubeConfigWriterBuilderTest {
                 "",
                 "",
                 "test-namespace",
+                false,
                 workspace, mockLauncher, build);
 
         KubernetesAuth auth = new KubernetesAuthUsernamePassword("test-user", "test-password");
@@ -304,6 +311,7 @@ public class KubeConfigWriterBuilderTest {
                 "",
                 "test-context",
                 "",
+                false,
                 workspace, mockLauncher, build);
 
         KubernetesAuth auth = new KubernetesAuthUsernamePassword("test-user", "test-password");
@@ -339,6 +347,7 @@ public class KubeConfigWriterBuilderTest {
                 "",
                 "",
                 "",
+                false,
                 workspace, mockLauncher, build);
 
         KubernetesAuthKubeconfig auth = dummyKubeConfigAuth();
@@ -379,6 +388,7 @@ public class KubeConfigWriterBuilderTest {
                 "",
                 "",
                 "",
+                false,
                 workspace, mockLauncher, build);
 
         KubernetesAuthKubeconfig auth = dummyKubeConfigAuth();
@@ -427,6 +437,7 @@ public class KubeConfigWriterBuilderTest {
                 "",
                 "",
                 "new-namespace",
+                false,
                 workspace, mockLauncher, build);
 
         KubernetesAuthKubeconfig auth = dummyKubeConfigAuth();
@@ -474,6 +485,7 @@ public class KubeConfigWriterBuilderTest {
                 "new-cluster",
                 "",
                 "",
+                false,
                 workspace, mockLauncher, build);
 
         KubernetesAuthKubeconfig auth = dummyKubeConfigAuth();
@@ -520,6 +532,7 @@ public class KubeConfigWriterBuilderTest {
                 "",
                 "unused-context",
                 "new-namespace",
+                false,
                 workspace, mockLauncher, build);
 
         KubernetesAuthKubeconfig auth = dummyKubeConfigAuth();
@@ -566,6 +579,7 @@ public class KubeConfigWriterBuilderTest {
                 "",
                 "non-existent-context",
                 "new-namespace",
+                false,
                 workspace, mockLauncher, build);
 
         KubernetesAuthKubeconfig auth = dummyKubeConfigAuth();
@@ -619,6 +633,7 @@ public class KubeConfigWriterBuilderTest {
                 "",
                 "existing-context",
                 "",
+                false,
                 workspace, mockLauncher, build);
 
         KubernetesAuthKubeconfig auth = dummyKubeConfigAuth();

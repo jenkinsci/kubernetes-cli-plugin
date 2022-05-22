@@ -31,9 +31,9 @@ public class MultiKubectlBuildWrapperTest {
 
         KubectlCredential kc = new KubectlCredential();
         kc.credentialsId = "test-credentials";
-        List<KubectlCredential> l = new ArrayList();
+        List<KubectlCredential> l = new ArrayList<KubectlCredential>();
         l.add(kc);
-        MultiKubectlBuildWrapper bw = new MultiKubectlBuildWrapper(l);
+        MultiKubectlBuildWrapper bw = new MultiKubectlBuildWrapper(l, false);
         p.getBuildWrappersList().add(bw);
 
         assertEquals("<?xml version='1.1' encoding='UTF-8'?>\n" +
@@ -56,6 +56,7 @@ public class MultiKubectlBuildWrapperTest {
                 "          <credentialsId>test-credentials</credentialsId>\n" +
                 "        </org.jenkinsci.plugins.kubernetes.cli.KubectlCredential>\n" +
                 "      </kubectlCredentials>\n" +
+                "      <restrictKubeConfigAccess>false</restrictKubeConfigAccess>\n" + 
                 "    </org.jenkinsci.plugins.kubernetes.cli.MultiKubectlBuildWrapper>\n" +
                 "  </buildWrappers>\n" +
                 "</project>", p.getConfigFile().asString());

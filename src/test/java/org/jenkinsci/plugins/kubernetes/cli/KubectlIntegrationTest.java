@@ -14,6 +14,7 @@ import org.jenkinsci.plugins.workflow.job.WorkflowRun;
 import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
+import org.junit.experimental.categories.Category;
 import org.jvnet.hudson.test.JenkinsRule;
 
 import java.io.File;
@@ -32,6 +33,7 @@ import static org.junit.Assume.assumeTrue;
 /**
  * @author Max Laverse
  */
+@Category(KubectlIntegrationTest.class)
 public class KubectlIntegrationTest {
     @Rule
     public JenkinsRule r = new JenkinsRule();
@@ -41,7 +43,7 @@ public class KubectlIntegrationTest {
 
     @Before
     public void checkKubectlPresence() {
-        assumeTrue("The '" + kubectlBinaryName() + "' binary could not be found in the PATH", kubectlPresent());
+        assertThat("The '" + kubectlBinaryName() + "' binary could not be found in the PATH", kubectlPresent());
     }
 
     @Test

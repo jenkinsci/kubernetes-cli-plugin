@@ -38,7 +38,7 @@ def integrationTest(platform, jdk, kubectlVersion) {
                     }
                 }
                 stage('tests') {
-                    infra.runWithJava('mvn clean -Dgroups=org.jenkinsci.plugins.kubernetes.cli.KubectlIntegrationTest test findbugs:check', jdk)
+                    infra.runWithJava('mvn clean -Dgroups=org.jenkinsci.plugins.kubernetes.cli.KubectlIntegrationTest test', jdk)
                 }
             }
         }

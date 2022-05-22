@@ -25,7 +25,7 @@ properties([
 // Generates a build block that can later be run in parallel
 // for which the kubectl version, platform and java version
 // can be specified
-def buildPlugin(kubectlVersion, platform, jdk) {
+def integrationTest(platform, jdk, kubectlVersion) {
     node(platform) {
         timeout(15) {
             withEnv(["PATH+KUBECTL=${env.WORKSPACE}/.bin", "KUBECTL_VERSION=v${kubectlVersion}"]){
@@ -33,15 +33,30 @@ def buildPlugin(kubectlVersion, platform, jdk) {
                     checkout scm
                 }
                 stage('preparation') {
-                    downloadKubectl(kubectlVersion)
+                    retry(5) {
+                        downloadKubectl(kubectlVersion)
+                    }
                 }
                 stage('tests') {
-                    infra.runWithJava('mvn clean test findbugs:check', jdk)
+                    infra.runWithJava('mvn clean -Dgroups=org.jenkinsci.plugins.kubernetes.cli.KubectlIntegrationTest test findbugs:check', jdk)
                 }
-                // stage('coverage') {
-                //     infra.runWithJava('mvn jacoco:report coveralls:report')
-                // }
             }
+        }
+    }
+}
+
+def unitTest(platform, jdk) {
+    node(platform) {
+        timeout(15) {
+            stage('checkout') {
+                checkout scm
+            }
+            stage('tests') {
+                infra.runWithJava('mvn clean -Dgroups="! org.jenkinsci.plugins.kubernetes.cli.KubectlIntegrationTest" test findbugs:check', jdk)
+            }
+            // stage('coverage') {
+            //     infra.runWithJava('mvn jacoco:report coveralls:report')
+            // }
         }
     }
 }
@@ -74,12 +89,20 @@ for (int i = 0; i < kubectlVersions.size(); i++) {
     for (int j = 0; j < platforms.size(); j++) {
         def platform = platforms[j]
 
-        for (int k = 0; k < jdkVersions.size(); k++) {
-        def jdkVersion = jdkVersions[k]
-            def stepName = "${platform}/v${kubectlVersion}/${jdkVersion}"
-            stepsForParallel[stepName] = { ->
-                buildPlugin(kubectlVersion, platform, jdkVersion)
-            }
+        def stepName = "integration/${platform}/v${kubectlVersion}"
+        stepsForParallel[stepName] = { ->
+            integrationTest(platform, jdkVersions[1], kubectlVersion)
+        }
+    }
+}
+for (int j = 0; j < platforms.size(); j++) {
+    def platform = platforms[j]
+
+    for (int k = 0; k < jdkVersions.size(); k++) {
+    def jdkVersion = jdkVersions[k]
+        def stepName = "unit/${platform}/${jdkVersion}"
+        stepsForParallel[stepName] = { ->
+            unitTest(platform, jdkVersion)
         }
     }
 }

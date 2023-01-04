@@ -3,8 +3,7 @@
   <parent>
     <groupId>org.jenkins-ci.plugins</groupId>
     <artifactId>plugin</artifactId>
-    <version>4.18</version> <!-- or whatever the newest version available is -->
-    <!--Check https://mvnrepository.com/artifact/org.jenkins-ci.plugins/plugin?repo=jenkins-releases-->
+    <version>4.50</version>
     <relativePath />
   </parent>
 
@@ -22,14 +21,14 @@
     <hpi.compatibleSinceVersion>1.0.0</hpi.compatibleSinceVersion>
 
     <!-- dependency versions -->
-    <jenkins.version>2.222.4</jenkins.version>
-    <bom.artifactId>bom-2.222.x</bom.artifactId>
-    <bom.version>9</bom.version>
+    <jenkins.version>2.332.4</jenkins.version>
+    <bom.artifactId>bom-2.332.x</bom.artifactId>
+    <bom.version>1763.v092b_8980a_f5e</bom.version>
 
     <!-- jenkins plugins versions -->
     <jenkins-env-inject.version>2.3.0</jenkins-env-inject.version>
     <jenkins-declarative.version>1.4.0</jenkins-declarative.version>
-    <jenkins-kubernetes-credentials.version>0.9.0</jenkins-kubernetes-credentials.version>
+    <jenkins-kubernetes-credentials.version>0.9.1-rc136.6105f8f63f7f</jenkins-kubernetes-credentials.version>
 
     <!-- maven plugins versions -->
     <maven-coveralls.version>4.3.0</maven-coveralls.version>
@@ -85,12 +84,7 @@
       <dependency>
         <groupId>org.jenkins-ci.plugins</groupId>
         <artifactId>kubernetes-client-api</artifactId>
-        <version>5.4.1</version>
-      </dependency>
-      <dependency>
-        <groupId>org.jenkins-ci.plugins</groupId>
-        <artifactId>jackson2-api</artifactId>
-        <version>2.12.3</version>
+        <version>6.3.1-204.v5400f87efd3c</version>
       </dependency>
     </dependencies>
   </dependencyManagement>
@@ -160,13 +154,12 @@
     <dependency>
       <groupId>org.jenkins-ci.plugins</groupId>
       <artifactId>junit</artifactId>
-      <version>1.28</version>
       <scope>test</scope>
     </dependency>
     <dependency>
       <groupId>org.mockito</groupId>
       <artifactId>mockito-core</artifactId>
-      <version>3.0.0</version>
+      <scope>test</scope>
     </dependency>
     <dependency>
       <groupId>org.jenkins-ci.plugins</groupId>

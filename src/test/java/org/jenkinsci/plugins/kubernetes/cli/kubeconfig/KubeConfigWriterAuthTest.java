@@ -9,7 +9,7 @@ import hudson.model.AbstractBuild;
 import hudson.remoting.VirtualChannel;
 import hudson.util.SecretRule;
 import io.fabric8.kubernetes.api.model.ConfigBuilder;
-import io.fabric8.kubernetes.client.internal.SerializationUtils;
+import io.fabric8.kubernetes.client.utils.Serialization;
 import jenkins.security.ConfidentialStoreRule;
 import org.jenkinsci.plugins.kubernetes.auth.KubernetesAuth;
 import org.jenkinsci.plugins.kubernetes.auth.impl.*;
@@ -52,7 +52,7 @@ public class KubeConfigWriterAuthTest {
     AbstractBuild build;
 
     private static String dumpBuilder(ConfigBuilder configBuilder) throws JsonProcessingException {
-        return SerializationUtils.getMapper().writeValueAsString(configBuilder.build());
+        return Serialization.asYaml(configBuilder.build());
     }
 
     private static KeyStore loadKeyStore(InputStream inputStream, char[] password) throws CertificateException, NoSuchAlgorithmException, IOException, KeyStoreException {

@@ -1,6 +1,6 @@
 package org.jenkinsci.plugins.kubernetes.cli.helpers;
 
-import org.checkerframework.checker.nullness.qual.NonNull;
+import edu.umd.cs.findbugs.annotations.NonNull;
 
 /*
  From https://gist.github.com/brianguertin/ada4b65c6d1c4f6d3eee3c12b6ce021b

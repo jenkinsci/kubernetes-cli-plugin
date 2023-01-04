@@ -1,5 +1,6 @@
 package org.jenkinsci.plugins.kubernetes.cli.kubeconfig;
 
+import io.fabric8.kubernetes.client.utils.Serialization;
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.util.Collections;
@@ -24,7 +25,6 @@ import io.fabric8.kubernetes.api.model.Cluster;
 import io.fabric8.kubernetes.api.model.ConfigBuilder;
 import io.fabric8.kubernetes.api.model.ConfigFluent;
 import io.fabric8.kubernetes.api.model.NamedCluster;
-import io.fabric8.kubernetes.client.internal.SerializationUtils;
 import jenkins.authentication.tokens.api.AuthenticationTokens;
 
 /**
@@ -81,7 +81,7 @@ public class KubeConfigWriter {
     }
 
     private static ConfigBuilder setCurrentContext(ConfigBuilder configBuilder, String context) {
-        return configBuilder.withNewCurrentContext(context);
+        return configBuilder.withCurrentContext(context);
     }
 
     private static ConfigFluent.ContextsNested<ConfigBuilder> existingOrNewContext(ConfigBuilder configBuilder,
@@ -138,7 +138,7 @@ public class KubeConfigWriter {
 
         // Write configuration to disk
         FilePath configFile = getTempKubeconfigFilePath();
-        configFile.write(SerializationUtils.getMapper().writeValueAsString(configBuilder.build()),
+        configFile.write(Serialization.asYaml(configBuilder.build()),
                 String.valueOf(StandardCharsets.UTF_8));
         if (restrictKubeConfigAccess != null && restrictKubeConfigAccess) {
             configFile.chmod(0600);

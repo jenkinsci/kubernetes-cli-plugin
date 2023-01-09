@@ -4,6 +4,7 @@ import static org.junit.Assert.assertEquals;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.when;
 
+import io.fabric8.kubernetes.client.utils.Serialization;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.PrintStream;
@@ -26,7 +27,6 @@ import hudson.model.AbstractBuild;
 import hudson.model.TaskListener;
 import hudson.remoting.VirtualChannel;
 import io.fabric8.kubernetes.api.model.ConfigBuilder;
-import io.fabric8.kubernetes.client.internal.SerializationUtils;
 
 public class KubeConfigWriterBuilderTest {
     final ByteArrayOutputStream output = new ByteArrayOutputStream();
@@ -37,7 +37,7 @@ public class KubeConfigWriterBuilderTest {
     AbstractBuild build;
 
     private static String dumpBuilder(ConfigBuilder configBuilder) throws JsonProcessingException {
-        return SerializationUtils.getMapper().writeValueAsString(configBuilder.build());
+        return Serialization.asYaml(configBuilder.build());
     }
 
     private static KubernetesAuthKubeconfig dummyKubeConfigAuth() {

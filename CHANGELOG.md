@@ -1,6 +1,18 @@
 CHANGELOG
 =========
 
+1.11.0
+-----
+* upgrade kubernetes-client to 6.x [#101](https://github.com/jenkinsci/kubernetes-cli-plugin/pull/101)
+* add support for making kubeconfig only accessible by owner [#96](https://github.com/jenkinsci/kubernetes-cli-plugin/pull/96)
+* fix incluster config without namespace [#97](https://github.com/jenkinsci/kubernetes-cli-plugin/pull/97)
+* separate unit and integration tests [#95](https://github.com/jenkinsci/kubernetes-cli-plugin/pull/95)
+* stop testing EOL versions [#94](https://github.com/jenkinsci/kubernetes-cli-plugin/pull/94)
+* run tests for 1.22 and 1.23 [#90](https://github.com/jenkinsci/kubernetes-cli-plugin/pull/90)
+* fix typo in README [#88](https://github.com/jenkinsci/kubernetes-cli-plugin/pull/88)
+* move from Travis to Jenkins CI [#87](https://github.com/jenkinsci/kubernetes-cli-plugin/pull/87)
+* compile against kubernetes-client-api-5.4.1 [#86](https://github.com/jenkinsci/kubernetes-cli-plugin/pull/86)
+
 1.10.3
 -----
 * compile against kubernetes-client-api 5.4.1 [#86](https://github.com/jenkinsci/kubernetes-cli-plugin/pull/86)

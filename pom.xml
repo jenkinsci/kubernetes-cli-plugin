@@ -28,7 +28,7 @@
     <!-- jenkins plugins versions -->
     <jenkins-env-inject.version>2.3.0</jenkins-env-inject.version>
     <jenkins-declarative.version>1.4.0</jenkins-declarative.version>
-    <jenkins-kubernetes-credentials.version>0.9.1-rc136.6105f8f63f7f</jenkins-kubernetes-credentials.version>
+    <jenkins-kubernetes-credentials.version>0.10.0</jenkins-kubernetes-credentials.version>
 
     <!-- maven plugins versions -->
     <maven-coveralls.version>4.3.0</maven-coveralls.version>

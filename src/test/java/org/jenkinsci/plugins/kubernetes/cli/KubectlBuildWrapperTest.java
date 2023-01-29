@@ -143,7 +143,7 @@ public class KubectlBuildWrapperTest {
         as.add(Jenkins.READ, "user-not-enough-permissions");
         r.jenkins.setAuthorizationStrategy(as);
 
-        try (ACLContext _ = ACL.as(User.get("user-not-enough-permissions", true, null).impersonate())) {
+        try (ACLContext unused = ACL.as(User.get("user-not-enough-permissions", true, null).impersonate())) {
             ListBoxModel options = d.doFillCredentialsIdItems(null, "", "1");
             assertEquals("- current -", options.get(0).name);
             assertEquals(1, options.size());

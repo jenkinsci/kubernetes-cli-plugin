@@ -1,5 +1,6 @@
 // Java versions to test against
-String[] jdkVersions = [8, 11]
+String[] unitTestJdkVersions = [11]
+String integrationJdkVersions = 11
 
 // Platform to test for
 String[] platforms = [
@@ -53,7 +54,7 @@ def unitTest(platform, jdk) {
                 checkout scm
             }
             stage('tests') {
-                infra.runWithJava('mvn clean -Dgroups="! org.jenkinsci.plugins.kubernetes.cli.KubectlIntegrationTest" test findbugs:check', jdk)
+                infra.runWithJava('mvn clean -Dgroups="! org.jenkinsci.plugins.kubernetes.cli.KubectlIntegrationTest" test spotbugs:check', jdk)
             }
             // stage('coverage') {
             //     infra.runWithJava('mvn jacoco:report coveralls:report')
@@ -92,15 +93,15 @@ for (int i = 0; i < kubectlVersions.size(); i++) {
 
         def stepName = "integration/${platform}/v${kubectlVersion}"
         stepsForParallel[stepName] = { ->
-            integrationTest(platform, jdkVersions[1], kubectlVersion)
+            integrationTest(platform, integrationJdkVersions, kubectlVersion)
         }
     }
 }
 for (int j = 0; j < platforms.size(); j++) {
     def platform = platforms[j]
 
-    for (int k = 0; k < jdkVersions.size(); k++) {
-    def jdkVersion = jdkVersions[k]
+    for (int k = 0; k < unitTestJdkVersions.size(); k++) {
+    def jdkVersion = unitTestJdkVersions[k]
         def stepName = "unit/${platform}/${jdkVersion}"
         stepsForParallel[stepName] = { ->
             unitTest(platform, jdkVersion)

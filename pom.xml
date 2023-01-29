@@ -3,7 +3,7 @@
   <parent>
     <groupId>org.jenkins-ci.plugins</groupId>
     <artifactId>plugin</artifactId>
-    <version>4.50</version>
+    <version>4.54</version>
     <relativePath />
   </parent>
 
@@ -17,13 +17,12 @@
   <properties>
     <revision>1.11.1</revision>
     <changelist>-SNAPSHOT</changelist>
-    <java.level>8</java.level>
     <hpi.compatibleSinceVersion>1.0.0</hpi.compatibleSinceVersion>
 
     <!-- dependency versions -->
-    <jenkins.version>2.332.4</jenkins.version>
-    <bom.artifactId>bom-2.332.x</bom.artifactId>
-    <bom.version>1763.v092b_8980a_f5e</bom.version>
+    <jenkins.version>2.361.4</jenkins.version>
+    <bom.artifactId>bom-2.361.x</bom.artifactId>
+    <bom.version>1798.vc671fe94856f</bom.version>
 
     <!-- jenkins plugins versions -->
     <jenkins-env-inject.version>2.3.0</jenkins-env-inject.version>

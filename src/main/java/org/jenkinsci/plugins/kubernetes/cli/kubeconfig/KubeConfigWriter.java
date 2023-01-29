@@ -126,6 +126,8 @@ public class KubeConfigWriter {
                 throw new AbortException("[kubernetes-cli] unable to find credentials with id '" + credentialsId + "'");
             }
 
+            CredentialsProvider.track(this.build, credentials);
+
             // Convert into Kubernetes credentials
             KubernetesAuth auth = AuthenticationTokens.convert(KubernetesAuth.class, credentials);
             if (auth == null) {

@@ -1,5 +1,5 @@
 // Java versions to test against
-String[] unitTestJdkVersions = [11]
+String[] unitTestJdkVersions = [11, 17]
 String integrationJdkVersions = 11
 
 // Platform to test for

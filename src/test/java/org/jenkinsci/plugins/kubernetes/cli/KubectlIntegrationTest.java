@@ -16,6 +16,7 @@ import java.util.stream.Stream;
 
 import com.cloudbees.plugins.credentials.CredentialsProvider;
 import com.cloudbees.plugins.credentials.CredentialsStore;
+import com.cloudbees.plugins.credentials.Credentials;
 import com.cloudbees.plugins.credentials.domains.Domain;
 
 import org.jenkinsci.plugins.kubernetes.cli.helpers.DummyCredentials;
@@ -31,6 +32,7 @@ import org.junit.Test;
 import org.junit.experimental.categories.Category;
 import org.jvnet.hudson.test.JenkinsRule;
 
+import hudson.model.Fingerprint;
 import hudson.FilePath;
 import io.jenkins.cli.shaded.org.apache.commons.lang.SystemUtils;
 
@@ -294,6 +296,24 @@ public class KubectlIntegrationTest {
                 "  user: {}\n" +
                 "- name: test-user2\n" +
                 "  user: {}"));
+    }
+
+    @Test
+    public void testTracking() throws Exception {
+        CredentialsStore store = CredentialsProvider.lookupStores(r.jenkins).iterator().next();
+        Credentials credentials = DummyCredentials.fileCredential(CREDENTIAL_ID);
+        store.addCredentials(Domain.global(), credentials);
+
+        WorkflowJob p = r.jenkins.createProject(WorkflowJob.class, "testBasicWithCa");
+        p.setDefinition(new CpsFlowDefinition(
+                TestResourceLoader.loadAsString("withKubeConfigPipelineConfigDump.groovy"), true));
+        WorkflowRun b = p.scheduleBuild2(0).waitForStart();
+        assertNotNull(b);
+        r.assertBuildStatusSuccess(r.waitForCompletion(b));
+
+        Fingerprint something = CredentialsProvider.getFingerprintOf(credentials);
+        assertNotNull(something);
+        assertNotNull(something.getUsages().get("testBasicWithCa"));
     }
 
     protected boolean kubectlPresent() {

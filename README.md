@@ -132,7 +132,7 @@ node {
 The merging is done by `kubectl` itself, refer to its documentation for details. When providing more than one credential
 is provided no context will be set by default.
 
-##### Usage whe running inside a Pod
+##### Usage when running inside a Pod
 
 If you're running your pipelines within Kubernetes Pods, you could use those Pod's ServiceAccount instead of providing dedicated credentials.
 To do so, don't specify any `credentialsId` when calling `withKubeConfig()`.

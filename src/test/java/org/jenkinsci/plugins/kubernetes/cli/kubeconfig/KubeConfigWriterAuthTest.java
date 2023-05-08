@@ -7,10 +7,8 @@ import hudson.FilePath;
 import hudson.Launcher;
 import hudson.model.AbstractBuild;
 import hudson.remoting.VirtualChannel;
-import hudson.util.SecretRule;
 import io.fabric8.kubernetes.api.model.ConfigBuilder;
 import io.fabric8.kubernetes.client.utils.Serialization;
-import jenkins.security.ConfidentialStoreRule;
 import org.jenkinsci.plugins.kubernetes.auth.KubernetesAuth;
 import org.jenkinsci.plugins.kubernetes.auth.impl.*;
 import org.jenkinsci.plugins.kubernetes.cli.helpers.DummyTokenCredentialImpl;
@@ -32,17 +30,6 @@ import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.when;
 
 public class KubeConfigWriterAuthTest {
-
-    /*
-    The SecretRule and ConfidentialStoreRule are hacks to avoid
-    having to use a JenkinsRule in order to read secure credentials,
-    as it is way slower to load
-     */
-    @Rule
-    public SecretRule secretRule = new SecretRule();
-
-    @Rule
-    public ConfidentialStoreRule confidentialStoreRule = new ConfidentialStoreRule();
 
     @Rule
     public TemporaryFolder tempFolder = new TemporaryFolder();

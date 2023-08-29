@@ -3,7 +3,7 @@
   <parent>
     <groupId>org.jenkins-ci.plugins</groupId>
     <artifactId>plugin</artifactId>
-    <version>4.54</version>
+    <version>4.72</version>
     <relativePath />
   </parent>
 
@@ -20,14 +20,14 @@
     <hpi.compatibleSinceVersion>1.0.0</hpi.compatibleSinceVersion>
 
     <!-- dependency versions -->
-    <jenkins.version>2.361.4</jenkins.version>
-    <bom.artifactId>bom-2.361.x</bom.artifactId>
-    <bom.version>1798.vc671fe94856f</bom.version>
+    <jenkins.version>2.401.1</jenkins.version>
+    <bom.artifactId>bom-2.401.x</bom.artifactId>
+    <bom.version>2357.v1043f8578392</bom.version>
 
     <!-- jenkins plugins versions -->
     <jenkins-env-inject.version>2.3.0</jenkins-env-inject.version>
     <jenkins-declarative.version>1.4.0</jenkins-declarative.version>
-    <jenkins-kubernetes-credentials.version>0.10.0</jenkins-kubernetes-credentials.version>
+    <jenkins-kubernetes-credentials.version>0.11</jenkins-kubernetes-credentials.version>
 
     <!-- maven plugins versions -->
     <maven-coveralls.version>4.3.0</maven-coveralls.version>
@@ -77,13 +77,13 @@
        <dependency>
          <groupId>org.jenkins-ci.plugins</groupId>
          <artifactId>authentication-tokens</artifactId>
-         <version>1.3</version>
+         <version>1.53.v1c90fd9191a_b_</version>
        </dependency>
       <!-- required to enforce dependency version -->
       <dependency>
         <groupId>org.jenkins-ci.plugins</groupId>
         <artifactId>kubernetes-client-api</artifactId>
-        <version>6.3.1-206.v76d3b_6b_14db_b</version>
+        <version>6.8.1-224.vd388fca_4db_3b_</version>
       </dependency>
     </dependencies>
   </dependencyManagement>
@@ -163,7 +163,7 @@
     <dependency>
       <groupId>org.jenkins-ci.plugins</groupId>
       <artifactId>docker-commons</artifactId>
-      <version>1.18</version>
+      <version>439.va_3cb_0a_6a_fb_29</version>
       <scope>test</scope>
     </dependency>
     <dependency>

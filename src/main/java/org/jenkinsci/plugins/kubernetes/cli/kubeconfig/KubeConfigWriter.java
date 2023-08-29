@@ -84,8 +84,8 @@ public class KubeConfigWriter {
         return configBuilder.withCurrentContext(context);
     }
 
-    private static ConfigFluent.ContextsNested<ConfigBuilder> existingOrNewContext(ConfigBuilder configBuilder,
-            String context) {
+    private static ConfigFluent<ConfigBuilder>.ContextsNested<ConfigBuilder> existingOrNewContext(ConfigBuilder configBuilder,
+                                                                                                  String context) {
         if (hasContext(configBuilder, context)) {
             return configBuilder.editMatchingContext(p -> context.equals(p.getName()));
         } else {
@@ -97,8 +97,8 @@ public class KubeConfigWriter {
         return configBuilder.hasMatchingContext(p -> context.equals(p.getName()));
     }
 
-    private static ConfigFluent.ClustersNested<ConfigBuilder> existingOrNewCluster(ConfigBuilder configBuilder,
-            String cluster) {
+    private static ConfigFluent<ConfigBuilder>.ClustersNested<ConfigBuilder> existingOrNewCluster(ConfigBuilder configBuilder,
+                                                                                                  String cluster) {
         if (configBuilder.hasMatchingCluster(p -> cluster.equals(p.getName()))) {
             return configBuilder.editMatchingCluster(p -> cluster.equals(p.getName()));
         } else {

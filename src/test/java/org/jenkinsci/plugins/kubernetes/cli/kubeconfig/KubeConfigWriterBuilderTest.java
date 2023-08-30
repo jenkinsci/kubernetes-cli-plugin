@@ -98,12 +98,10 @@ public class KubeConfigWriterBuilderTest {
         String configDumpContent = dumpBuilder(configBuilder);
 
         assertEquals("---\n" +
-                "clusters: []\n" +
                 "contexts:\n" +
                 "- context: {}\n" +
                 "  name: \"k8s\"\n" +
-                "current-context: \"k8s\"\n" +
-                "users: []\n", configDumpContent);
+                "current-context: \"k8s\"\n", configDumpContent);
     }
 
     @Test
@@ -122,13 +120,11 @@ public class KubeConfigWriterBuilderTest {
         String configDumpContent = dumpBuilder(configBuilder);
 
         assertEquals("---\n" +
-                "clusters: []\n" +
                 "contexts:\n" +
                 "- context:\n" +
                 "    namespace: \"test-namespace\"\n" +
                 "  name: \"k8s\"\n" +
-                "current-context: \"k8s\"\n" +
-                "users: []\n", configDumpContent);
+                "current-context: \"k8s\"\n", configDumpContent);
     }
 
     @Test
@@ -147,13 +143,11 @@ public class KubeConfigWriterBuilderTest {
         String configDumpContent = dumpBuilder(configBuilder);
 
         assertEquals("---\n" +
-                "clusters: []\n" +
                 "contexts:\n" +
                 "- context:\n" +
                 "    namespace: \"test-namespace\"\n" +
                 "  name: \"test-context\"\n" +
-                "current-context: \"test-context\"\n" +
-                "users: []\n", configDumpContent);
+                "current-context: \"test-context\"\n", configDumpContent);
     }
 
     @Test

@@ -1,13 +1,18 @@
 CHANGELOG
 =========
 
-1.12.0
+1.12.1
 -----
 * fix typo in README [#109](https://github.com/jenkinsci/kubernetes-cli-plugin/pull/109)
 * compile against kubernetes-client-api-6.8.1 [#112](https://github.com/jenkinsci/kubernetes-cli-plugin/pull/112)
 * Removing ConfidentialStoreRule and SecretRule [#119](https://github.com/jenkinsci/kubernetes-cli-plugin/pull/119)
 * compile against docker-commons 439.va_3cb_0a_6a_fb_29 [#112](https://github.com/jenkinsci/kubernetes-cli-plugin/pull/112)
 * compile against authentication-tokens 1.53.v1c90fd9191a_b_ [#112](https://github.com/jenkinsci/kubernetes-cli-plugin/pull/112)
+
+1.12.0
+-----
+* compile against docker-commons 1.18 [#102](https://github.com/jenkinsci/kubernetes-cli-plugin/pull/102)
+* track credentials usage [#103](https://github.com/jenkinsci/kubernetes-cli-plugin/pull/103)
 
 1.11.0
 -----

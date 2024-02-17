@@ -34,7 +34,7 @@ public class KubeConfigWriterBuilderTest {
     public TemporaryFolder tempFolder = new TemporaryFolder();
     FilePath workspace;
     Launcher mockLauncher;
-    AbstractBuild build;
+    AbstractBuild<?, ?> build;
 
     private static String dumpBuilder(ConfigBuilder configBuilder) throws JsonProcessingException {
         return Serialization.asYaml(configBuilder.build());

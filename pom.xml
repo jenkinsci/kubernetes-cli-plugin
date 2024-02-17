@@ -9,7 +9,6 @@
 
   <name>Kubernetes CLI Plugin</name>
   <url>https://github.com/jenkinsci/kubernetes-cli-plugin</url>
-  <groupId>org.jenkins-ci.plugins</groupId>
   <artifactId>kubernetes-cli</artifactId>
   <version>${revision}${changelist}</version>
   <packaging>hpi</packaging>

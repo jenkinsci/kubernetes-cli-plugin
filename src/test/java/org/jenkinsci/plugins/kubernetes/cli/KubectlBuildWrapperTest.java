@@ -10,6 +10,8 @@ import com.cloudbees.plugins.credentials.domains.Domain;
 import org.jenkinsci.plugins.envinject.EnvInjectBuildWrapper;
 import org.jenkinsci.plugins.envinject.EnvInjectJobPropertyInfo;
 import org.jenkinsci.plugins.kubernetes.cli.helpers.DummyCredentials;
+import org.jenkinsci.plugins.matrixauth.AuthorizationType;
+import org.jenkinsci.plugins.matrixauth.PermissionEntry;
 import org.junit.Rule;
 import org.junit.Test;
 import org.jvnet.hudson.test.JenkinsRule;
@@ -140,10 +142,10 @@ public class KubectlBuildWrapperTest {
 
         r.jenkins.setSecurityRealm(r.createDummySecurityRealm());
         ProjectMatrixAuthorizationStrategy as = new ProjectMatrixAuthorizationStrategy();
-        as.add(Jenkins.READ, "user-not-enough-permissions");
+        as.add(Jenkins.READ, new PermissionEntry(AuthorizationType.EITHER, "user-not-enough-permissions"));
         r.jenkins.setAuthorizationStrategy(as);
 
-        try (ACLContext unused = ACL.as(User.get("user-not-enough-permissions", true, null).impersonate())) {
+        try (ACLContext unused = ACL.as2(User.get("user-not-enough-permissions", true, null).impersonate2())) {
             ListBoxModel options = d.doFillCredentialsIdItems(null, "", "1");
             assertEquals("- current -", options.get(0).name);
             assertEquals(1, options.size());

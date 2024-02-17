@@ -30,7 +30,7 @@ public class DummyCredentials {
 
     public static BaseStandardCredentials certificateCredential(String credentialId) {
         byte[] storeFile = TestResourceLoader.loadAsByteArray("kubernetes.pkcs12");
-        CertificateCredentialsImpl.KeyStoreSource keyStoreSource = new CertificateCredentialsImpl.UploadedKeyStoreSource(
+        CertificateCredentialsImpl.KeyStoreSource keyStoreSource = new CertificateCredentialsImpl.UploadedKeyStoreSource(null,
                 SecretBytes.fromBytes(storeFile));
         return new CertificateCredentialsImpl(CredentialsScope.GLOBAL, credentialId, "sample", PASSPHRASE,
                 keyStoreSource);
@@ -38,7 +38,7 @@ public class DummyCredentials {
 
     public static BaseStandardCredentials brokenCertificateCredential(String credentialId) {
         byte[] storeFile = TestResourceLoader.loadAsByteArray("kubernetes.pkcs12");
-        CertificateCredentialsImpl.KeyStoreSource keyStoreSource = new CertificateCredentialsImpl.UploadedKeyStoreSource(
+        CertificateCredentialsImpl.KeyStoreSource keyStoreSource = new CertificateCredentialsImpl.UploadedKeyStoreSource(null,
                 SecretBytes.fromBytes(storeFile));
         return new CertificateCredentialsImpl(CredentialsScope.GLOBAL, credentialId, "sample", "bad-passphrase",
                 keyStoreSource);

@@ -36,7 +36,7 @@ public class KubeConfigWriterAuthTest {
 
     FilePath workspace;
     Launcher mockLauncher;
-    AbstractBuild build;
+    AbstractBuild<?, ?> build;
 
     private static String dumpBuilder(ConfigBuilder configBuilder) throws JsonProcessingException {
         return Serialization.asYaml(configBuilder.build());

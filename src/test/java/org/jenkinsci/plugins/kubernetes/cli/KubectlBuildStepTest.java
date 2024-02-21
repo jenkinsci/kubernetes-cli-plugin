@@ -151,8 +151,8 @@ public class KubectlBuildStepTest {
         assertBuildStatus(b, Result.SUCCESS);
         String regExp = "Using temporary file '(.+).kube(.+)config'";
         Pattern kubeConfigPathRegexp = Pattern.compile(regExp);
-        assertTrue("No line in the logs matched the regular expression '" + regExp + "': " + r.getLog(b),
-                kubeConfigPathRegexp.matcher(r.getLog(b)).find());
+        assertTrue("No line in the logs matched the regular expression '" + regExp + "': " + JenkinsRule.getLog(b),
+                kubeConfigPathRegexp.matcher(JenkinsRule.getLog(b)).find());
     }
 
     private void assertBuildStatus(WorkflowRun b, Result result) throws Exception {

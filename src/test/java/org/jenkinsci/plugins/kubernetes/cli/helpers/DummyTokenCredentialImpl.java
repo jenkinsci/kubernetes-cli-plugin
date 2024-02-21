@@ -7,7 +7,12 @@ import org.jenkinsci.plugins.kubernetes.credentials.TokenProducer;
 
 public class DummyTokenCredentialImpl extends UsernamePasswordCredentialsImpl implements TokenProducer {
 
-    public DummyTokenCredentialImpl(CredentialsScope scope, String id, String description, String username,
+    /**
+	 * 
+	 */
+	private static final long serialVersionUID = 1L;
+
+	public DummyTokenCredentialImpl(CredentialsScope scope, String id, String description, String username,
             String password) {
         super(scope, id, description, username, password);
     }

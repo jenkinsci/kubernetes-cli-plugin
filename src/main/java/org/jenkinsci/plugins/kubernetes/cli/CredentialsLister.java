@@ -41,7 +41,7 @@ public abstract class CredentialsLister {
         return new StandardListBoxModel()
                 .includeEmptyValue()
                 .includeMatchingAs(
-                        ACL.SYSTEM,
+                        ACL.SYSTEM2,
                         item,
                         StandardCredentials.class,
                         URIRequirementBuilder.fromUri(serverUrl).build(),

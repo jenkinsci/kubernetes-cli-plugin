@@ -4,15 +4,13 @@ import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 
-import javax.annotation.Nonnull;
-
 import org.jenkinsci.plugins.kubernetes.cli.kubeconfig.KubeConfigWriter;
 import org.jenkinsci.plugins.kubernetes.cli.kubeconfig.KubeConfigWriterFactory;
 import org.jenkinsci.plugins.workflow.steps.AbstractStepExecutionImpl;
 import org.jenkinsci.plugins.workflow.steps.BodyExecutionCallback;
 import org.jenkinsci.plugins.workflow.steps.EnvironmentExpander;
 import org.jenkinsci.plugins.workflow.steps.StepContext;
-
+import edu.umd.cs.findbugs.annotations.NonNull;
 import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 import hudson.FilePath;
 import hudson.model.TaskListener;
@@ -78,7 +76,7 @@ public class GenericBuildStep extends AbstractStepExecutionImpl {
      * {@inheritDoc}
      */
     @Override
-    public void stop(@Nonnull Throwable cause) throws Exception {
+    public void stop(@NonNull Throwable cause) throws Exception {
         getContext().onFailure(cause);
     }
 

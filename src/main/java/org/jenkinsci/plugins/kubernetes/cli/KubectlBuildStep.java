@@ -5,8 +5,6 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
-import javax.annotation.Nonnull;
-
 import org.jenkinsci.plugins.workflow.steps.Step;
 import org.jenkinsci.plugins.workflow.steps.StepContext;
 import org.jenkinsci.plugins.workflow.steps.StepDescriptor;
@@ -15,7 +13,7 @@ import org.kohsuke.stapler.AncestorInPath;
 import org.kohsuke.stapler.DataBoundConstructor;
 import org.kohsuke.stapler.DataBoundSetter;
 import org.kohsuke.stapler.QueryParameter;
-
+import edu.umd.cs.findbugs.annotations.NonNull;
 import hudson.Extension;
 import hudson.model.Item;
 import hudson.util.ListBoxModel;
@@ -97,7 +95,7 @@ public class KubectlBuildStep extends Step {
             return new HashSet<>();
         }
 
-        public ListBoxModel doFillCredentialsIdItems(@Nonnull @AncestorInPath Item item,
+        public ListBoxModel doFillCredentialsIdItems(@NonNull @AncestorInPath Item item,
                 @QueryParameter String serverUrl, @QueryParameter String credentialsId) {
             return CredentialsLister.doFillCredentialsIdItems(item, serverUrl, credentialsId);
         }

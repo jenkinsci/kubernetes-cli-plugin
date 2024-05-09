@@ -1,7 +1,5 @@
 package org.jenkinsci.plugins.kubernetes.cli;
 
-import javax.annotation.Nonnull;
-
 import com.cloudbees.plugins.credentials.CredentialsMatcher;
 import com.cloudbees.plugins.credentials.CredentialsMatchers;
 import com.cloudbees.plugins.credentials.common.StandardCertificateCredentials;
@@ -9,7 +7,7 @@ import com.cloudbees.plugins.credentials.common.StandardCredentials;
 import com.cloudbees.plugins.credentials.common.StandardListBoxModel;
 import com.cloudbees.plugins.credentials.common.StandardUsernamePasswordCredentials;
 import com.cloudbees.plugins.credentials.domains.URIRequirementBuilder;
-
+import edu.umd.cs.findbugs.annotations.NonNull;
 import org.jenkinsci.plugins.kubernetes.credentials.TokenProducer;
 import org.jenkinsci.plugins.plaincredentials.FileCredentials;
 import org.jenkinsci.plugins.plaincredentials.StringCredentials;
@@ -31,7 +29,7 @@ public abstract class CredentialsLister {
             CredentialsMatchers.instanceOf(StandardCertificateCredentials.class),
             CredentialsMatchers.instanceOf(FileCredentials.class));
 
-    public static ListBoxModel doFillCredentialsIdItems(@Nonnull @AncestorInPath Item item,
+    public static ListBoxModel doFillCredentialsIdItems(@NonNull @AncestorInPath Item item,
             @QueryParameter String serverUrl, @QueryParameter String credentialsId) {
         if (item == null
                 ? !Jenkins.get().hasPermission(Jenkins.ADMINISTER)

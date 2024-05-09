@@ -5,11 +5,9 @@ import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.util.Collections;
 
-import javax.annotation.Nonnull;
-
 import com.cloudbees.plugins.credentials.CredentialsProvider;
 import com.cloudbees.plugins.credentials.common.StandardCredentials;
-
+import edu.umd.cs.findbugs.annotations.NonNull;
 import org.jenkinsci.plugins.kubernetes.auth.KubernetesAuth;
 import org.jenkinsci.plugins.kubernetes.auth.KubernetesAuthConfig;
 import org.jenkinsci.plugins.kubernetes.auth.KubernetesAuthException;
@@ -47,7 +45,7 @@ public class KubeConfigWriter {
     private final Launcher launcher;
     private final Run<?, ?> build;
 
-    public KubeConfigWriter(@Nonnull String serverUrl, String credentialsId,
+    public KubeConfigWriter(@NonNull String serverUrl, String credentialsId,
             String caCertificate, String clusterName, String contextName, String namespace,
             Boolean restrictKubeConfigAccess, FilePath workspace, Launcher launcher, Run<?, ?> build) {
         this.serverUrl = serverUrl;

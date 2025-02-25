@@ -7,7 +7,7 @@
 Allows you to configure [kubectl][kubectl] to interact with Kubernetes clusters from within your jobs.
 Any tool built on top of `kubectl` can then be used from your pipelines to perform deployments, e.g. [Shopify/krane][krane] or [Helm].
 
-*Initially extracted and rewritten from the [Kubernetes Plugin][kubernetes-plugin].*
+_Initially extracted and rewritten from the [Kubernetes Plugin][kubernetes-plugin]._
 
 ```groovy
 // Example when used in a pipeline
@@ -21,11 +21,13 @@ node {
 ```
 
 ## Prerequisites
-* A jenkins installation running version 2.401.1 or higher (with jdk11 or jdk17).
-* An executor with `kubectl` installed (tested against [v1.22 to v1.29][Jenkinsfile] included).
-* A Kubernetes cluster.
+
+- A jenkins installation running version 2.401.1 or higher (with jdk11 or jdk17).
+- An executor with `kubectl` installed (tested against [v1.22 to v1.32][Jenkinsfile] included).
+- A Kubernetes cluster.
 
 ## How it works
+
 The plugin generates a `kubeconfig` file based on the parameters that were provided in the build.
 This file is stored in a temporary file inside the build workspace and the exact path
 can be found in the `KUBECONFIG` environment variable. `kubectl` automatically picks up the path
@@ -34,31 +36,33 @@ Once the build is finished (or the pipeline block is exited), the temporary `kub
 automatically removed.
 
 ## Supported Credentials
+
 The following types of credentials are supported and can be used to authenticate against Kubernetes clusters:
-* Token, as secrets (see [Plain Credentials plugin][plain-credentials-plugin])
-* Plain KubeConfig files (see [Plain Credentials plugin][plain-credentials-plugin])
-* Username and Password (see [Credentials plugin][credentials-plugin])
-* Certificates (see [Credentials plugin][credentials-plugin])
-* OpenShift OAuth tokens, as secrets (see [Kubernetes Credentials plugin][kubernetes-credentials-plugin])
+
+- Token, as secrets (see [Plain Credentials plugin][plain-credentials-plugin])
+- Plain KubeConfig files (see [Plain Credentials plugin][plain-credentials-plugin])
+- Username and Password (see [Credentials plugin][credentials-plugin])
+- Certificates (see [Credentials plugin][credentials-plugin])
+- OpenShift OAuth tokens, as secrets (see [Kubernetes Credentials plugin][kubernetes-credentials-plugin])
 
 If the Jenkins Agent is running within a Pod (e.g. by using the [Kubernetes Plugin][kubernetes-plugin]),
 you can fallback to the Pod's ServiceAccount by not setting any credentials.
 
 ## Quick Usage Quide
+
 The parameters have a slightly different effect depending if a plain KubeConfig file is provided.
 
 ### Parameters (without KubeConfig File)
-| Name                         | Mandatory | Description   |
-| ---------------------------- | --------- | ------------- |
-| `credentialsId`              | yes       | The Jenkins ID of the credentials. |
-| `serverUrl`                  | yes       | URL of the API server's. |
-| `caCertificate`              | no        | Cluster Certificate Authority used to validate the API server's certificate. The validation is skipped if the parameter is not provided. |
-| `clusterName`                | no        | Name of the generated Cluster configuration. (default: `k8s`) |
-| `namespace`                  | no        | Namespace for the Context. |
-| `contextName`                | no        | Name of the generated Context configuration. (default: `k8s`) |
-| `restrictKubeConfigAccess`   | no        | Only allow Jenkins user to read the KubeConfig file. (default: `false`)(doesn't work on Windows) |
 
-
+| Name                       | Mandatory | Description                                                                                                                              |
+| -------------------------- | --------- | ---------------------------------------------------------------------------------------------------------------------------------------- |
+| `credentialsId`            | yes       | The Jenkins ID of the credentials.                                                                                                       |
+| `serverUrl`                | yes       | URL of the API server's.                                                                                                                 |
+| `caCertificate`            | no        | Cluster Certificate Authority used to validate the API server's certificate. The validation is skipped if the parameter is not provided. |
+| `clusterName`              | no        | Name of the generated Cluster configuration. (default: `k8s`)                                                                            |
+| `namespace`                | no        | Namespace for the Context.                                                                                                               |
+| `contextName`              | no        | Name of the generated Context configuration. (default: `k8s`)                                                                            |
+| `restrictKubeConfigAccess` | no        | Only allow Jenkins user to read the KubeConfig file. (default: `false`)(doesn't work on Windows)                                         |
 
 ### Parameters (with KubeConfig File)
 
@@ -66,35 +70,38 @@ The plugin writes the plain KubeConfig file and doesn't change any other field i
 The recommended way to use a single KubeConfig file with multiples clusters, users, and default namespaces is to
 configure a Context for each of them, and use the `contextName` parameter to switch between them (see [Kubernetes documentation][multi-clusters]).
 
-| Name                        | Mandatory | Description   |
-| --------------------------- | --------- | ------------- |
-| `credentialsId`             | yes       | The Jenkins ID of the plain KubeConfig file. |
-| `serverUrl`                 | no        | URL of the API server's. This will create a new `cluster` block and modify the current Context to use it. |
-| `caCertificate`             | no        | Cluster Certificate Authority used to validate the API server's certificate if a `serverUrl` was provided. The validation is skipped if the parameter is not provided. |
-| `clusterName`               | no        | Modifies the Cluster of the current Context. Also used for the generated `cluster` block if a `serverUrl` was provided. |
-| `namespace`                 | no        | Modifies the Namespace of the current Context. |
-| `contextName`               | no        | Switch the current Context to this name. The Context must already exist in the KubeConfig file. |
-| `restrictKubeConfigAccess`  | no        | Only allow Jenkins user to read the KubeConfig file. (default: `false`)(doesn't work on Windows) |
+| Name                       | Mandatory | Description                                                                                                                                                            |
+| -------------------------- | --------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `credentialsId`            | yes       | The Jenkins ID of the plain KubeConfig file.                                                                                                                           |
+| `serverUrl`                | no        | URL of the API server's. This will create a new `cluster` block and modify the current Context to use it.                                                              |
+| `caCertificate`            | no        | Cluster Certificate Authority used to validate the API server's certificate if a `serverUrl` was provided. The validation is skipped if the parameter is not provided. |
+| `clusterName`              | no        | Modifies the Cluster of the current Context. Also used for the generated `cluster` block if a `serverUrl` was provided.                                                |
+| `namespace`                | no        | Modifies the Namespace of the current Context.                                                                                                                         |
+| `contextName`              | no        | Switch the current Context to this name. The Context must already exist in the KubeConfig file.                                                                        |
+| `restrictKubeConfigAccess` | no        | Only allow Jenkins user to read the KubeConfig file. (default: `false`)(doesn't work on Windows)                                                                       |
 
 ### Parameters (when running inside a Pod)
-| Name                        | Mandatory | Description   |
-| --------------------------- | --------- | ------------- |
-| `namespace`                 | no        | Namespace for the Context. |
-| `contextName`               | no        | Name of the generated Context configuration. (default: `k8s`) |
-| `restrictKubeConfigAccess`  | no        | Only allow Jenkins user to read the KubeConfig file. (default: `false`)(doesn't work on Windows) |
+
+| Name                       | Mandatory | Description                                                                                      |
+| -------------------------- | --------- | ------------------------------------------------------------------------------------------------ |
+| `namespace`                | no        | Namespace for the Context.                                                                       |
+| `contextName`              | no        | Name of the generated Context configuration. (default: `k8s`)                                    |
+| `restrictKubeConfigAccess` | no        | Only allow Jenkins user to read the KubeConfig file. (default: `false`)(doesn't work on Windows) |
 
 ### Using Environment Variables
 
 The parameters `serverUrl`, `clusterName` , `namespace` and `contextName` can contain environment variables and are interpolated before writing the configuration file to disk.
 
 ### Using the Plugin in a Pipeline
+
 The `kubernetes-cli` plugin provides the function `withKubeConfig()` for Jenkins Pipeline support.
-You can go to the *Snippet Generator* page under the *Pipeline Syntax* section in Jenkins, select
-*withKubeConfig: Setup Kubernetes CLI* from the *Sample Step* dropdown, and it will provide you configuration
-interface for the plugin. After filling the entries and click *Generate Pipeline Script* button, you will get the sample scripts which can be used
+You can go to the _Snippet Generator_ page under the _Pipeline Syntax_ section in Jenkins, select
+_withKubeConfig: Setup Kubernetes CLI_ from the _Sample Step_ dropdown, and it will provide you configuration
+interface for the plugin. After filling the entries and click _Generate Pipeline Script_ button, you will get the sample scripts which can be used
 in your Pipeline definition.
 
 Example:
+
 ```groovy
 node {
   stage('List pods') {
@@ -153,6 +160,7 @@ podTemplate(inheritFrom: 'default')
 Note: You may also want to call `podTemplate()` with a dedicated `ServiceAccount` that has the permissions required by your pipeline.
 
 ### Using the Plugin from the Web Interface
+
 1. Within the Jenkins dashboard, select a Job and then select "Configure"
 2. Scroll down to the "Build Environment" section
 3. Select "Configure Kubernetes CLI (kubectl) with multiple credentials"
@@ -162,6 +170,7 @@ Note: You may also want to call `podTemplate()` with a dedicated `ServiceAccount
 ![webui](img/webui.png)
 
 ## Generating Kubernetes Credentials
+
 The following example describes how you could use the token of a `ServiceAccount` to access the Kubernetes cluster from Jenkins.
 The result depends of course on the permissions you have.
 
@@ -190,29 +199,34 @@ Finally, paste your token into a `Secret text` credential. The ID is the `creden
 ## Development
 
 ### Building and testing
+
 To build the extension, run:
+
 ```bash
 mvn clean package
 ```
+
 and upload `target/kubernetes-cli.hpi` to your Jenkins installation.
 
 To run the tests:
+
 ```bash
 mvn clean test
 ```
 
 ### Performing a Release
+
 ```bash
 mvn release:prepare release:perform
 ```
 
-[Jenkinsfile]:Jenkinsfile
-[credentials-plugin]:https://github.com/jenkinsci/credentials-plugin
-[kubernetes-plugin]:https://github.com/jenkinsci/kubernetes-plugin
-[kubernetes-credentials-plugin]:https://github.com/jenkinsci/kubernetes-credentials-plugin
+[Jenkinsfile]: Jenkinsfile
+[credentials-plugin]: https://github.com/jenkinsci/credentials-plugin
+[kubernetes-plugin]: https://github.com/jenkinsci/kubernetes-plugin
+[kubernetes-credentials-plugin]: https://github.com/jenkinsci/kubernetes-credentials-plugin
 [plain-credentials-plugin]: https://github.com/jenkinsci/plain-credentials-plugin
-[kubectl]:https://kubernetes.io/docs/reference/kubectl/overview/
-[krane]:https://github.com/Shopify/krane
+[kubectl]: https://kubernetes.io/docs/reference/kubectl/overview/
+[krane]: https://github.com/Shopify/krane
 [master-build]: https://ci.jenkins.io/job/Plugins/job/kubernetes-cli-plugin/job/master/
 [issue-tracker]: https://issues.jenkins-ci.org/issues/?jql=project%20%3D%20JENKINS%20AND%20status%20in%20(Open%2C%20%22In%20Progress%22%2C%20Reopened%2C%20%22In%20Review%22)%20AND%20component%20%3D%20kubernetes-cli-plugin
 [multi-clusters]: https://kubernetes.io/docs/tasks/access-application-cluster/configure-access-multiple-clusters/

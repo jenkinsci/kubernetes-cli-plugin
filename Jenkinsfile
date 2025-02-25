@@ -68,7 +68,7 @@ def downloadKubectl(kubectlVersion){
         sh """
             mkdir -p .bin
             cd .bin
-            curl -LO https://storage.googleapis.com/kubernetes-release/release/v${kubectlVersion}/bin/linux/amd64/kubectl
+            curl -LO https://dl.k8s.io/release/v${kubectlVersion}/bin/linux/amd64/kubectl
             chmod +x kubectl
             kubectl version --client 
         """
@@ -76,7 +76,7 @@ def downloadKubectl(kubectlVersion){
         bat """
             mkdir -p .bin
             cd .bin
-            curl -LO https://storage.googleapis.com/kubernetes-release/release/v${kubectlVersion}/bin/windows/amd64/kubectl.exe
+            curl -LO https://dl.k8s.io/release/v${kubectlVersion}/bin/windows/amd64/kubectl.exe
             kubectl.exe version --client
         """
     }

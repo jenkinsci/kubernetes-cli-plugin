@@ -8,6 +8,7 @@ import com.cloudbees.plugins.credentials.impl.BaseStandardCredentials;
 import com.cloudbees.plugins.credentials.impl.CertificateCredentialsImpl;
 import com.cloudbees.plugins.credentials.impl.UsernamePasswordCredentialsImpl;
 
+import hudson.model.Descriptor.FormException;
 import org.jenkinsci.plugins.plaincredentials.FileCredentials;
 import org.jenkinsci.plugins.plaincredentials.impl.FileCredentialsImpl;
 import org.jenkinsci.plugins.plaincredentials.impl.StringCredentialsImpl;
@@ -44,11 +45,11 @@ public class DummyCredentials {
                 keyStoreSource);
     }
 
-    public static BaseStandardCredentials usernamePasswordCredential(String credentialId) {
+    public static BaseStandardCredentials usernamePasswordCredential(String credentialId) throws FormException {
         return new UsernamePasswordCredentialsImpl(CredentialsScope.GLOBAL, credentialId, "sample", USERNAME, PASSWORD);
     }
 
-    public static BaseStandardCredentials usernamePasswordCredentialWithSpace(String credentialId) {
+    public static BaseStandardCredentials usernamePasswordCredentialWithSpace(String credentialId) throws FormException {
         return new UsernamePasswordCredentialsImpl(CredentialsScope.GLOBAL, credentialId, "sample", USERNAME_WITH_SPACE,
                 PASSWORD_WITH_SPACE);
     }
@@ -79,7 +80,7 @@ public class DummyCredentials {
                         "- name: \"" + userName + "\"\n").getBytes(StandardCharsets.UTF_8)));
     }
 
-    public static DummyTokenCredentialImpl tokenCredential(String credentialId) {
+    public static DummyTokenCredentialImpl tokenCredential(String credentialId) throws FormException {
         return new DummyTokenCredentialImpl(CredentialsScope.GLOBAL, credentialId, "a-description", USERNAME, PASSWORD);
     }
 

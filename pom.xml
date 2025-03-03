@@ -74,13 +74,13 @@
       <dependency>
         <groupId>org.jenkins-ci.plugins</groupId>
         <artifactId>authentication-tokens</artifactId>
-        <version>1.53.v1c90fd9191a_b_</version>
+        <version>1.119.v50285141b_7e1</version>
       </dependency>
       <!-- required to enforce dependency version -->
       <dependency>
         <groupId>org.jenkins-ci.plugins</groupId>
         <artifactId>kubernetes-client-api</artifactId>
-        <version>6.8.1-224.vd388fca_4db_3b_</version>
+        <version>6.10.0-240.v57880ce8b_0b_2</version>
       </dependency>
     </dependencies>
   </dependencyManagement>

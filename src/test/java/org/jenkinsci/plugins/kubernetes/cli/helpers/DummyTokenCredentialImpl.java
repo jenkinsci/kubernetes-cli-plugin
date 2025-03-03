@@ -2,6 +2,7 @@ package org.jenkinsci.plugins.kubernetes.cli.helpers;
 
 import com.cloudbees.plugins.credentials.CredentialsScope;
 import com.cloudbees.plugins.credentials.impl.UsernamePasswordCredentialsImpl;
+import hudson.model.Descriptor.FormException;
 
 import org.jenkinsci.plugins.kubernetes.credentials.TokenProducer;
 
@@ -13,7 +14,7 @@ public class DummyTokenCredentialImpl extends UsernamePasswordCredentialsImpl im
 	private static final long serialVersionUID = 1L;
 
 	public DummyTokenCredentialImpl(CredentialsScope scope, String id, String description, String username,
-            String password) {
+            String password) throws FormException {
         super(scope, id, description, username, password);
     }
 

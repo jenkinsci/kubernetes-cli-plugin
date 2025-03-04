@@ -31,16 +31,18 @@ public class DummyCredentials {
 
     public static BaseStandardCredentials certificateCredential(String credentialId) {
         byte[] storeFile = TestResourceLoader.loadAsByteArray("kubernetes.pkcs12");
-        CertificateCredentialsImpl.KeyStoreSource keyStoreSource = new CertificateCredentialsImpl.UploadedKeyStoreSource(null,
-                SecretBytes.fromBytes(storeFile));
+        CertificateCredentialsImpl.KeyStoreSource keyStoreSource = new CertificateCredentialsImpl.UploadedKeyStoreSource(
+                null,
+                SecretBytes.fromRawBytes(storeFile));
         return new CertificateCredentialsImpl(CredentialsScope.GLOBAL, credentialId, "sample", PASSPHRASE,
                 keyStoreSource);
     }
 
     public static BaseStandardCredentials brokenCertificateCredential(String credentialId) {
         byte[] storeFile = TestResourceLoader.loadAsByteArray("kubernetes.pkcs12");
-        CertificateCredentialsImpl.KeyStoreSource keyStoreSource = new CertificateCredentialsImpl.UploadedKeyStoreSource(null,
-                SecretBytes.fromBytes(storeFile));
+        CertificateCredentialsImpl.KeyStoreSource keyStoreSource = new CertificateCredentialsImpl.UploadedKeyStoreSource(
+                null,
+                SecretBytes.fromRawBytes(storeFile));
         return new CertificateCredentialsImpl(CredentialsScope.GLOBAL, credentialId, "sample", "bad-passphrase",
                 keyStoreSource);
     }
@@ -49,7 +51,8 @@ public class DummyCredentials {
         return new UsernamePasswordCredentialsImpl(CredentialsScope.GLOBAL, credentialId, "sample", USERNAME, PASSWORD);
     }
 
-    public static BaseStandardCredentials usernamePasswordCredentialWithSpace(String credentialId) throws FormException {
+    public static BaseStandardCredentials usernamePasswordCredentialWithSpace(String credentialId)
+            throws FormException {
         return new UsernamePasswordCredentialsImpl(CredentialsScope.GLOBAL, credentialId, "sample", USERNAME_WITH_SPACE,
                 PASSWORD_WITH_SPACE);
     }
@@ -63,7 +66,7 @@ public class DummyCredentials {
                 credentialId,
                 "sample",
                 "file-name",
-                SecretBytes.fromBytes(("---\n" +
+                SecretBytes.fromRawBytes(("---\n" +
                         "apiVersion: \"v1\"\n" +
                         "clusters:\n" +
                         "- cluster:\n" +

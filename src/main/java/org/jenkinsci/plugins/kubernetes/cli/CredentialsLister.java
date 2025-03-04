@@ -13,6 +13,7 @@ import org.jenkinsci.plugins.plaincredentials.FileCredentials;
 import org.jenkinsci.plugins.plaincredentials.StringCredentials;
 import org.kohsuke.stapler.AncestorInPath;
 import org.kohsuke.stapler.QueryParameter;
+import org.kohsuke.stapler.interceptor.RequirePOST;
 
 import hudson.model.Item;
 import hudson.security.ACL;
@@ -29,6 +30,7 @@ public abstract class CredentialsLister {
             CredentialsMatchers.instanceOf(StandardCertificateCredentials.class),
             CredentialsMatchers.instanceOf(FileCredentials.class));
 
+    @RequirePOST
     public static ListBoxModel doFillCredentialsIdItems(@NonNull @AncestorInPath Item item,
             @QueryParameter String serverUrl, @QueryParameter String credentialsId) {
         if (item == null

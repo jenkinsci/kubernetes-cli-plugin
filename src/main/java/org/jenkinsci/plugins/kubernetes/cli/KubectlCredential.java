@@ -4,6 +4,8 @@ import org.kohsuke.stapler.AncestorInPath;
 import org.kohsuke.stapler.DataBoundConstructor;
 import org.kohsuke.stapler.DataBoundSetter;
 import org.kohsuke.stapler.QueryParameter;
+import org.kohsuke.stapler.interceptor.RequirePOST;
+
 import edu.umd.cs.findbugs.annotations.NonNull;
 import hudson.Extension;
 import hudson.model.AbstractDescribableImpl;
@@ -45,6 +47,7 @@ public class KubectlCredential extends AbstractDescribableImpl<KubectlCredential
             return "";
         }
 
+        @RequirePOST
         public ListBoxModel doFillCredentialsIdItems(@NonNull @AncestorInPath Item item,
                 @QueryParameter String serverUrl, @QueryParameter String credentialsId) {
             return CredentialsLister.doFillCredentialsIdItems(item, serverUrl, credentialsId);

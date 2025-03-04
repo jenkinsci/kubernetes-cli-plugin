@@ -13,6 +13,8 @@ import org.kohsuke.stapler.AncestorInPath;
 import org.kohsuke.stapler.DataBoundConstructor;
 import org.kohsuke.stapler.DataBoundSetter;
 import org.kohsuke.stapler.QueryParameter;
+import org.kohsuke.stapler.interceptor.RequirePOST;
+
 import edu.umd.cs.findbugs.annotations.NonNull;
 import hudson.Extension;
 import hudson.model.Item;
@@ -95,6 +97,7 @@ public class KubectlBuildStep extends Step {
             return new HashSet<>();
         }
 
+        @RequirePOST
         public ListBoxModel doFillCredentialsIdItems(@NonNull @AncestorInPath Item item,
                 @QueryParameter String serverUrl, @QueryParameter String credentialsId) {
             return CredentialsLister.doFillCredentialsIdItems(item, serverUrl, credentialsId);

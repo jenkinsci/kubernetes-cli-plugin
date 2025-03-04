@@ -8,6 +8,8 @@ import org.kohsuke.stapler.AncestorInPath;
 import org.kohsuke.stapler.DataBoundConstructor;
 import org.kohsuke.stapler.DataBoundSetter;
 import org.kohsuke.stapler.QueryParameter;
+import org.kohsuke.stapler.interceptor.RequirePOST;
+
 import edu.umd.cs.findbugs.annotations.NonNull;
 import hudson.EnvVars;
 import hudson.Extension;
@@ -85,6 +87,7 @@ public class KubectlBuildWrapper extends SimpleBuildWrapper {
             return "Configure Kubernetes CLI (kubectl) (deprecated, use the multi credentials one instead)";
         }
 
+        @RequirePOST
         public ListBoxModel doFillCredentialsIdItems(@NonNull @AncestorInPath Item item,
                 @QueryParameter String serverUrl, @QueryParameter String credentialsId) {
             return CredentialsLister.doFillCredentialsIdItems(item, serverUrl, credentialsId);

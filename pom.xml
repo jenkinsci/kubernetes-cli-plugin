@@ -1,9 +1,10 @@
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
   <modelVersion>4.0.0</modelVersion>
   <parent>
     <groupId>org.jenkins-ci.plugins</groupId>
     <artifactId>plugin</artifactId>
-    <version>4.74</version>
+    <version>5.7</version>
     <relativePath />
   </parent>
 
@@ -18,14 +19,13 @@
     <changelist>-SNAPSHOT</changelist>
     <hpi.compatibleSinceVersion>1.0.0</hpi.compatibleSinceVersion>
 
-    <!-- dependency versions -->
-    <jenkins.version>2.401.3</jenkins.version>
-    <bom.artifactId>bom-2.401.x</bom.artifactId>
-    <bom.version>2555.v3190a_8a_c60c6</bom.version>
+    <!-- https://www.jenkins.io/doc/developer/plugin-development/choosing-jenkins-baseline/ -->
+    <jenkins.baseline>2.479</jenkins.baseline>
+    <jenkins.version>${jenkins.baseline}.1</jenkins.version>
 
     <!-- jenkins plugins versions -->
     <jenkins-env-inject.version>2.3.0</jenkins-env-inject.version>
-    
+
     <!-- maven plugins versions -->
     <maven-coveralls.version>4.3.0</maven-coveralls.version>
 
@@ -41,7 +41,7 @@
   </developers>
 
   <scm>
-    <connection>scm:git:git://github.com/jenkinsci/${project.artifactId}-plugin.git</connection>
+    <connection>scm:git:https://github.com/jenkinsci/${project.artifactId}-plugin.git</connection>
     <developerConnection>scm:git:ssh://git@github.com/jenkinsci/${project.artifactId}-plugin.git</developerConnection>
     <url>https://github.com/jenkinsci/${project.artifactId}-plugin</url>
     <tag>${scmTag}</tag>
@@ -66,21 +66,21 @@
     <dependencies>
       <dependency>
         <groupId>io.jenkins.tools.bom</groupId>
-        <artifactId>${bom.artifactId}</artifactId>
-        <version>${bom.version}</version>
+        <artifactId>bom-${jenkins.baseline}.x</artifactId>
+        <version>3893.v213a_42768d35</version>
         <scope>import</scope>
         <type>pom</type>
       </dependency>
-       <dependency>
-         <groupId>org.jenkins-ci.plugins</groupId>
-         <artifactId>authentication-tokens</artifactId>
-         <version>1.53.v1c90fd9191a_b_</version>
-       </dependency>
+      <dependency>
+        <groupId>org.jenkins-ci.plugins</groupId>
+        <artifactId>authentication-tokens</artifactId>
+        <version>1.119.v50285141b_7e1</version>
+      </dependency>
       <!-- required to enforce dependency version -->
       <dependency>
         <groupId>org.jenkins-ci.plugins</groupId>
         <artifactId>kubernetes-client-api</artifactId>
-        <version>6.8.1-224.vd388fca_4db_3b_</version>
+        <version>6.10.0-240.v57880ce8b_0b_2</version>
       </dependency>
     </dependencies>
   </dependencyManagement>

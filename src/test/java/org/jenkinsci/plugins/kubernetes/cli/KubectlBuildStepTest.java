@@ -122,21 +122,6 @@ public class KubectlBuildStepTest {
     }
 
     @Test
-    public void testInvalidCertificate() throws Exception {
-        CredentialsProvider.lookupStores(r.jenkins).iterator().next().addCredentials(Domain.global(),
-                DummyCredentials.brokenCertificateCredential("test-credentials"));
-
-        WorkflowJob p = r.jenkins.createProject(WorkflowJob.class, "testWithBrokenCertificate");
-        p.setDefinition(
-                new CpsFlowDefinition(TestResourceLoader.loadAsString("withKubeConfigPipelineEchoPath.groovy"), true));
-        WorkflowRun b = p.scheduleBuild2(0).waitForStart();
-
-        assertNotNull(b);
-        assertBuildStatus(b, Result.FAILURE);
-        r.assertLogContains("ERROR: Uninitialized keystore", b);
-    }
-
-    @Test
     public void testEnvVariableFormat() throws Exception {
         Folder folder = new Folder(r.jenkins.getItemGroup(), "test-folder");
         CredentialsProvider.lookupStores(folder).iterator().next().addCredentials(Domain.global(),

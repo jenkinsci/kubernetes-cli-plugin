@@ -11,12 +11,12 @@
   <name>Kubernetes CLI Plugin</name>
   <url>https://github.com/jenkinsci/kubernetes-cli-plugin</url>
   <artifactId>kubernetes-cli</artifactId>
-  <version>${revision}${changelist}</version>
+  <version>${revision}.${changelist}</version>
   <packaging>hpi</packaging>
 
   <properties>
-    <revision>1.12.2</revision>
-    <changelist>-SNAPSHOT</changelist>
+    <revision>1</revision>
+    <changelist>999999-SNAPSHOT</changelist>
     <hpi.compatibleSinceVersion>1.0.0</hpi.compatibleSinceVersion>
 
     <!-- https://www.jenkins.io/doc/developer/plugin-development/choosing-jenkins-baseline/ -->

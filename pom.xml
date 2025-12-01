@@ -28,6 +28,8 @@
 
     <!-- parent override -->
     <surefire.rerunFailingTestsCount>0</surefire.rerunFailingTestsCount>
+
+    <ban-junit4-imports.skip>false</ban-junit4-imports.skip>
   </properties>
 
   <developers>

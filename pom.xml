@@ -4,7 +4,7 @@
   <parent>
     <groupId>org.jenkins-ci.plugins</groupId>
     <artifactId>plugin</artifactId>
-    <version>5.7</version>
+    <version>5.28</version>
     <relativePath />
   </parent>
 
@@ -21,10 +21,7 @@
 
     <!-- https://www.jenkins.io/doc/developer/plugin-development/choosing-jenkins-baseline/ -->
     <jenkins.baseline>2.479</jenkins.baseline>
-    <jenkins.version>${jenkins.baseline}.1</jenkins.version>
-
-    <!-- jenkins plugins versions -->
-    <jenkins-env-inject.version>2.3.0</jenkins-env-inject.version>
+    <jenkins.version>${jenkins.baseline}.3</jenkins.version>
 
     <!-- maven plugins versions -->
     <maven-coveralls.version>4.3.0</maven-coveralls.version>
@@ -42,7 +39,7 @@
 
   <scm>
     <connection>scm:git:https://github.com/jenkinsci/${project.artifactId}-plugin.git</connection>
-    <developerConnection>scm:git:ssh://git@github.com/jenkinsci/${project.artifactId}-plugin.git</developerConnection>
+    <developerConnection>scm:git:git@github.com:jenkinsci/${project.artifactId}-plugin.git</developerConnection>
     <url>https://github.com/jenkinsci/${project.artifactId}-plugin</url>
     <tag>${scmTag}</tag>
   </scm>
@@ -67,20 +64,9 @@
       <dependency>
         <groupId>io.jenkins.tools.bom</groupId>
         <artifactId>bom-${jenkins.baseline}.x</artifactId>
-        <version>3893.v213a_42768d35</version>
+        <version>5054.v620b_5d2b_d5e6</version>
         <scope>import</scope>
         <type>pom</type>
-      </dependency>
-      <dependency>
-        <groupId>org.jenkins-ci.plugins</groupId>
-        <artifactId>authentication-tokens</artifactId>
-        <version>1.119.v50285141b_7e1</version>
-      </dependency>
-      <!-- required to enforce dependency version -->
-      <dependency>
-        <groupId>org.jenkins-ci.plugins</groupId>
-        <artifactId>kubernetes-client-api</artifactId>
-        <version>6.10.0-240.v57880ce8b_0b_2</version>
       </dependency>
     </dependencies>
   </dependencyManagement>
@@ -142,7 +128,6 @@
     <dependency>
       <groupId>org.jenkins-ci.plugins</groupId>
       <artifactId>envinject</artifactId>
-      <version>${jenkins-env-inject.version}</version>
       <scope>test</scope>
     </dependency>
     <dependency>

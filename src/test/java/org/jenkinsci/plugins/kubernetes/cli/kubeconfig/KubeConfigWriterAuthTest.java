@@ -12,27 +12,28 @@ import io.fabric8.kubernetes.client.utils.Serialization;
 import org.jenkinsci.plugins.kubernetes.auth.KubernetesAuth;
 import org.jenkinsci.plugins.kubernetes.auth.impl.*;
 import org.jenkinsci.plugins.kubernetes.cli.helpers.DummyTokenCredentialImpl;
-import org.junit.Before;
-import org.junit.Rule;
-import org.junit.Test;
-import org.junit.rules.TemporaryFolder;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.io.TempDir;
 import org.mockito.Mockito;
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.nio.file.Files;
+import java.nio.file.Path;
 import java.security.KeyStore;
 import java.security.KeyStoreException;
 import java.security.NoSuchAlgorithmException;
 import java.security.cert.CertificateException;
 
-import static org.junit.Assert.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.when;
 
 public class KubeConfigWriterAuthTest {
 
-    @Rule
-    public TemporaryFolder tempFolder = new TemporaryFolder();
+    @TempDir
+    Path tempFolder;
 
     FilePath workspace;
     Launcher mockLauncher;
@@ -84,9 +85,11 @@ public class KubeConfigWriterAuthTest {
                 "    username: \"test-user\"\n", configDumpContent);
     }
 
-    @Before
+    @BeforeEach
     public void init() throws IOException, InterruptedException {
-        workspace = new FilePath(tempFolder.newFolder("workspace"));
+        Path workspacePath = tempFolder.resolve("workspace");
+        Files.createDirectories(workspacePath);
+        workspace = new FilePath(workspacePath.toFile());
 
         mockLauncher = Mockito.mock(Launcher.class);
         VirtualChannel mockChannel = Mockito.mock(VirtualChannel.class);

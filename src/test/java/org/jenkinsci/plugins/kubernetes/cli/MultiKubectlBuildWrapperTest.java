@@ -1,6 +1,6 @@
 package org.jenkinsci.plugins.kubernetes.cli;
 
-import static org.junit.Assert.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -9,8 +9,9 @@ import com.cloudbees.plugins.credentials.CredentialsProvider;
 import com.cloudbees.plugins.credentials.domains.Domain;
 
 import org.jenkinsci.plugins.kubernetes.cli.helpers.DummyCredentials;
-import org.junit.Rule;
-import org.junit.Test;
+import org.jenkinsci.plugins.kubernetes.cli.helpers.JenkinsRuleExtension;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.jvnet.hudson.test.JenkinsRule;
 
 import hudson.model.FreeStyleProject;
@@ -18,9 +19,9 @@ import hudson.model.FreeStyleProject;
 /**
  * @author Max Laverse
  */
+@ExtendWith(JenkinsRuleExtension.class)
 public class MultiKubectlBuildWrapperTest {
-    @Rule
-    public JenkinsRule r = new JenkinsRule();
+    public final JenkinsRule r = new JenkinsRule();
 
     @Test
     public void testConfigurationPersistedOnSave() throws Exception {
@@ -56,7 +57,7 @@ public class MultiKubectlBuildWrapperTest {
                 "          <credentialsId>test-credentials</credentialsId>\n" +
                 "        </org.jenkinsci.plugins.kubernetes.cli.KubectlCredential>\n" +
                 "      </kubectlCredentials>\n" +
-                "      <restrictKubeConfigAccess>false</restrictKubeConfigAccess>\n" + 
+                "      <restrictKubeConfigAccess>false</restrictKubeConfigAccess>\n" +
                 "    </org.jenkinsci.plugins.kubernetes.cli.MultiKubectlBuildWrapper>\n" +
                 "  </buildWrappers>\n" +
                 "</project>", p.getConfigFile().asString());

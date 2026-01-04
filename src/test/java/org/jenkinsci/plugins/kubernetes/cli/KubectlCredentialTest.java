@@ -1,15 +1,16 @@
 package org.jenkinsci.plugins.kubernetes.cli;
 
-import static org.junit.Assert.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import com.cloudbees.plugins.credentials.CredentialsProvider;
 import com.cloudbees.plugins.credentials.CredentialsStore;
 import com.cloudbees.plugins.credentials.domains.Domain;
 
 import org.jenkinsci.plugins.kubernetes.cli.helpers.DummyCredentials;
+import org.jenkinsci.plugins.kubernetes.cli.helpers.JenkinsRuleExtension;
 import org.jenkinsci.plugins.workflow.job.WorkflowJob;
-import org.junit.Rule;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.jvnet.hudson.test.JenkinsRule;
 
 import hudson.util.ListBoxModel;
@@ -17,9 +18,9 @@ import hudson.util.ListBoxModel;
 /**
  * @author Max Laverse
  */
+@ExtendWith(JenkinsRuleExtension.class)
 public class KubectlCredentialTest {
-    @Rule
-    public JenkinsRule r = new JenkinsRule();
+    public final JenkinsRule r = new JenkinsRule();
 
     @Test
     public void testListedCredentials() throws Exception {

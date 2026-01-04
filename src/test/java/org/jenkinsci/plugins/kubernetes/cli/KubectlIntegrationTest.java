@@ -2,10 +2,10 @@ package org.jenkinsci.plugins.kubernetes.cli;
 
 import static org.hamcrest.CoreMatchers.containsString;
 import static org.hamcrest.MatcherAssert.assertThat;
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotEquals;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 import java.io.File;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -25,11 +25,12 @@ import org.jenkinsci.plugins.kubernetes.cli.helpers.Version;
 import org.jenkinsci.plugins.workflow.cps.CpsFlowDefinition;
 import org.jenkinsci.plugins.workflow.job.WorkflowJob;
 import org.jenkinsci.plugins.workflow.job.WorkflowRun;
-import org.junit.Assume;
-import org.junit.Before;
-import org.junit.Rule;
-import org.junit.Test;
-import org.junit.experimental.categories.Category;
+import org.jenkinsci.plugins.kubernetes.cli.helpers.JenkinsRuleExtension;
+import org.junit.jupiter.api.Assumptions;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Tag;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.jvnet.hudson.test.JenkinsRule;
 
 import hudson.model.Fingerprint;
@@ -39,22 +40,22 @@ import io.jenkins.cli.shaded.org.apache.commons.lang.SystemUtils;
 /**
  * @author Max Laverse
  */
-@Category(KubectlIntegrationTest.class)
+@Tag("org.jenkinsci.plugins.kubernetes.cli.KubectlIntegrationTest")
+@ExtendWith(JenkinsRuleExtension.class)
 public class KubectlIntegrationTest {
-    @Rule
-    public JenkinsRule r = new JenkinsRule();
+    public final JenkinsRule r = new JenkinsRule();
 
     protected static final String CREDENTIAL_ID = "test-credentials";
     protected static final String SECONDARY_CREDENTIAL_ID = "cred9999";
 
-    @Before
+    @BeforeEach
     public void checkKubectlPresence() {
         assertThat("The '" + kubectlBinaryName() + "' binary could not be found in the PATH", kubectlPresent());
     }
 
     @Test
     public void testKubeConfigPermissionsRestrictedRead() throws Exception {
-        Assume.assumeFalse(System.getProperty("os.name").contains("Windows"));
+        Assumptions.assumeFalse(System.getProperty("os.name").contains("Windows"));
 
         CredentialsProvider.lookupStores(r.jenkins).iterator().next().addCredentials(Domain.global(),
                 DummyCredentials.usernamePasswordCredential(CREDENTIAL_ID));
@@ -75,7 +76,7 @@ public class KubectlIntegrationTest {
 
     @Test
     public void testKubeConfigPermissionsDefault() throws Exception {
-        Assume.assumeFalse(System.getProperty("os.name").contains("Windows"));
+        Assumptions.assumeFalse(System.getProperty("os.name").contains("Windows"));
 
         CredentialsProvider.lookupStores(r.jenkins).iterator().next().addCredentials(Domain.global(),
                 DummyCredentials.usernamePasswordCredential(CREDENTIAL_ID));

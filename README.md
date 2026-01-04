@@ -23,7 +23,7 @@ node {
 ## Prerequisites
 
 - A jenkins installation running version 2.401.1 or higher (with jdk17 or jdk21).
-- An executor with `kubectl` installed (tested against [v1.22 to v1.32][Jenkinsfile] included).
+- An executor with `kubectl` installed (tested against [v1.32 to v1.35][Jenkinsfile] included).
 - A Kubernetes cluster.
 
 ## How it works

@@ -1,7 +1,7 @@
 package org.jenkinsci.plugins.kubernetes.cli;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 import com.cloudbees.plugins.credentials.CredentialsProvider;
 import com.cloudbees.plugins.credentials.CredentialsStore;
@@ -12,8 +12,9 @@ import org.jenkinsci.plugins.envinject.EnvInjectJobPropertyInfo;
 import org.jenkinsci.plugins.kubernetes.cli.helpers.DummyCredentials;
 import org.jenkinsci.plugins.matrixauth.AuthorizationType;
 import org.jenkinsci.plugins.matrixauth.PermissionEntry;
-import org.junit.Rule;
-import org.junit.Test;
+import org.jenkinsci.plugins.kubernetes.cli.helpers.JenkinsRuleExtension;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.jvnet.hudson.test.JenkinsRule;
 
 import hudson.model.FreeStyleBuild;
@@ -31,9 +32,9 @@ import jenkins.model.Jenkins;
 /**
  * @author Max Laverse
  */
+@ExtendWith(JenkinsRuleExtension.class)
 public class KubectlBuildWrapperTest {
-    @Rule
-    public JenkinsRule r = new JenkinsRule();
+    public final JenkinsRule r = new JenkinsRule();
 
     @Test
     public void testEnvVariablePresent() throws Exception {

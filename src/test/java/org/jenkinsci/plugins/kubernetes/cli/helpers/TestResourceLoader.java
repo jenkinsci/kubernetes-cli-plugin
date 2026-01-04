@@ -1,6 +1,7 @@
 package org.jenkinsci.plugins.kubernetes.cli.helpers;
 
-import org.apache.commons.compress.utils.IOUtils;
+import java.io.IOException;
+import java.io.InputStream;
 
 public class TestResourceLoader {
     public static String loadAsString(String name) {
@@ -8,10 +9,13 @@ public class TestResourceLoader {
     }
 
     public static byte[] loadAsByteArray(String name) {
-        try {
-            return IOUtils.toByteArray(TestResourceLoader.class.getResourceAsStream("../" + name));
-        } catch (Throwable t) {
-            throw new RuntimeException("Could not read resource:[" + name + "].");
+        try (InputStream inputStream = TestResourceLoader.class.getResourceAsStream("../" + name)) {
+            if (inputStream == null) {
+                throw new RuntimeException("Could not find resource:[" + name + "].");
+            }
+            return inputStream.readAllBytes();
+        } catch (IOException e) {
+            throw new RuntimeException("Could not read resource:[" + name + "].", e);
         }
     }
 }

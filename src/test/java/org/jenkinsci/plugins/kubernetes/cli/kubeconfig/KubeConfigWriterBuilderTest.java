@@ -1,6 +1,6 @@
 package org.jenkinsci.plugins.kubernetes.cli.kubeconfig;
 
-import static org.junit.Assert.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.when;
 
@@ -8,16 +8,16 @@ import io.fabric8.kubernetes.client.utils.Serialization;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.PrintStream;
+import java.nio.file.Files;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 
 import org.jenkinsci.plugins.kubernetes.auth.KubernetesAuth;
 import org.jenkinsci.plugins.kubernetes.auth.impl.KubernetesAuthKubeconfig;
 import org.jenkinsci.plugins.kubernetes.auth.impl.KubernetesAuthUsernamePassword;
-import org.junit.Before;
-import org.junit.Rule;
-import org.junit.Test;
-import org.junit.rules.TemporaryFolder;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.io.TempDir;
 import org.mockito.Mockito;
 
 import hudson.EnvVars;
@@ -27,11 +27,12 @@ import hudson.model.AbstractBuild;
 import hudson.model.TaskListener;
 import hudson.remoting.VirtualChannel;
 import io.fabric8.kubernetes.api.model.ConfigBuilder;
+import java.nio.file.Path;
 
 public class KubeConfigWriterBuilderTest {
     final ByteArrayOutputStream output = new ByteArrayOutputStream();
-    @Rule
-    public TemporaryFolder tempFolder = new TemporaryFolder();
+    @TempDir
+    public Path tempFolder;
     FilePath workspace;
     Launcher mockLauncher;
     AbstractBuild<?, ?> build;
@@ -64,9 +65,11 @@ public class KubeConfigWriterBuilderTest {
                         "    username: \"existing-user\"\n");
     }
 
-    @Before
+    @BeforeEach
     public void init() throws IOException, InterruptedException {
-        workspace = new FilePath(tempFolder.newFolder("workspace"));
+        Path workspacePath = tempFolder.resolve("workspace");
+        Files.createDirectories(workspacePath);
+        workspace = new FilePath(workspacePath.toFile());
 
         mockLauncher = Mockito.mock(Launcher.class);
         VirtualChannel mockChannel = Mockito.mock(VirtualChannel.class);
